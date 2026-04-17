@@ -1,0 +1,225 @@
+{
+  "main": {
+    "id": "ac27a90cb73dcf42",
+    "type": "split",
+    "children": [
+      {
+        "id": "13dbadbc6fa8d7e5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d01722955bd27631",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "wiki/tags-dashboard.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "tags-dashboard"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "451a6dad19a587d4",
+    "type": "split",
+    "children": [
+      {
+        "id": "b4bfd58ae78113ae",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2b055373325ab1e8",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "e2930e7d95b5f662",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:FastAPI-Users",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "c166d0ae2009e32d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 459.5
+  },
+  "right": {
+    "id": "e99e3fc8ce9c9278",
+    "type": "split",
+    "children": [
+      {
+        "id": "02ec0ffe423bf4eb",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "524971a8e70416e6",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "graphify-out/GRAPH_REPORT.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "GRAPH_REPORT 的反向链接列表"
+            }
+          },
+          {
+            "id": "d30d4a2d94c4ce28",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "graphify-out/GRAPH_REPORT.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "GRAPH_REPORT 的出链列表"
+            }
+          },
+          {
+            "id": "df25cdadf900e07b",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "4ed75858158858a6",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "e8bb85c5e34bbf66",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "graphify-out/GRAPH_REPORT.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "GRAPH_REPORT 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "d01722955bd27631",
+  "lastOpenFiles": [
+    "wiki/Fastapi/articles/fastapi-users-usermanager.md",
+    "wiki/Fastapi/Fastapi_index.md",
+    "Archive/Hermes Agent 教程（1）：本地启动与项目结构.md",
+    "wiki/AICoding/articles/hermes-agent-setup-and-structure.md",
+    "wiki/tags-dashboard.md",
+    "wiki/ClaudeCode/ClaudeCode_index.md",
+    "wiki/ClaudeCode/articles/claude-code-memory-system-analysis.md",
+    "wiki/ClaudeCode/articles/claude-code-boris-cherny-13-tips.md",
+    "wiki/ClaudeCode/articles/claude-code-gstack-multi-agent-guide.md",
+    "Archive/Claude Code + gstack 实战：如何用多 Agent 协作实现 10 倍提效.md",
+    "wiki/Fastapi/articles/fastapi-celery-async-tasks-redis-db.md",
+    "wiki/INDEX.md",
+    "wiki/Rag/articles/seda0XNOw",
+    "wiki/Fastapi/articles/sedvoZV0r",
+    "wiki/Fastapi/articles/sedpKLdUX",
+    "wiki/Fastapi/articles/sedlL3Xb8",
+    "wiki/Fastapi/articles/sedQW6KC0",
+    "wiki/Fastapi/articles/sedVqsYSc",
+    "wiki/Fastapi/articles/sedo9qsFO",
+    "wiki/ClaudeCode/articles/sedCNmqzW",
+    "wiki/ClaudeCode/articles/sedyHbW43",
+    "wiki/AICoding/articles/sedljoxZF",
+    "wiki/Rag/Rag_index.md",
+    "wiki/Median-tools/Median-tools_index.md",
+    "wiki/AICoding/AICoding_index.md",
+    "wiki/AICoding/index.md",
+    "wiki/Fastapi/index.md",
+    "wiki/Fastapi/articles/fastapi-users-project-template.md",
+    "outputs/2026-04-17-fastapi-users-intro.md",
+    "Archive/20250828_FastAPI-Users保姆级教程（三）：认证后端揭秘——传输方式(Transport)与策略(Strategy)上.md",
+    "wiki/Fastapi/articles/fastapi-users-core-concepts.md",
+    "wiki/Fastapi/articles/fastapi-users-schemas-routers.md",
+    "wiki/Fastapi/articles/fastapi-users-database-models.md",
+    "wiki/Fastapi/articles/fastapi-users-authentication-backends.md",
+    "wiki/ClaudeCode/index.md",
+    "CLAUDE.md"
+  ]
+}

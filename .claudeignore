@@ -1,0 +1,6 @@
+.gitignore
+.python-version
+pyproject.toml
+uv.lock
+.venv/
+.obsidian

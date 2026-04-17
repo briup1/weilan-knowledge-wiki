@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv --version)",
+      "Bash(python *)",
+      "Bash(uv run *)",
+      "Bash(pip install *)",
+      "Bash(grep -E \"\\\\.\\(md\\)$\")",
+      "Bash(grep *)",
+      "Bash(ls -la wiki/*/articles/)",
+      "Bash(ls *)",
+      "Bash(gh auth *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'Initial commit *)",
+      "Bash(git config *)"
+    ]
+  }
+}
