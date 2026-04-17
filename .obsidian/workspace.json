@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "wiki/tags-dashboard.md",
+                "file": "wiki/Median-tools/articles/autoclip-ai-video-slicing-tool.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "tags-dashboard"
+              "title": "autoclip-ai-video-slicing-tool"
             }
           }
         ]
@@ -185,18 +185,32 @@
   },
   "active": "d01722955bd27631",
   "lastOpenFiles": [
-    "wiki/Fastapi/articles/fastapi-users-usermanager.md",
-    "wiki/Fastapi/Fastapi_index.md",
-    "Archive/Hermes Agent 教程（1）：本地启动与项目结构.md",
-    "wiki/AICoding/articles/hermes-agent-setup-and-structure.md",
-    "wiki/tags-dashboard.md",
-    "wiki/ClaudeCode/ClaudeCode_index.md",
-    "wiki/ClaudeCode/articles/claude-code-memory-system-analysis.md",
-    "wiki/ClaudeCode/articles/claude-code-boris-cherny-13-tips.md",
-    "wiki/ClaudeCode/articles/claude-code-gstack-multi-agent-guide.md",
-    "Archive/Claude Code + gstack 实战：如何用多 Agent 协作实现 10 倍提效.md",
-    "wiki/Fastapi/articles/fastapi-celery-async-tasks-redis-db.md",
+    "wiki/Median-tools/Median-tools_index.md",
     "wiki/INDEX.md",
+    "wiki/tags-dashboard.md",
+    "wiki/Fastapi/Fastapi_index.md",
+    "Clipping/harry0703MoneyPrinterTurbo 利用AI大模型，一键生成高清短视频 Generate short videos with one click using AI LLM.md",
+    "Archive/harry0703MoneyPrinterTurbo 利用AI大模型，一键生成高清短视频 Generate short videos with one click using AI LLM.md",
+    "wiki/Median-tools/articles/moneyprinterturbo-ai-short-video-generator.md",
+    "wiki/Median-tools/articles/opencode-remotion-video-animation-tutorial.md",
+    "wiki/Median-tools/articles/aitoearn-ai-content-marketing-agent.md",
+    "wiki/Median-tools/articles/openmaic-multi-agent-interactive-classroom.md",
+    "wiki/Median-tools/articles/last30days-skill-cn-chinese-research-agent.md",
+    "wiki/Median-tools/articles/claudian-baoyu-skills-free-ai-image-workflow.md",
+    "wiki/Rag/Rag_index.md",
+    "Archive/THU-MAICOpenMAIC Open Multi-Agent Interactive Classroom — Get an immersive, multi-agent learning experience in just one click.md",
+    "Archive/亲手做出一个视频！用OpenCode玩转Remotion动画.md",
+    "Archive/zhouxiaokaautoclip AutoClip  AI-powered video clipping and highlight generation · 一款智能高光提取与剪辑的二创工具.md",
+    "Archive/yikartAiToEarn Let's use AI to Earn!.md",
+    "Archive/OpenMontage.agentsskillselevenlabs at main.md",
+    "Archive/Jesseovolast30days-skill-cn last30days-cn 是一个 AI Agent 技能（Skill），能够自动搜索中国互联网 8 大主流平台最近 30 天的内容，综合分析后生成有据可查的研究报告。.md",
+    "Archive/Claudian + baoyu-skills + ModelScope：打造免费AI绘图工作流.md",
+    "Archive/20250827_FastAPI-Users保姆级教程（二）：文档解析-深入用户模型与数据库集成.md",
+    "wiki/AICoding/articles/opencode-remotion-video-animation-tutorial.md",
+    "wiki/AICoding/articles/aitoearn-ai-content-marketing-agent.md",
+    "wiki/AICoding/articles/openmaic-multi-agent-interactive-classroom.md",
+    "wiki/Median-tools/articles/openmontage-agentic-video-production-system.md",
+    "wiki/AICoding/articles/last30days-skill-cn-chinese-research-agent.md",
     "wiki/Rag/articles/seda0XNOw",
     "wiki/Fastapi/articles/sedvoZV0r",
     "wiki/Fastapi/articles/sedpKLdUX",
@@ -206,20 +220,6 @@
     "wiki/Fastapi/articles/sedo9qsFO",
     "wiki/ClaudeCode/articles/sedCNmqzW",
     "wiki/ClaudeCode/articles/sedyHbW43",
-    "wiki/AICoding/articles/sedljoxZF",
-    "wiki/Rag/Rag_index.md",
-    "wiki/Median-tools/Median-tools_index.md",
-    "wiki/AICoding/AICoding_index.md",
-    "wiki/AICoding/index.md",
-    "wiki/Fastapi/index.md",
-    "wiki/Fastapi/articles/fastapi-users-project-template.md",
-    "outputs/2026-04-17-fastapi-users-intro.md",
-    "Archive/20250828_FastAPI-Users保姆级教程（三）：认证后端揭秘——传输方式(Transport)与策略(Strategy)上.md",
-    "wiki/Fastapi/articles/fastapi-users-core-concepts.md",
-    "wiki/Fastapi/articles/fastapi-users-schemas-routers.md",
-    "wiki/Fastapi/articles/fastapi-users-database-models.md",
-    "wiki/Fastapi/articles/fastapi-users-authentication-backends.md",
-    "wiki/ClaudeCode/index.md",
-    "CLAUDE.md"
+    "wiki/AICoding/articles/sedljoxZF"
   ]
 }

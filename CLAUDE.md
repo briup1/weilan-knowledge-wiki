@@ -250,9 +250,25 @@ sources:
 |----------|----------|
 | `Rag` | RAG（检索增强生成）技术、工具、模式与最佳实践 |
 | `Fastapi` | FastAPI 框架、设计模式、生态工具与部署 |
-| `AICoding` | AI 辅助编程、智能体（Agents）、开发工作流、通用 Skill 设计模式与开发提效技巧。**不属于**：特定工具（Claude Code / Cursor / Windsurf）的源码解析、内部架构或独家特性深度剖析 |
+| `AICoding` | AI 辅助**编程与开发**、智能体（Agents）**开发框架与模式**、**开发者**工作流提效。**核心判定：面向开发者/工程师**，帮助写代码、设计系统、构建 Agent。**不属于**：面向终端用户的 AI 内容创作工具（绘图/视频/音频/社媒发布）、特定工具（Claude Code / Cursor / Windsurf）的源码解析 |
 | `ClaudeCode` | Claude Code 的源码解析、内部架构、记忆系统、REPL 机制、独家特性深度剖析 |
-| `Median-tools` | Median 相关工具、视频/媒体类 AI 工具、实用脚本、集成方案 |
+| `Median-tools` | **媒体/内容类 AI 工具**（视频生成/剪辑/动画、AI 绘图、音频处理、内容发布/营销）、实用脚本、集成方案。**核心判定：面向内容创作者或终端用户**，产出物是媒体内容（图像/视频/音频/课件/帖子），而非代码或软件系统 |
+
+### 分类边界快速判定（AICoding vs Median-tools）
+
+当素材同时涉及"AI"和"工具/项目"时，按以下优先级判定：
+
+1. **看目标用户**：面向开发者/程序员 → AICoding；面向内容创作者/普通用户 → Median-tools
+2. **看产出物**：产出代码/软件系统/开发框架 → AICoding；产出图像/视频/音频/课件/社交媒体帖子 → Median-tools
+3. **看核心价值**：提升编程/开发效率 → AICoding；提升内容创作/发布效率 → Median-tools
+
+**典型误判案例**：
+- AI 绘图工具（如 Stable Diffusion 客户端、文生图 Skill）→ **Median-tools**（产出图像是媒体内容）
+- AI 视频切片/生成工具（如 AutoClip、OpenMontage）→ **Median-tools**（产出视频是媒体内容）
+- 社媒内容自动发布工具（如 AiToEarn）→ **Median-tools**（面向内容创作者，发布的是帖子/视频）
+- AI 互动课堂生成平台（如 OpenMAIC）→ **Median-tools**（产出课件/PPT/互动内容）
+- Agent Skill 开发框架/模式 → **AICoding**（面向开发者，帮助构建 Agent）
+- 爬虫/数据采集工具用于开发调试 → **AICoding**；用于内容监控/舆情分析 → **Median-tools**
 
 ### 6.1 标准类型标签（文章类型）
 
