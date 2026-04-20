@@ -67,7 +67,10 @@
       "Bash(mv \"abhigyanpatwariGitNexus GitNexus The Zero-Server Code Intelligence Engine -       GitNexus is a client-side knowledge graph creator that runs entirely in your browser. Drop in a GitHub repo or ZIP file, and get an interactive knowledge graph wit.md\" \"GitNexus Zero-Server Code Intelligence Engine.md\")",
       "Bash(mv \"Jesseovolast30days-skill-cn last30days-cn 是一个 AI Agent 技能（Skill），能够自动搜索中国互联网 8 大主流平台最近 30 天的内容，综合分析后生成有据可查的研究报告。.md\" \"last30days-skill-cn chinese internet research agent.md\")",
       "Bash(mv \"twwchAIComicBuilder AI-powered animated comic generator — transform scripts into fully animated videos with AI-driven character design,    storyboarding, and video synthesis.md\" \"AIComicBuilder AI-powered animated comic generator.md\")",
-      "Bash(mv \"PanniantongAgent-Reach Give your AI agent eyes to see the entire internet. Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, XiaoHongShu — one CLI, zero API fees.md\" \"Agent-Reach AI agent internet search tool.md\")"
+      "Bash(mv \"PanniantongAgent-Reach Give your AI agent eyes to see the entire internet. Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, XiaoHongShu — one CLI, zero API fees.md\" \"Agent-Reach AI agent internet search tool.md\")",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(curl -I https://github.com)"
     ]
   }
 }
