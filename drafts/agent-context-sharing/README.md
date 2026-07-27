@@ -8,9 +8,9 @@
 
 ## 与 wiki 的关系
 
-- [[context-management]]
-- [[prompt-building-for-agents]]
-- [[agent-tool-system]]
+- context-management
+- prompt-building-for-agents
+- agent-tool-system
 - [[agent-memory-system]]
 
 ## 设计文档
