@@ -127,6 +127,93 @@ entity/concept/synthesis 页面
    - 正文中有"原始文件"小节且链接有效。
 7. 向 `log.md` 追加一条记录：`## [YYYY-MM-DD] lint | <巡检摘要>`。
 
+## 半成品输出：drafts/
+
+`drafts/` 目录存放基于 wiki 知识产出的**半成品**：书稿、长文章、演讲稿、课程大纲等。它与 `wiki/` 的关键区别在于：
+
+| 维度 | `wiki/` | `drafts/` |
+|------|---------|-----------|
+| 内容 | 结构化知识卡片 | 面向特定读者/目标的成篇内容 |
+| 编辑者 | LLM 维护，人类审阅 | 人类主导，LLM 辅助 |
+| 来源 | `raw/` 中的原始资料 | `wiki/synthesis/` + `raw/` |
+| 生命周期 | 持续迭代 | 完成后发布或归档 |
+
+### 目录结构
+
+```
+drafts/
+├── agent-book-beginner/
+│   ├── README.md      # 项目说明 + 状态标签
+│   └── chapters/      # 章节/正文
+└── another-project/
+    ├── README.md
+    └── ...
+```
+
+**约束**：
+
+- 每个 `drafts/<project>/` 是一个独立的创作项目。
+- `drafts/<project>/` 下只保留与当前创作直接相关的文件。
+- **禁止在 `drafts/` 中囤积原始资料**。原始资料属于 `raw/`。
+
+### 项目 README 模板
+
+每个 draft 项目的 `README.md` 必须包含以下小节：
+
+```markdown
+# 项目标题
+
+**状态**: `planning` | `writing` | `review` | `published` | `archived`
+
+## 目标
+
+一句话说明这个半成品的目标：读者是谁、要解决什么问题、最终形态是什么。
+
+## 与 wiki 的关系
+
+列出主要依赖的 wiki 页面：
+
+- [[synthesis-page]]
+- [[concept-page]]
+
+## 当前进度
+
+- [ ] 第 1 章
+- [x] 第 2 章
+
+## 来源
+
+- 优先引用：`wiki/synthesis/`、`wiki/concepts/`
+- 必要时回查：`raw/archive/` 中的原始文件
+```
+
+### 状态标签
+
+每个项目同一时刻只能有一个状态：
+
+| 状态 | 含义 |
+|------|------|
+| `planning` | 还在构思、列大纲，没有正式开写 |
+| `writing` | 正在撰写主体内容 |
+| `review` | 内容基本完成，正在审阅/修改 |
+| `published` | 已发布到外部平台，准备从 `drafts/` 移出 |
+| `archived` | 不再继续，准备归档 |
+
+### 与 wiki 的关系
+
+- **drafts 是下游**：可以引用 wiki，但 wiki 不反向依赖 drafts。
+- **发现新结论时向上游迁移**：如果写作过程中产生值得长期保留的洞察，应把它提取成 `wiki/concepts/` 或 `wiki/synthesis/`，而不是让它只存在于 draft 中。
+- **引用方式**：章节中优先用 `[[page-name]]` wiki-link 引用 wiki 页面；外部链接用普通 Markdown 链接。
+
+### 完成后的去向
+
+一旦项目达到 `published` 或 `archived` 状态，应在 30 天内移出 `drafts/`：
+
+- **`published`**：发布到外部平台后，将最终版本移到 `raw/archive/drafts/<project>/` 作为历史作品存档，或直接从仓库中删除。
+- **`archived`**：未发布但不再继续，直接移到 `raw/archive/drafts/<project>/`。
+
+`index.md` 的 Drafts 分类只保留 `planning` / `writing` / `review` 状态的项目。
+
 ## 特殊文件
 
 - **`index.md`** —— 内容目录。按类别组织（entities、concepts、sources、synthesis、queries）。每项格式：`[[page-name]] —— 一行摘要`。每次入库后更新。
