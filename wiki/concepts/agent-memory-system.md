@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-04-20
-sources: [claude-code-memory-system]
+updated: 2026-07-26
+sources: [claude-code-memory-system, hermes-agent-memory-system, hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
 tags: [agent-memory, memory-system, claude-code, context-management, ai-agent]
 ---
 
@@ -89,6 +89,50 @@ Claude Code 的记忆系统将信息分为四个维度：
 - **团队知识沉淀**：将团队规范、API 使用模式、常见陷阱固化为共享记忆。
 - **复杂工作流追踪**：跨会话追踪多步骤任务的进度和中间结果。
 
+## Hermes Agent 的记忆系统视角
+
+[[hermes-agent]] 提供了另一种工程化的记忆系统实现，可与 Claude Code 的文件式记忆形成对比：
+
+| 维度 | Claude Code | Hermes Agent |
+|---|---|---|
+| 存储形态 | 本地 Markdown 文件 + 索引 | 内置 MEMORY.md/USER.md + 外部 MemoryProvider 插件 |
+| 跨会话稳定性 | 文件即持久化 | SQLite + 外部后端（Honcho/Mem0 等） |
+| 注入位置 | system prompt | 内置记忆进 system prompt；外部 recall 进 user message |
+| prefix cache 策略 | 不特别强调 | frozen snapshot：本会话内 system prompt 不变 |
+| 扩展方式 | 文件 + git 共享 | MemoryProvider ABC 插件接口 |
+| 失败处理 | 本地文件为主 | 外部 provider 失败不阻塞主流程 |
+
+Hermes 的关键设计：
+- **frozen snapshot**：`load_from_disk()` 一次性把 MEMORY/USER 渲染到 `_system_prompt_snapshot`，mid-session 写入落盘但不刷新 prompt，保护 prefix cache。
+- **外部 recall 注入 user message**：通过 `<memory-context>` fence 拼到当前 user 消息末尾，不污染持久化 messages。
+- **单 external provider 约束**：防止工具名冲突和 schema 膨胀。
+
+## 四框架记忆系统对比
+
+| 维度 | Claude Code | Hermes | nanobot | OpenClaw | OpenCode |
+|---|---|---|---|---|---|
+| 存储形态 | 本地 Markdown 文件 + 索引 | 内置 MEMORY.md/USER.md + 外部 MemoryProvider | MEMORY.md + HISTORY.md 双层文件 | Markdown 文件为唯一事实来源，SQLite 仅索引 | SQLite + Drizzle ORM 三层表结构 |
+| 跨会话稳定性 | 文件即持久化 | SQLite + 外部后端 | JSONL 会话 + 文件记忆 | 文件 + SQLite 索引 | SQLite |
+| 注入位置 | system prompt | 内置进 system；外部 recall 进 user message | `# Memory` 区块进 system prompt | system prompt | system prompt |
+| 压缩/固化策略 | KAIROS 日志 + `/dream` 四阶段蒸馏 | frozen snapshot 保护 prefix cache | LLM 驱动 `save_memory` 固化 | 专门 compaction agent | Prune → Compaction → Overflow 三级 |
+| 检索方式 | Sonnet 侧边查询 Top 5 | FTS5 / 外部 provider | HISTORY.md 可 grep；MEMORY.md 结构化 | 向量 + BM25 hybrid | SQL 查询 + compaction 摘要 |
+| 扩展方式 | 文件 + git 共享 | MemoryProvider ABC 插件 | 文件化 | 插件 + provider | Plugin hook |
+| 失败处理 | 本地文件为主 | 外部 provider 失败不阻塞 | 连续失败 3 次降级为 raw archive | 自动降级到 FTS-only | — |
+
+### nanobot
+
+nanobot 采用 **MEMORY.md（长期事实）+ HISTORY.md（可检索日志）** 的双层文件结构。与 Claude Code 类似，都是文件式记忆，但职责更明确：MEMORY.md 存结构化事实，HISTORY.md 存时间线日志。固化由 LLM 通过 `save_memory` 工具主动完成，以用户轮次为最小单元，连续失败 3 次后降级为原始归档。
+
+### OpenClaw
+
+OpenClaw 选择 **Markdown 文件为唯一事实来源，SQLite 仅作索引**。这一设计与 Claude Code 的文件式记忆理念一致，但增加了混合检索（向量 + BM25）和原子化重索引。当 embedding provider 缺失或失败时，自动降级到 FTS-only，保证记忆系统不因配置问题而瘫痪。
+
+### OpenCode
+
+OpenCode 采用 **SQLite + Drizzle ORM 的三层表结构**（Session → Message → Part），更适合 IDE 场景中对历史消息的高效查询和级联删除。压缩策略分为 Prune、Compaction、Overflow 三级，并用专门的 compaction agent 生成结构化摘要。
+
 ## 相关来源
 
 - [[claude-code-memory-system]] —— Claude Code 源码级记忆系统万字解析
+- [[hermes-agent-memory-system]] —— Hermes Agent 记忆系统调研
+- [[hermes-agent]] —— Hermes Agent 实体概述

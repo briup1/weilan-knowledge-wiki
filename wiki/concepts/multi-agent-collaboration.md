@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-04-20
-sources: [claude-code-gstack, hermes-agent-setup, openmaic]
+updated: 2026-07-26
+sources: [claude-code-gstack, hermes-agent-setup, openmaic, hermes-agent-sub-agent-orchestration, hermes-agent]
 tags: [multi-agent, collaboration, team-mode, agent-orchestration, ai-programming]
 ---
 
@@ -90,8 +90,30 @@ team-plan → team-prd → team-exec → team-verify → team-fix
 4. **阶段性检查点**：在 plan → prd → exec → verify 各阶段设置检查点，确保质量 gate 通过后再进入下一阶段。
 5. **从双 Agent 开始**：不要一开始就启动 10 个 Agent，先从 2-3 个角色的协作开始，逐步扩展。
 
+## Hermes Agent 的子 Agent 编排
+
+[[hermes-agent]] 提供了一种**「同框架临时子 Agent 实例」**的多 Agent 协作实现，与 gstack/OMC 的「团队角色并行」形成互补：
+
+| 维度 | gstack/OMC | Hermes `delegate_task` |
+|---|---|---|
+| 触发方式 | 用户主动发起 team-plan/exec/fix 等命令 | LLM 主动调用 `delegate_task` 工具 |
+| Agent 形态 | 独立 CLI 实例 / 进程 | 同框架临时 AIAgent 实例 |
+| 上下文关系 | 可共享文件和状态 | 完全隔离，只回 summary |
+| 并发 | 多个角色并行 | ThreadPool 并发子任务 |
+| 工具继承 | 角色有各自工具集 | 父 Agent 工具集的交集裁剪 |
+| 中断 | 每个实例独立 | 父 Agent 中断级联到所有子 Agent |
+| 适用场景 | 大型项目分角色协作 | 单任务内需要探索/计算的子任务外包 |
+
+Hermes 的关键设计：
+- **上下文隔离**：子任务中间 tool calls/reasoning 不进入父上下文，避免子任务吹爆父窗口。
+- **能力切断**：`DELEGATE_BLOCKED_TOOLS` 切断 `memory`、`send_message`、`clarify`、`execute_code` 等副作用工具。
+- **深度限制**：`depth >= max_spawn` 直接返回错误，防止无限递归。
+- **角色降级**：`orchestrator` 不满足条件时静默退化为 `leaf`。
+
 ## 相关来源
 
 - [[claude-code-gstack]] —— Garry Tan 的 gstack 多 Agent 协作工作流，28 个专业角色
 - [[hermes-agent-setup]] —— Hermes Agent 框架的 Skills 体系和多 Agent 支持
+- [[hermes-agent-sub-agent-orchestration]] —— Hermes Agent 子 Agent 编排调研
+- [[hermes-agent]] —— Hermes Agent 实体概述
 - [[openmaic]] —— 清华大学 OpenMAIC 多智能体互动课堂平台

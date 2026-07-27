@@ -1,7 +1,7 @@
 ---
 type: synthesis
 created: 2026-04-20
-updated: 2026-04-20
+updated: 2026-07-26
 sources: [moneyprinterturbo, vimax-agentic-video, autoclip, aidc-aipixelle-video, opencode-remotion, auto-video-slicing, flycut-caption, hyperframes, aicomicbuilder, open-source-short-drama-projects]
 tags: [ai-video, media, content-creation, landscape, tool-chain]
 ---
@@ -19,15 +19,15 @@ AI 视频/媒体创作生态可划分为四个递进的环节：**内容生成**
 | 层级 | 工具 | 交互方式 | 输入 | 输出 | 目标用户 | 可控性 |
 |------|------|---------|------|------|---------|--------|
 | **内容生成层** | [[moneyprinterturbo]] | Web UI / API | 主题/关键词 | 高清短视频 | 自媒体、营销人员 | 低（一键生成） |
-| | [[aidc-aipixelle-video\|AIDC-AIPixelle-Video]] | Web UI / 本地部署 | 主题/关键词 | 竖屏/横屏短视频 | 零门槛用户、本地部署爱好者 | 中（ComfyUI 模块化替换） |
-| | [[vimax-agentic-video\|ViMax]] | 脚本/配置驱动 | 创意/小说/剧本 | 叙事性长视频 | 内容创作者、IP 改编者 | 中高（多 Agent 协作，镜头级控制） |
-| | [[aicomicbuilder\|AIComicBuilder]] | Web UI（分镜编辑） | TXT/DOCX/PDF 剧本 | 漫剧/动画视频 | 漫画创作者、编剧 | 中高（分镜可人工精修） |
-| **内容编辑层** | [[autoclip\|AutoClip]] | Web UI | YouTube/B 站链接或本地文件 | 高光切片 + 自动标题 | 知识博主、UP 主、MCN | 中（AI 推荐 + 人工选择） |
-| | [[auto-video-slicing\|auto-video-slicing]] | 概念/评测 | 长视频 | 短片段 | 内容创作者 | — |
-| | [[flycut-caption\|FlyCut Caption]] | React 组件嵌入 | 视频文件 | 带字幕视频 / SRT | 开发者、剪辑工具集成方 | 高（逐段编辑、样式自定义） |
+| | [[aidc-aipixelle-video|AIDC-AIPixelle-Video]] | Web UI / 本地部署 | 主题/关键词 | 竖屏/横屏短视频 | 零门槛用户、本地部署爱好者 | 中（ComfyUI 模块化替换） |
+| | [[vimax-agentic-video|ViMax]] | 脚本/配置驱动 | 创意/小说/剧本 | 叙事性长视频 | 内容创作者、IP 改编者 | 中高（多 Agent 协作，镜头级控制） |
+| | [[aicomicbuilder|AIComicBuilder]] | Web UI（分镜编辑） | TXT/DOCX/PDF 剧本 | 漫剧/动画视频 | 漫画创作者、编剧 | 中高（分镜可人工精修） |
+| **内容编辑层** | [[autoclip|AutoClip]] | Web UI | YouTube/B 站链接或本地文件 | 高光切片 + 自动标题 | 知识博主、UP 主、MCN | 中（AI 推荐 + 人工选择） |
+| | [[auto-video-slicing|auto-video-slicing]] | 概念/评测 | 长视频 | 短片段 | 内容创作者 | — |
+| | [[flycut-caption|FlyCut Caption]] | React 组件嵌入 | 视频文件 | 带字幕视频 / SRT | 开发者、剪辑工具集成方 | 高（逐段编辑、样式自定义） |
 | **内容控制层** | [[remotion]] | 代码（React/TS） | 代码 / 自然语言描述 | MP4 动画 | 开发者、设计师 | 极高（帧级精确控制） |
-| | [[hyperframes\|Hyperframes]] | HTML + CLI | HTML 文件 / Agent 对话 | 渲染视频 | 开发者、AI Agent | 极高（HTML-native，确定性渲染） |
-| **内容分发/短剧层** | [[open-source-short-drama-projects\|open-source-short-drama-projects]] | 多工具组合 | 剧本/素材 | 短剧/漫剧成品 | 短剧团队、独立创作者 | 因工具而异 |
+| | [[hyperframes|Hyperframes]] | HTML + CLI | HTML 文件 / Agent 对话 | 渲染视频 | 开发者、AI Agent | 极高（HTML-native，确定性渲染） |
+| **内容分发/短剧层** | [[open-source-short-drama-projects|open-source-short-drama-projects]] | 多工具组合 | 剧本/素材 | 短剧/漫剧成品 | 短剧团队、独立创作者 | 因工具而异 |
 
 ### 基础设施层（贯穿全链路）
 

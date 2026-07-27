@@ -24,8 +24,8 @@ from pathlib import Path
 # ──────────────────────────────────────────────
 RAW_DIR = "raw"
 WIKI_DIR = "wiki"
-INDEX_FILE = "wiki/index.md"
-LOG_FILE = "wiki/log.md"
+INDEX_FILE = "index.md"
+LOG_FILE = "log.md"
 SCHEMA_FILE = "CLAUDE.md"
 STATE_FILE = ".ingest_state.json"  # 隐藏的状态文件，存储文件哈希
 
@@ -97,13 +97,13 @@ def scan_raw(kb_root: Path) -> list[Path]:
 def cmd_init(kb_root: Path):
     """初始化知识库目录结构"""
     dirs = [
-        kb_root / RAW_DIR / "articles",
-        kb_root / RAW_DIR / "papers",
-        kb_root / RAW_DIR / "notes",
         kb_root / RAW_DIR / "assets",
-        kb_root / WIKI_DIR / "concepts",
+        kb_root / RAW_DIR / "archive",
+        kb_root / WIKI_DIR / "sources",
         kb_root / WIKI_DIR / "entities",
-        kb_root / WIKI_DIR / "comparisons",
+        kb_root / WIKI_DIR / "concepts",
+        kb_root / WIKI_DIR / "synthesis",
+        kb_root / WIKI_DIR / "queries",
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
@@ -113,11 +113,13 @@ def cmd_init(kb_root: Path):
     index_path = kb_root / INDEX_FILE
     if not index_path.exists():
         index_path.write_text(
-            "# Wiki Index\n\n"
-            "> 此文件由 LLM 自动维护，每次摄取后更新。\n\n"
-            "## 概念（Concepts）\n\n"
-            "## 实体（Entities）\n\n"
-            "## 对比分析（Comparisons）\n\n"
+            "# Knowledge Forest 索引\n\n"
+            "> 按类别组织的 wiki 页面目录。每页格式：`[[page-name]] —— 一行摘要`。\n\n"
+            "## Entities\n\n"
+            "## Concepts\n\n"
+            "## Sources\n\n"
+            "## Synthesis\n\n"
+            "## Queries\n\n"
         )
         print(f"  ✓ {INDEX_FILE}")
 
@@ -137,34 +139,47 @@ def cmd_init(kb_root: Path):
             "# Wiki Schema（知识库配置）\n\n"
             "> 此文件告诉 LLM 知识库的结构和操作约定。\n\n"
             "## 目录结构\n\n"
-            "- `raw/`：原始来源，只读，永不修改\n"
-            "- `wiki/`：LLM 编译产物，由 LLM 完全拥有\n"
-            "- `wiki/index.md`：全局内容目录，每页一行摘要\n"
-            "- `wiki/log.md`：操作日志，append-only\n\n"
+            "```\n"
+            ".\n"
+            "├── CLAUDE.md          # 本文件 —— wiki 的架构与约定\n"
+            "├── index.md           # 所有 wiki 页面的内容型目录\n"
+            "├── log.md             # 只追加的时间线记录（入库/查询/巡检）\n"
+            "├── raw/               # 不可变的原始文档（文章、论文、转录稿）\n"
+            "│   ├── assets/        # 待入库的新文章 + 本地图片/附件\n"
+            "│   └── archive/       # 已入库并处理完毕的文章\n"
+            "└── wiki/              # 由 LLM 生成的 markdown（请勿手动编辑）\n"
+            "    ├── sources/       # 每个被入库的来源对应一个页面（摘要 + 核心要点）\n"
+            "    ├── entities/      # 谁/什么工具：产品、公司、项目、开源库、具体的人\n"
+            "    ├── concepts/      # 什么思想/方法：抽象概念、设计模式、方法论、技术范式\n"
+            "    ├── synthesis/     # 跨来源的综合：领域内知识全景 + 跨领域分析对比\n"
+            "    └── queries/       # 问题的答案，归档以备复用\n"
+            "```\n\n"
             "## 摄取约定（Ingest）\n\n"
-            "1. 读取新来源，提取关键概念和实体\n"
-            "2. 在 `wiki/concepts/` 或 `wiki/entities/` 创建或更新对应 .md 文件\n"
-            "3. 使用 `[[wiki-links]]` 格式添加交叉引用\n"
-            "4. 更新 `wiki/index.md` 目录\n"
-            "5. 在每个 wiki 页面的 frontmatter 中记录来源文件\n\n"
+            "1. 从 `raw/assets/` 中读取新来源\n"
+            "2. 创建/更新 `wiki/sources/<slug>.md`，写入摘要与核心主张\n"
+            "3. 更新受该来源影响的 `wiki/entities/` 和 `wiki/concepts/` 页面\n"
+            "4. 主动产出或更新 `wiki/synthesis/` 综合页面\n"
+            "5. 使用 `[[wiki-links]]` 格式添加交叉引用，禁止死链\n"
+            "6. 更新 `wiki/index.md` 目录\n"
+            "7. 向 `wiki/log.md` 追加记录，并将源文件移动到 `raw/archive/`\n\n"
             "## Wiki 页面 Frontmatter 格式\n\n"
             "```yaml\n"
             "---\n"
-            "title: \"页面标题\"\n"
-            "confidence: 0.9\n"
-            "last_ingested: YYYY-MM-DD\n"
-            "sources:\n"
-            "  - raw/articles/example.md\n"
-            "stale: false\n"
+            "type: source | entity | concept | synthesis | query\n"
+            "created: YYYY-MM-DD\n"
+            "updated: YYYY-MM-DD\n"
+            "sources: [source-slug-1, source-slug-2]\n"
+            "raw: raw/archive/<原始文件名>.md    # 仅 source 页面必填\n"
+            "tags: [tag1, tag2]\n"
             "---\n"
             "```\n\n"
             "## 查询约定（Query）\n\n"
             "1. 先读取 `wiki/index.md` 定位相关页面\n"
-            "2. 读取相关页面内容并综合答案\n"
-            "3. 优质答案归档回 wiki 作为新页面\n\n"
+            "2. 读取相关页面内容并综合答案，使用 `[[page-name]]` 链接引用\n"
+            "3. 优质答案归档为 `wiki/queries/<slug>.md` 并更新 index.md\n\n"
             "## 整理约定（Lint）\n\n"
-            "- 检查页面间矛盾，在 frontmatter 标注 `stale: true`\n"
-            "- 补全孤立页面的入站链接\n"
+            "- 扫描孤立页面、死链、矛盾和陈旧主张\n"
+            "- 检查 source 页面的 `raw` 字段和原始文件链接\n"
             "- 发现缺少独立页面的重要概念\n"
         )
         print(f"  ✓ {SCHEMA_FILE}")
@@ -268,7 +283,7 @@ def cmd_status(kb_root: Path):
     index_ok = (kb_root / INDEX_FILE).exists()
     schema_ok = (kb_root / SCHEMA_FILE).exists()
     print(f"\n   ── 配置检查 ──")
-    print(f"   {'✅' if index_ok else '❌'} wiki/index.md {'存在' if index_ok else '缺失（建议创建）'}")
+    print(f"   {'✅' if index_ok else '❌'} index.md {'存在' if index_ok else '缺失（建议创建）'}")
     print(f"   {'✅' if schema_ok else '❌'} CLAUDE.md {'存在' if schema_ok else '缺失（建议创建）'}")
 
 

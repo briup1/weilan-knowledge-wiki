@@ -1,8 +1,8 @@
 ---
 type: synthesis
 created: 2026-04-20
-updated: 2026-04-20
-sources: [claude-code-gstack, hermes-agent-setup, openmaic, panniantong-agent]
+updated: 2026-07-26
+sources: [claude-code-gstack, hermes-agent-setup, openmaic, panniantong-agent, hermes-agent-sub-agent-orchestration, hermes-agent]
 tags: [multi-agent, architecture, agent-orchestration, tool-comparison]
 ---
 
@@ -14,11 +14,12 @@ gstack、Hermes、OpenMAIC 和 Agent-Reach 代表了多 Agent 系统的四种不
 
 | 维度 | gstack | Hermes | OpenMAIC | Agent-Reach |
 |------|--------|--------|----------|-------------|
-| **设计目标** | 将 Claude Code 变成完整虚拟工程团队 | 提供可扩展的 Agent Skills 体系 | 多 Agent 沉浸式互动课堂 | 给任意 AI Agent 装上互联网能力 |
-| **角色数量** | 28 个专业角色（/命令触发） | 灵活的 Skills 体系（自定义） | AI 教师 + AI 同学 + AI 导演 | 无固定角色，纯工具集 |
-| **协作模式** | Team Mode（主从 + 并行） | 子 Agent 调用（嵌套） | 多角色剧本编排 | 无协作，单个 Agent 调用工具 |
-| **通信机制** | Agent 间消息传递 + 共享状态 | Skill 间上下文继承 | 剧本驱动的角色互动 | 直接调用上游 CLI 工具 |
+| **设计目标** | 将 Claude Code 变成完整虚拟工程团队 | 提供可扩展的 Agent Skills 体系 + 子 Agent 任务外包 | 多 Agent 沉浸式互动课堂 | 给任意 AI Agent 装上互联网能力 |
+| **角色数量** | 28 个专业角色（/命令触发） | 灵活的 Skills 体系 + 临时子 Agent | AI 教师 + AI 同学 + AI 导演 | 无固定角色，纯工具集 |
+| **协作模式** | Team Mode（主从 + 并行） | `delegate_task` 创建受限子 AIAgent 实例 | 多角色剧本编排 | 无协作，单个 Agent 调用工具 |
+| **通信机制** | Agent 间消息传递 + 共享状态 | 父 Agent 只看到子 Agent 最终 summary；子 Agent 上下文完全隔离 | 剧本驱动的角色互动 | 直接调用上游 CLI 工具 |
 | **部署形态** | Claude Code Skill | 本地 Agent 框架 | 一键部署的教育平台 | 开源 CLI 脚手架 |
+| **并发方式** | 多个独立 Agent 实例并行 | ThreadPoolExecutor 并发子 Agent | 剧本内角色按情境互动 | 单 Agent 顺序调用 |
 
 ## 架构深度对比
 
@@ -72,9 +73,18 @@ flowchart TB
 
 Garry Tan 将软件工程团队的完整流程（规划→构建→测试→发布）映射为 28 个可召唤的 Agent 角色。关键创新是 **Team Mode**：多个 Agent 实例并行运行，前端/后端/DevOps Agent 同时工作。这需要解决冲突（文件锁）、接口契约（API 定义先达成一致）和验证循环（独立审查 Agent）。gstack 的本质是「用 Agent 模拟人类团队协作」。
 
-**Hermes —— 技能即 Agent**
+**Hermes —— 技能即 Agent + 子 Agent 任务外包**
 
-Hermes 的设计理念相反：不是预定义 28 个角色，而是提供一个可扩展的 Skills 框架。每个 Skill 是一个独立的能力包，Agent 根据需要动态加载。这更像「插件化」而非「团队化」。优势是轻量和灵活，劣势是缺乏 gstack 那样开箱即用的完整工程流程。
+Hermes 的设计理念与 gstack 不同：不是预定义 28 个角色，而是提供可扩展的 Skills 框架，并在核心循环中通过 `delegate_task` 工具把「会消耗大量中间状态的子任务」外包给临时子 AIAgent 实例。
+
+关键机制：
+- **上下文隔离**：子 Agent 的中间 tool calls/reasoning 不进入父 Agent 上下文，只返回最终 summary，避免子任务吹爆父窗口。
+- **工具能力裁剪**：`DELEGATE_BLOCKED_TOOLS` 切断 `memory`、`send_message`、`clarify`、`execute_code` 等可能产生跨会话副作用的能力。
+- **并发执行**：通过 `ThreadPoolExecutor` 并发运行多个子 Agent，父循环统一监控并响应中断。
+- **中断级联**：父 Agent 收到用户中断时，递归取消所有嵌套子 Agent。
+- **深度限制**：`depth >= max_spawn` 直接返回错误，防止无限递归派生。
+
+Hermes 的协作更偏向「单任务内子任务外包」，而 gstack 更偏向「完整工程团队角色并行」。两者可以互补：gstack 负责项目级角色分工，Hermes 的 `delegate_task` 负责单个角色内部的深度探索。
 
 **OpenMAIC —— 剧本驱动的教育编排**
 
