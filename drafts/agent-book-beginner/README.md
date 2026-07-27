@@ -9,31 +9,25 @@
 - **阶段一（已完成）**：对四个开源 Agent 项目（Hermes Agent、nanobot、OpenClaw、OpenCode）的源代码调研。
 - **阶段二（进行中）**：面向有 Python/Java 基础但无 Agent 经验的传统开发者，以"实习生入职第一天"的生活化比喻，讲解 Agent 系统的 12 个核心维度。
 
-本书稿是 wiki 知识的**下游产物**：写作时应优先引用 `wiki/synthesis/` 中的综合结论，必要时回查 `raw/research/agent-frameworks/` 中的调研笔记。
+本书稿是 wiki 知识的**下游产物**：写作时应优先引用 `wiki/synthesis/` 中的综合结论，必要时回查 `raw/archive/research/agent-frameworks/` 中的调研笔记。
 
 ## 目录结构
 
 ```
 drafts/agent-book-beginner/
 ├── README.md              # 本文件
-├── chapters/              # 书稿章节（按七节模板写作）
-│   ├── 01_第0章_初识Agent：这位实习生是谁.md
-│   ├── 03_第1章_工作节奏——编排循环.md
-│   └── ...
-└── research/              # 第一阶段调研文档（只读参考）
-    ├── hermes_agent/      # Hermes Agent 各维度分析
-    ├── nanobot/           # nanobot 各维度分析
-    ├── openclaw/          # OpenClaw 各维度分析
-    ├── opencode/          # OpenCode 各维度分析
-    └── comparison/        # 横向对比文档
+└── chapters/              # 书稿章节（按七节模板写作）
+    ├── 01_第0章_初识Agent：这位实习生是谁.md
+    ├── 03_第1章_工作节奏——编排循环.md
+    └── ...
 ```
 
 ## 与 wiki 的关系
 
 ```
-raw/research/agent-frameworks/   ← 调研笔记的规范存档位置
+raw/archive/research/agent-frameworks/   ← 调研笔记的规范存档位置
         ↓
-wiki/sources/                    ← 待创建：每份调研的 source 页面
+wiki/sources/                            ← 待创建：每份调研的 source 页面
         ↓
 wiki/entities/ + concepts/ + synthesis/  ← 结构化知识
         ↓
@@ -61,9 +55,9 @@ drafts/agent-book-beginner/chapters/     ← 本书稿
 
 ## 写作约定
 
-1. **优先用 wiki，少直接引用 research/**
+1. **优先用 wiki，少直接引用原始调研**
    - 12 个维度的共性、差异、设计权衡，应到 `wiki/synthesis/` 中查证是否已有结论。
-   - 只有当 wiki 未覆盖某个具体实现细节时，才回查 `research/<框架>/` 中的原始调研。
+   - 只有当 wiki 未覆盖某个具体实现细节时，才回查 `raw/archive/research/agent-frameworks/<框架>/` 中的原始调研。
 
 2. **源码核实不可跳过**
    - 书中引用的每一行代码都必须回到 `/home/weilan/workdir/excellent_project/*` 的源码中亲自确认。
@@ -79,4 +73,4 @@ drafts/agent-book-beginner/chapters/     ← 本书稿
 
 - 17 个章节文件已就位，整体处于 `writing` 阶段。
 - 下一步：按章节推进写作，优先引用 `wiki/synthesis/` 中的综合结论。
-- `drafts/agent-book-beginner/research/` 中的原始调研资料已与 `raw/research/agent-frameworks/` 重复，将在 Task 3 中删除。
+- `drafts/agent-book-beginner/research/` 中的原始调研资料已与 `raw/archive/research/agent-frameworks/` 重复，已在 Task 3 中删除。
