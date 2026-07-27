@@ -124,7 +124,7 @@
 
 ## Drafts
 
-[[agent-book-beginner]] —— 面向小白开发者的 Agent 系统入门书（实习生比喻版）
+[Agent 系统入门书稿](drafts/agent-book-beginner/README.md) —— 面向小白开发者的 Agent 系统入门书（实习生比喻版）
 
 ## Queries
 
