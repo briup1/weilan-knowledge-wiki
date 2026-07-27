@@ -13,6 +13,7 @@
 [[docker]] —— 容器化平台，支持镜像、容器、Compose 编排
 [[fastapi]] —— 现代、高性能的 Python Web 框架
 [[fastapi-users]] —— FastAPI 的用户认证库，支持 OAuth/JWT
+[[hermes-agent]] —— NousResearch 开源的 Python AI Agent 框架，强调生产级错误恢复与可扩展工具体系
 [[moneyprinterturbo]] —— AI 一键生成高清短视频
 [[obsidian]] —— 本地优先的知识管理工具，支持双向链接
 [[redis]] —— 内存数据结构存储，用作缓存和消息队列
@@ -25,6 +26,7 @@
 [[ai-video-generation]] —— AI 视频生成：文本/图片到视频的自动化工作流
 [[async-tasks]] —— 异步任务：Celery 架构与适用场景
 [[claude-code-skills]] —— Claude Code Skills：通过 SKILL.md 扩展 AI 助手能力
+[[wechat-article-ingestion]] —— 微信文章批量摄取：从合集页面自动化下载到 raw/assets
 [[containerization]] —— 容器化：Docker 与虚拟机的对比及微服务部署
 [[jwt-authentication]] —— JWT 认证：结构与原理，及与 Session 认证对比
 [[knowledge-graph]] —— 知识图谱：实体-关系模型，与向量检索对比
@@ -33,6 +35,23 @@
 [[multi-agent-collaboration]] —— 多 Agent 协作：Team Mode、子 Agent 与角色分工
 [[rag]] —— RAG (Retrieval-Augmented Generation)：检索增强生成流程
 [[vibe-coding]] —— Vibe Coding：信任 AI、减少微观管理的编程范式
+
+### Agent 架构（来自 Hermes Agent 调研）
+
+[[agent-trace]] —— Agent 执行过程的结构化可观测记录（Trace/Span/Event）
+[[agent-turn]] —— Agent 与用户一次完整交互回合的业务语义单位
+[[agent-memory-system]] —— Agent 记忆系统：内置 MemoryStore + 外部 MemoryProvider 插件
+[[agent-security]] —— Agent 安全防护：分层纵深防御与 fail-closed 原则
+[[agent-tool-system]] —— Agent 工具系统：发现、注册、schema 编排与调度分发
+[[context-management]] —— 上下文管理：把 token 当作受限资源主动经营
+[[error-handling]] —— 错误处理：结构化分类器与六类恢复动作
+[[initialization-environment]] —— 初始化与环境：profile、配置合并、沙箱后端
+[[orchestration-loop]] —— 编排循环：LLM 推理与工具执行的迭代主控制流
+[[output-parsing]] —— 输出解析：多 provider 响应归一化与防御性修复
+[[prompt-building-for-agents]] —— Agent 的 Prompt 构建：洋葱式 system prompt 组装
+[[state-management]] —— 状态管理：运行时内存状态与 SQLite 持久化双轨架构
+[[sub-agent-orchestration]] —— 子 Agent 编排：受限临时实例的任务外包
+[[validation-loop]] —— 验证循环：LLM 决策到实际执行的多层把关
 
 ## Sources
 
@@ -61,6 +80,21 @@
 [[flycut-caption]] —— Flycut：AI 语音识别视频字幕编辑 React 组件
 [[gitnexus]] —— GitNexus：浏览器端代码知识图谱生成器
 [[hermes-agent-setup]] —— Hermes Agent 本地启动与项目结构
+[[hermes-agent-orchestration-loop]] —— Hermes Agent 编排循环调研
+[[hermes-agent-tool-system]] —— Hermes Agent 工具系统调研
+[[hermes-agent-memory-system]] —— Hermes Agent 记忆系统调研
+[[hermes-agent-context-management]] —— Hermes Agent 上下文管理调研
+[[hermes-agent-prompt-building]] —— Hermes Agent Prompt 构建调研
+[[hermes-agent-output-parsing]] —— Hermes Agent 输出解析调研
+[[hermes-agent-state-management]] —— Hermes Agent 状态管理调研
+[[hermes-agent-error-handling]] —— Hermes Agent 错误处理调研
+[[hermes-agent-security]] —— Hermes Agent 安全防护调研
+[[hermes-agent-validation-loop]] —— Hermes Agent 验证循环调研
+[[hermes-agent-sub-agent-orchestration]] —— Hermes Agent 子 Agent 编排调研
+[[hermes-agent-initialization-environment]] —— Hermes Agent 初始化与环境调研
+[[nanobot-framework-analysis]] —— nanobot 12 维度综合调研
+[[openclaw-framework-analysis]] —— OpenClaw 12 维度综合调研
+[[opencode-framework-analysis]] —— OpenCode 12 维度综合调研
 [[hyper-extract]] —— Hyper-Extract：一条命令将杂乱文档转为知识图谱
 [[hyperframes]] —— Hyperframes：HTML 渲染视频的 Agent 工具
 [[last30days-skill]] —— last30days-cn：搜索中国互联网 8 大平台近期内容
@@ -85,7 +119,14 @@
 [[knowledge-graph-tools-comparison]] —— Hyper-Extract/GitNexus/Understand-Anything 选型对比
 [[multi-agent-architecture-comparison]] —— gstack/Hermes/OpenMAIC/Agent-Reach 架构对比
 [[rag-knowledge-retrieval-landscape]] —— RAG 与知识检索领域全景：从向量检索到知识网络的演进
+[[knowledge-base-audit-and-flywheel]] —— 知识库现状诊断与知识飞轮设计：从资料库到复利系统的闭环
+[[agent-framework-12-dimensions-comparison]] —— 四大开源 Agent 框架 12 维度对比：Hermes / nanobot / OpenClaw / OpenCode
+
+## Drafts
+
+[[agent-book-beginner]] —— 面向小白开发者的 Agent 系统入门书（实习生比喻版）
 
 ## Queries
 
-（暂无）
+[[what-are-turn-and-trace-in-agents]] —— Agent 中的 Turn 和 Trace 是什么？
+
