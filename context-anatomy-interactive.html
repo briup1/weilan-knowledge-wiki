@@ -72,7 +72,7 @@
 </head>
 <body>
   <div id="app">
-    <div id="scene-bar"><strong>场景：</strong>智能客服退款 Agent</div>
+    <div id="scene-bar"><strong>场景：</strong>智能客服退款智能体</div>
     <div class="main-layout">
       <div id="stack-panel"></div>
       <div id="detail-panel">
@@ -285,9 +285,16 @@
       if (id === 'assistant' && round.assistantAction) return round.assistantAction;
       if (id === 'tool-result' && round.toolResult) return round.toolResult;
       if (id === 'state-bar' && round.stateBar) {
+        const keyLabels = {
+          task: '任务',
+          orderVerified: '订单已验证',
+          policyChecked: '政策已确认',
+          refundMethod: '退款方式',
+          refundProcessed: '退款已处理'
+        };
         return Object.entries(round.stateBar)
           .filter(([k, v]) => v != null)
-          .map(([k, v]) => `${k}=${v}`)
+          .map(([k, v]) => `${keyLabels[k] || k}=${v}`)
           .join(' | ');
       }
       if (id === 'skill-metadata' && round.skillLoaded) return round.skillLoaded;
@@ -386,6 +393,20 @@
           const speed = parseInt(btn.dataset.speed, 10);
           startAutoPlay(speed);
         });
+      });
+
+      const stackPanel = document.getElementById('stack-panel');
+      stackPanel.addEventListener('mouseenter', () => {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+        }
+      });
+      stackPanel.addEventListener('mouseleave', () => {
+        const activeBtn = document.querySelector('[data-speed].active');
+        if (activeBtn) {
+          startAutoPlay(parseInt(activeBtn.dataset.speed, 10));
+        }
       });
 
       document.getElementById('stack-panel').addEventListener('click', (e) => {
