@@ -61,6 +61,12 @@
     #control-bar button { background: var(--elevated); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; }
     #control-bar button:hover { border-color: var(--accent-blue); }
     #control-bar button:active { background: var(--surface); }
+    .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .overview-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; cursor: pointer; transition: all 0.2s ease; }
+    .overview-card:hover { border-color: var(--layer-color); transform: translateY(-2px); }
+    .overview-card.selected { outline: 2px solid var(--layer-color); outline-offset: 2px; }
+    .overview-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .overview-card-desc { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   </style>
 </head>
 <body>
@@ -76,16 +82,19 @@
       <button type="button" id="btn-prev">← 上一回合</button>
       <button type="button" id="btn-next">下一回合 →</button>
       <button type="button" id="btn-reset">重置</button>
+      <div style="width: 1px; height: 20px; background: var(--border);"></div>
       <span style="color: var(--muted); font-size: 12px;">自动播放：</span>
       <button type="button" data-speed="3000">3s</button>
       <button type="button" data-speed="5000">5s</button>
       <button type="button" data-speed="10000">10s</button>
-      <span id="progress" style="margin-left: auto; font-size: 12px; color: var(--muted);">第 0 / 4 回合</span>
+      <button type="button" id="btn-overview" style="margin-left: auto;">查看完整剖面</button>
+      <span id="progress" style="font-size: 12px; color: var(--muted);">第 0 / 4 回合</span>
     </div>
   </div>
   <script>
     let currentRound = 0;
     let autoPlayTimer = null;
+    let isOverviewMode = false;
 
     const layerDefinitions = {
       'static-prefix': { id: 'static-prefix', label: 'Static Prefix', short: 'System + Tools Schema', color: '#f0883e', layer: 1 },
@@ -323,7 +332,7 @@
     }
 
     function highlightSelectedLayer(layerId) {
-      document.querySelectorAll('.layer-row').forEach(el => {
+      document.querySelectorAll('.layer-row, .overview-card').forEach(el => {
         el.classList.toggle('selected', el.dataset.layer === layerId);
       });
     }
@@ -335,6 +344,8 @@
     }
 
     function goToRound(roundIndex) {
+      isOverviewMode = false;
+      document.getElementById('btn-overview').textContent = '查看完整剖面';
       if (roundIndex < 0) roundIndex = 0;
       if (roundIndex >= script.length) roundIndex = script.length - 1;
       currentRound = roundIndex;
@@ -373,6 +384,9 @@
       document.getElementById('btn-next').addEventListener('click', nextRound);
       document.getElementById('btn-prev').addEventListener('click', prevRound);
       document.getElementById('btn-reset').addEventListener('click', resetRound);
+      document.getElementById('btn-overview').addEventListener('click', () => {
+        if (isOverviewMode) exitOverviewMode(); else enterOverviewMode();
+      });
 
       document.querySelectorAll('[data-speed]').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -401,6 +415,42 @@
         clearInterval(autoPlayTimer);
         autoPlayTimer = null;
       }
+    }
+
+    function enterOverviewMode() {
+      isOverviewMode = true;
+      stopAutoPlay();
+      const panel = document.getElementById('stack-panel');
+      let html = '<div class="section-label">完整上下文剖面 · 点击任意卡片查看详情</div>';
+      html += '<div class="overview-grid">';
+      const orderedIds = ['static-prefix', 'user', 'assistant', 'tool-result', 'state-bar', 'skill-metadata', 'compaction-summary'];
+      orderedIds.forEach(id => {
+        const def = layerDefinitions[id];
+        const detail = layerDetails[id];
+        html += `
+          <div class="overview-card" data-layer="${id}" style="--layer-color: ${def.color}">
+            <div class="overview-card-header">
+              <span class="layer-number">L${def.layer}</span>
+              <span class="layer-name">${def.label}</span>
+            </div>
+            <p class="overview-card-desc">${detail.scenario}</p>
+          </div>
+        `;
+      });
+      html += '</div>';
+      panel.innerHTML = html;
+
+      document.querySelectorAll('.overview-card').forEach(el => {
+        el.addEventListener('click', () => showDetail(el.dataset.layer));
+      });
+
+      document.getElementById('btn-overview').textContent = '返回逐步播放';
+    }
+
+    function exitOverviewMode() {
+      isOverviewMode = false;
+      goToRound(currentRound);
+      document.getElementById('btn-overview').textContent = '查看完整剖面';
     }
 
     document.addEventListener('keydown', (e) => {
