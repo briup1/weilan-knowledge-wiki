@@ -45,6 +45,14 @@
     .round-pill.passed { background: var(--elevated); color: var(--text); border: 1px solid var(--border); }
     .round-pill.future { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
     .round-arrow { color: var(--border); font-size: 12px; }
+    #detail-panel h2 { font-size: 20px; }
+    .detail-scenario { color: var(--text); line-height: 1.7; font-size: 14px; margin-bottom: 20px; }
+    .detail-live, .detail-code, .detail-points { margin-bottom: 20px; }
+    .code-block { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace; font-size: 12.5px; line-height: 1.6; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); }
+    .detail-points ul { color: var(--muted); font-size: 13px; line-height: 1.8; padding-left: 20px; }
+    .detail-points li { margin-bottom: 6px; }
+    .layer-row.selected { background: var(--elevated); outline: 2px solid var(--layer-color); outline-offset: 2px; }
+    .placeholder-text { color: var(--muted); font-size: 14px; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -68,6 +76,8 @@
     </div>
   </div>
   <script>
+    let currentRound = 0;
+
     const layerDefinitions = {
       'static-prefix': { id: 'static-prefix', label: 'Static Prefix', short: 'System + Tools Schema', color: '#f0883e', layer: 1 },
       'user': { id: 'user', label: 'User', short: '用户输入 + 元信息', color: '#7ee787', layer: 2 },
@@ -125,7 +135,95 @@
       }
     ];
 
+    const layerDetails = {
+      'static-prefix': {
+        title: 'Static Prefix',
+        scenario: '在客服退款场景中，Static Prefix 定义了 Agent 的身份（"你是客服助手"）和可用工具（query_order / check_policy / process_refund）。',
+        code: `{
+  "role": "system",
+  "content": "你是客服助手，帮助用户处理退款。可用工具：query_order, check_policy, process_refund。"
+}`,
+        points: [
+          'System 提示词 + Tools schema 共同构成静态前缀',
+          '前缀在每一轮请求中保持不变，是 KV Cache 的基础',
+          '不要在 system 中注入动态时间戳，否则会破坏缓存'
+        ]
+      },
+      'user': {
+        title: 'User',
+        scenario: '用户说"我想退掉昨天买的耳机"，这条消息被追加到上下文末尾，同时也可能携带框架注入的元信息（如用户 ID、会话 ID）。',
+        code: `{
+  "role": "user",
+  "content": "我想退掉昨天买的耳机"
+}`,
+        points: [
+          'user 角色承载真实用户输入',
+          '框架也可以在这里注入元信息',
+          '每次请求都追加到上下文末尾，不改变前缀'
+        ]
+      },
+      'assistant': {
+        title: 'Assistant',
+        scenario: 'Agent 理解了退款意图，决定先查询订单。它在 assistant 角色中输出思考过程和 tool_calls。',
+        code: `{
+  "role": "assistant",
+  "content": "用户想退款，我需要先查询订单信息。",
+  "tool_calls": [{"id": "call_001", "function": {"name": "query_order"}}]
+}`,
+        points: [
+          'assistant 角色包含模型回复和 tool_calls',
+          'ReAct 循环的推理步骤体现在这里',
+          'tool_calls 需要 tool result 来闭环'
+        ]
+      },
+      'tool-result': {
+        title: 'Tool Result',
+        scenario: 'query_order 返回了订单信息。Tool Result 通过 tool_call_id 精确关联到 Assistant 层的调用。',
+        code: `{
+  "role": "tool",
+  "tool_call_id": "call_001",
+  "content": "订单 #20240728：蓝牙耳机，金额 ¥299"
+}`,
+        points: [
+          'tool_call_id 是关联 Assistant 调用和工具结果的关键',
+          'Tool Result 是 ReAct 循环的反馈输入',
+          '在长对话中，旧 Tool Result 可能被 Compaction Summary 替代'
+        ]
+      },
+      'state-bar': {
+        title: 'State Bar',
+        scenario: 'State Bar 是显式状态栏，让模型随时"瞥一眼"当前状态，而不必自己从历史中推断。',
+        code: `任务=处理退款 | 订单已验证=true | 政策已确认=true | 退款方式=原支付账户`,
+        points: [
+          '把隐式状态提炼为显式状态栏',
+          '弱模型准确率大幅提升，强模型成本显著下降',
+          '状态栏应由代码维护，不要让 LLM 批量统计历史'
+        ]
+      },
+      'skill-metadata': {
+        title: 'Skill Metadata',
+        scenario: '当对话进入退款流程时，系统加载"客服退款流程 skill"的元数据，完整内容按需通过 Skill 工具加载。',
+        code: `Skill: 客服退款流程\nDescription: 处理用户退款请求，包括查询订单、核对政策、执行退款。`,
+        points: [
+          'Skill 元数据常驻上下文，完整内容按需加载',
+          '避免系统提示词膨胀导致的 token 浪费',
+          'Skill 描述应像路由条件，包含反例'
+        ]
+      },
+      'compaction-summary': {
+        title: 'Compaction Summary',
+        scenario: '四轮对话结束后，早期细节被压缩成结构化摘要，保留关键事实而丢弃冗余中间信息。',
+        code: `用户要求退耳机；订单 #20240728 已验证；政策允许；退款至原支付账户，1-3 个工作日到账。`,
+        points: [
+          '上下文压缩在超过阈值时触发',
+          '压缩产物是结构化的 CompactionEntry',
+          '隔离优于压缩：大体积中间信息可用子 Agent 隔离'
+        ]
+      }
+    };
+
     function renderStack(roundIndex) {
+      currentRound = roundIndex;
       const panel = document.getElementById('stack-panel');
       const round = script[roundIndex] || { activeLayers: ['static-prefix'] };
       const activeSet = new Set(round.activeLayers);
@@ -177,12 +275,58 @@
     }
 
     // Placeholders for later tasks
-    function attachLayerClicks() {}
-    function showDetail(layerId, roundIndex) {}
+    let currentLayer = null;
+
+    function showDetail(layerId) {
+      currentLayer = layerId;
+      const detail = layerDetails[layerId];
+      const def = layerDefinitions[layerId];
+      const round = script[currentRound];
+      const panel = document.getElementById('detail-panel');
+
+      let html = `<div class="detail-header" style="border-left: 4px solid ${def.color}; padding-left: 12px; margin-bottom: 20px;">`;
+      html += `<h2 style="margin: 0 0 6px 0;">${detail.title}</h2>`;
+      html += `<div style="font-size: 12px; color: var(--muted);">L${def.layer} · ${def.short}</div>`;
+      html += '</div>';
+
+      html += `<p class="detail-scenario">${detail.scenario}</p>`;
+
+      const liveData = getLayerData(layerId, round);
+      if (liveData) {
+        html += `<div class="detail-live"><div class="section-label">当前轮次实际内容</div><div class="code-block">${escapeHtml(liveData)}</div></div>`;
+      }
+
+      html += `<div class="detail-code"><div class="section-label">典型示例</div><pre class="code-block">${escapeHtml(detail.code)}</pre></div>`;
+
+      html += `<div class="detail-points"><div class="section-label">关键要点</div><ul>`;
+      detail.points.forEach(p => { html += `<li>${p}</li>`; });
+      html += '</ul></div>';
+
+      panel.innerHTML = html;
+      highlightSelectedLayer(layerId);
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function highlightSelectedLayer(layerId) {
+      document.querySelectorAll('.layer-row').forEach(el => {
+        el.classList.toggle('selected', el.dataset.layer === layerId);
+      });
+    }
+
+    function attachLayerClicks() {
+      document.querySelectorAll('.layer-row').forEach(el => {
+        el.addEventListener('click', () => showDetail(el.dataset.layer));
+      });
+    }
+
     function goToRound(roundIndex) {}
 
     document.addEventListener('DOMContentLoaded', () => {
       renderStack(0);
+      showDetail('static-prefix');
     });
   </script>
 </body>
