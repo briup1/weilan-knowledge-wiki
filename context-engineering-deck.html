@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>上下文工程：Agent 能力的基础设施</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gh: {
+              bg: '#0d1117',
+              surface: '#161b22',
+              elevated: '#21262d',
+              border: '#30363d',
+              text: '#c9d1d9',
+              muted: '#8b949e',
+              accent: '#58a6ff',
+              success: '#7ee787',
+              warning: '#f0883e',
+              danger: '#f85149',
+              purple: '#a371f7'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans SC"', 'Inter', 'system-ui', 'sans-serif'],
+            serif: ['"Noto Serif SC"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; overflow: hidden; background: #0d1117; color: #c9d1d9; }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      padding: 56px 72px 96px 72px;
+      opacity: 0; pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 320ms ease, transform 320ms ease;
+    }
+    .slide.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 20px 24px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: auto;
+      color: #c9d1d9;
+    }
+    .token-keyword { color: #ff7b72; }
+    .token-string { color: #a5d6ff; }
+    .token-comment { color: #8b949e; }
+    .token-function { color: #d2a8ff; }
+    .token-number { color: #79c0ff; }
+    .table-gh { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .table-gh th, .table-gh td { padding: 14px 18px; text-align: left; border-bottom: 1px solid #30363d; }
+    .table-gh th { color: #8b949e; font-weight: 500; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; background: #161b22; }
+    .table-gh td { font-size: 15px; color: #c9d1d9; }
+    .table-gh tr:last-child td { border-bottom: none; }
+    .table-gh tr:hover td { background: rgba(48,54,61,0.35); }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .pill {
+      display: inline-flex; align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+      border: 1px solid #30363d;
+      background: #21262d;
+      color: #8b949e;
+    }
+    .status-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 48px;
+      background: #161b22;
+      border-top: 1px solid #30363d;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      z-index: 50;
+    }
+    .context-strip {
+      display: flex; gap: 3px; align-items: center;
+    }
+    .context-bar {
+      width: 4px; border-radius: 2px;
+      background: #30363d;
+    }
+    .context-bar.static { background: #58a6ff; }
+    .context-bar.dynamic { background: #7ee787; }
+    .kbd {
+      padding: 2px 6px;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      background: #21262d;
+      font-size: 11px;
+    }
+    .progress {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: #58a6ff;
+      transition: width 260ms ease;
+      z-index: 60;
+    }
+    .speaker-note {
+      position: fixed;
+      right: 24px; bottom: 64px;
+      max-width: 420px;
+      background: rgba(22,27,34,0.96);
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #8b949e;
+      opacity: 0; pointer-events: none;
+      transform: translateY(8px);
+      transition: all 220ms ease;
+      z-index: 40;
+    }
+    .speaker-note.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .note-label { color: #f0883e; font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+    ul.list-dash li { position: relative; padding-left: 20px; margin-bottom: 12px; }
+    ul.list-dash li::before {
+      content: "—"; position: absolute; left: 0;
+      color: #58a6ff; font-weight: 600;
+    }
+    ol.list-num { counter-reset: item; }
+    ol.list-num li { counter-increment: item; position: relative; padding-left: 32px; margin-bottom: 16px; }
+    ol.list-num li::before {
+      content: counter(item, decimal-leading-zero);
+      position: absolute; left: 0; top: 1px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px; font-weight: 600;
+      color: #58a6ff;
+      background: #21262d;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #58a6ff 0%, #a371f7 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-number {
+      font-family: "JetBrains Mono", monospace;
+      color: #58a6ff;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    @media (max-width: 1024px) {
+      .slide { padding: 32px 28px 88px 28px; }
+      .status-bar { padding: 0 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .slide { transition: none; }
+    }
+  </style>
+</head>
+<body class="font-sans antialiased bg-gh-bg text-gh-text selection:bg-gh-accent/30">
+  <div class="progress" id="progressBar"></div>
+
+  <!-- Slide 1: Cover -->
+  <section class="slide active" data-index="0" data-note="开场点题——上下文工程不是 prompt 技巧，而是决定 Agent 能力上限的基础设施。组织信息越透明，Agent 越能发挥作用。">
+    <div class="flex-1 flex flex-col justify-center">
+      <div class="max-w-4xl">
+        <div class="pill mb-6 text-gh-accent border-gh-accent/30 bg-gh-accent/10">Tech Sharing Deck</div>
+        <h1 class="text-6xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-8">
+          上下文工程：<br />
+          <span class="gradient-text">Agent 能力的基础设施</span>
+        </h1>
+        <p class="text-xl text-gh-muted max-w-2xl leading-relaxed">
+          不是 prompt 技巧，而是决定 Agent 能力上限的基础设施。<br />
+          组织信息越透明，Agent 越能发挥作用。
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4 text-gh-muted text-sm">
+      <div class="w-12 h-12 rounded-full bg-gh-elevated border border-gh-border flex items-center justify-center font-mono text-gh-accent font-bold">A</div>
+      <div>
+        <div class="text-gh-text font-medium">Speaker</div>
+        <div class="font-mono">@agent-context-team</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2: Agenda -->
+  <section class="slide" data-index="1" data-note="先建立共识：不要只盯着模型变强了，要盯着'给模型看了什么'。">
+    <div class="mb-8">
+      <div class="section-number text-sm mb-2">AGENDA</div>
+      <h2 class="text-4xl font-bold">今日议程</h2>
+    </div>
+    <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 content-start">
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">01</span>
+        <div><div class="font-medium text-gh-text">核心观点</div><div class="text-sm text-gh-muted mt-1">上下文决定 Agent 能力上限</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">02</span>
+        <div><div class="font-medium text-gh-text">API 上下文结构</div><div class="text-sm text-gh-muted mt-1">四角色消息与 ReAct 循环</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">03</span>
+        <div><div class="font-medium text-gh-text">上下文构成</div><div class="text-sm text-gh-muted mt-1">静态前缀 + 轨迹</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">04</span>
+        <div><div class="font-medium text-gh-text">KV Cache 友好设计</div><div class="text-sm text-gh-muted mt-1">前缀不变性与常见错误</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">05</span>
+        <div><div class="font-medium text-gh-text">提示工程</div><div class="text-sm text-gh-muted mt-1">系统提示词与工具定义</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">06</span>
+        <div><div class="font-medium text-gh-text">提示注入</div><div class="text-sm text-gh-muted mt-1">上下文安全威胁与防御</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">07</span>
+        <div><div class="font-medium text-gh-text">动态提示词与 Skills</div><div class="text-sm text-gh-muted mt-1">渐进式披露</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">08</span>
+        <div><div class="font-medium text-gh-text">Agent 状态栏</div><div class="text-sm text-gh-muted mt-1">元信息注入</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">09</span>
+        <div><div class="font-medium text-gh-text">上下文压缩策略</div><div class="text-sm text-gh-muted mt-1">Trace / Turn / 保留区</div></div>
+      </div>
+      <div class="card flex items-start gap-4">
+        <span class="font-mono text-gh-accent text-lg">10</span>
+        <div><div class="font-medium text-gh-text">本章小结</div><div class="text-sm text-gh-muted mt-1">记忆与注意力基础设施</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3: 01 核心观点 -->
+  <section class="slide" data-index="2" data-note="先建立共识：不要只盯着模型变强了，要盯着'给模型看了什么'。">
+    <div class="mb-10">
+      <div class="section-number text-sm mb-2">01 / 核心观点</div>
+      <h2 class="text-4xl font-bold">上下文决定 Agent 能力上限</h2>
+    </div>
+    <div class="flex-1 flex flex-col justify-center max-w-5xl">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="card border-l-4 border-l-gh-accent">
+          <div class="text-gh-muted text-sm mb-3 font-mono">01</div>
+          <p class="text-lg leading-relaxed">模型智力只是基础，真正决定表现的是每个决策点能获得多少、多精准的上下文。</p>
+        </div>
+        <div class="card border-l-4 border-l-gh-success">
+          <div class="text-gh-muted text-sm mb-3 font-mono">02</div>
+          <p class="text-lg leading-relaxed">上下文工程不仅是技术问题，更是<strong class="text-gh-text">组织问题</strong>。</p>
+        </div>
+        <div class="card border-l-4 border-l-gh-purple">
+          <div class="text-gh-muted text-sm mb-3 font-mono">03</div>
+          <p class="text-lg leading-relaxed">它是 Harness 中“上下文与工具”层面的核心实现。</p>
+        </div>
+      </div>
+      <div class="bg-gh-elevated/50 border border-gh-border rounded-xl p-8">
+        <p class="text-2xl font-serif text-gh-text leading-relaxed">
+          “不要只盯着模型变强了，要盯着<span class="text-gh-accent font-semibold">给模型看了什么</span>。”
+        </p>
+      </div>
+    </div>
+    <div style="margin-top: 24px;">
+      <a href="./context-anatomy-interactive.html" target="_blank" style="display:inline-block;padding:10px 18px;background:#58a6ff;color:#0d1117;border-radius:6px;text-decoration:none;font-weight:600;">
+        🧬 打开交互式上下文剖面图
+      </a>
+    </div>
+  </section>
+
+  <!-- Slide 4: 02 API 上下文结构 -->
+  <section class="slide" data-index="3" data-note="这是所有上下文工程技术的底层结构，后面讲的 KV Cache、压缩、状态栏都建立在这个模型上。">
+    <div class="mb-6">
+      <div class="section-number text-sm mb-2">02 / API 上下文结构</div>
+      <h2 class="text-4xl font-bold mb-2">Agent 调用大模型的 API 上下文结构</h2>
+      <p class="text-gh-muted">四角色消息、工具定义与 ReAct 循环</p>
+    </div>
+    <div class="flex-1 flex flex-col gap-6">
+      <div class="card p-0 overflow-hidden">
+        <table class="table-gh">
+          <thead>
+            <tr><th>角色</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-mono text-gh-accent">system</td>
+              <td>身份、规则、约束（静态）</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-gh-accent">user</td>
+              <td>用户输入 + 框架注入的元信息</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-gh-accent">assistant</td>
+              <td>模型历史回复（文本、思考、工具调用）</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-gh-accent">tool</td>
+              <td>工具执行结果，通过 <code class="text-gh-success font-mono">tool_call_id</code> 关联</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="card">
+          <div class="pill mb-3 text-gh-success">工具定义</div>
+          <p class="text-gh-muted leading-relaxed">独立声明可用工具的名称、描述、参数，让模型知道“我能调用什么”。</p>
+        </div>
+        <div class="card">
+          <div class="pill mb-3 text-gh-warning">无状态调用</div>
+          <p class="text-gh-muted leading-relaxed">每次调用无状态，框架必须回传完整历史。</p>
+        </div>
+        <div class="card">
+          <div class="pill mb-3 text-gh-purple">ReAct 循环</div>
+          <p class="text-gh-muted leading-relaxed">请求 → tool_calls → 执行 → 追加结果 → 再次请求。</p>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 24px;">
+      <a href="./context-anatomy-interactive.html" target="_blank" style="display:inline-block;padding:10px 18px;background:#58a6ff;color:#0d1117;border-radius:6px;text-decoration:none;font-weight:600;">
+        🧬 打开交互式上下文剖面图
+      </a>
+    </div>
+  </section>
+
+  <!-- Slide 5: 03 上下文构成 -->
+  <section class="slide" data-index="4" data-note="把上下文拆成'不变的'和'变的'，是后面所有性能优化的起点。">
+    <div class="mb-8">
+      <div class="section-number text-sm mb-2">03 / 上下文构成</div>
+      <h2 class="text-4xl font-bold">上下文 = 静态前缀 + 轨迹</h2>
+    </div>
+    <div class="flex-1 flex flex-col justify-center">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <div class="card relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4 opacity-10 font-mono text-6xl text-gh-accent">01</div>
+          <div class="pill mb-4 text-gh-accent">静态前缀 Static Prefix</div>
+          <ul class="list-dash text-gh-muted">
+            <li>系统提示词</li>
+            <li>工具定义</li>
+            <li>对话中保持不变</li>
+          </ul>
+        </div>
+        <div class="card relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4 opacity-10 font-mono text-6xl text-gh-success">02</div>
+          <div class="pill mb-4 text-gh-success">轨迹 Trajectory</div>
+          <ul class="list-dash text-gh-muted">
+            <li>用户消息</li>
+            <li>模型回复</li>
+            <li>工具执行结果</li>
+            <li>动态增长</li>
+          </ul>
+        </div>
+      </div>
+      <div class="code-block">
+        <span class="token-comment"># 这一结构是 KV Cache 优化和上下文压缩等技术的基础</span><br />
+        context = [<span class="token-string">static_prefix</span>, <span class="token-string">turn_1</span>, <span class="token-string">turn_2</span>, ..., <span class="token-string">turn_n</span>]
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: 04 KV Cache 友好设计 -->
+  <section class="slide" data-index="5" data-note="Prompt Cache 是服务商层面的优化，但前提是客户端别把前缀搞脏了。">
+    <div class="mb-6">
+      <div class="section-number text-sm mb-2">04 / KV Cache 友好设计</div>
+      <h2 class="text-4xl font-bold">KV Cache 友好的上下文设计</h2>
+    </div>
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="flex flex-col gap-5">
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-2">什么是 KV Cache？</div>
+          <p class="text-gh-muted leading-relaxed">缓存已计算 token 的 Key/Value，避免每轮重算。</p>
+        </div>
+        <div class="card border-gh-warning">
+          <div class="text-lg font-medium text-gh-warning mb-2">核心约束</div>
+          <p class="leading-relaxed">前缀必须完全不变，<strong>改一个字节缓存就全部失效</strong>。</p>
+        </div>
+        <div class="code-block">
+          <span class="token-comment"># 缓存命中的前提</span><br />
+          prefix_hash == previous_prefix_hash
+        </div>
+      </div>
+      <div class="flex flex-col gap-5">
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-4">三条核心原则</div>
+          <ol class="list-num text-gh-muted">
+            <li>系统提示词和工具定义一旦确定就不要改。</li>
+            <li>动态信息（时间戳、状态等）永远追加到上下文末尾。</li>
+            <li>使用标准 API 格式，不要自行拼接消息。</li>
+          </ol>
+        </div>
+        <div class="card">
+          <div class="text-lg font-medium text-gh-danger mb-4">常见错误</div>
+          <ul class="list-dash text-gh-muted">
+            <li>在系统提示词中注入动态时间戳</li>
+            <li>动态排序工具定义</li>
+            <li>滑动窗口丢弃历史消息</li>
+            <li>把结构化消息转为纯文本拼接</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: 05 提示工程 -->
+  <section class="slide" data-index="6" data-note="系统提示词不是越长越好，而是越'可执行'越好。">
+    <div class="mb-6">
+      <div class="section-number text-sm mb-2">05 / 提示工程</div>
+      <h2 class="text-4xl font-bold">优化系统提示词</h2>
+    </div>
+    <div class="flex-1 flex flex-col gap-6">
+      <div class="card bg-gh-elevated/40 border-gh-accent/30">
+        <p class="text-xl leading-relaxed">系统提示词是 Agent 的<strong class="text-gh-accent">员工手册</strong>——检验标准：新员工读完是否知道怎么做。</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="card">
+          <div class="pill mb-3 text-gh-accent">语气与风格</div>
+          <p class="text-gh-muted text-sm leading-relaxed">明确、简洁，关键约束用强语气。</p>
+        </div>
+        <div class="card">
+          <div class="pill mb-3 text-gh-success">结构化</div>
+          <p class="text-gh-muted text-sm leading-relaxed">XML 标签 + Markdown 层次。</p>
+        </div>
+        <div class="card">
+          <div class="pill mb-3 text-gh-purple">流程驱动</div>
+          <p class="text-gh-muted text-sm leading-relaxed">用 SOP 替代零散规则堆砌。</p>
+        </div>
+        <div class="card">
+          <div class="pill mb-3 text-gh-warning">业务规则细化</div>
+          <p class="text-gh-muted text-sm leading-relaxed">规则精确可执行，产品经理应参与。</p>
+        </div>
+        <div class="card">
+          <div class="pill mb-3 text-gh-danger">Few-shot 示例</div>
+          <p class="text-gh-muted text-sm leading-relaxed">用于难以用文字精确定义的模式。</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-3">工具定义与动态 Schema</div>
+          <ul class="list-dash text-gh-muted">
+            <li>工具边界清晰、有示例、有性能提示</li>
+            <li>说明工具之间的协作关系</li>
+          </ul>
+        </div>
+        <div class="code-block flex items-center">
+          <div>
+            <span class="token-comment"># 按需加载完整工具定义到上下文末尾</span><br />
+            <span class="token-keyword">via</span> <span class="token-function">tool_search</span>(name)<br />
+            <span class="token-keyword">not</span> all_tools_in_prefix()
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: 06 提示注入 -->
+  <section class="slide" data-index="7" data-note="安全不是只靠 prompt 解决，但 prompt 是最前的一道门。">
+    <div class="mb-6">
+      <div class="section-number text-sm mb-2">06 / 提示注入</div>
+      <h2 class="text-4xl font-bold">上下文安全威胁</h2>
+    </div>
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="flex flex-col gap-6">
+        <div class="card border-l-4 border-l-gh-danger">
+          <div class="text-lg font-medium text-gh-danger mb-2">本质</div>
+          <p class="leading-relaxed">攻击者通过外部内容（网页、邮件、文档）向上下文注入恶意指令。</p>
+        </div>
+        <div class="card border-l-4 border-l-gh-warning">
+          <div class="text-lg font-medium text-gh-warning mb-2">危险点</div>
+          <p class="leading-relaxed">Agent 有工具调用能力，被注入可能导致数据泄露、误操作。</p>
+        </div>
+        <div class="code-block">
+          <span class="token-comment">&lt;!-- 攻击者可能插入 --&gt;</span><br />
+          <span class="token-keyword">&lt;ignore-previous&gt;</span><br />
+          &nbsp;&nbsp;...<span class="token-function">send_all_data</span>()...<br />
+          <span class="token-keyword">&lt;/ignore-previous&gt;</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="text-lg font-medium text-gh-text mb-5">防御手段</div>
+        <ul class="list-dash text-gh-muted">
+          <li><strong class="text-gh-text">来源标记</strong>：用 XML 标签包裹外部内容并标注来源。</li>
+          <li><strong class="text-gh-text">结构化角色</strong>：严格使用 system/user/assistant/tool 角色。</li>
+          <li><strong class="text-gh-text">输入清洗</strong>：过滤常见注入短语。</li>
+          <li><strong class="text-gh-text">执行层兜底</strong>：权限控制、沙盒、高风险操作确认。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: 07 动态提示词与 Skills -->
+  <section class="slide" data-index="8" data-note="Skill 描述要像路由条件，必须包含反例，否则模型不知道何时不该调用。">
+    <div class="mb-6">
+      <div class="section-number text-sm mb-2">07 / 动态提示词与 Agent Skills</div>
+      <h2 class="text-4xl font-bold">渐进式披露：按需加载</h2>
+    </div>
+    <div class="flex-1 flex flex-col gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-2">问题</div>
+          <p class="text-gh-muted leading-relaxed">系统提示词膨胀导致浪费 token、注意力稀释。</p>
+        </div>
+        <div class="card border-gh-success">
+          <div class="text-lg font-medium text-gh-success mb-2">核心思想</div>
+          <p class="leading-relaxed"><strong>渐进式披露</strong>——按需加载，而非一次性塞满。</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="card text-center">
+          <div class="w-12 h-12 rounded-full bg-gh-elevated border border-gh-border flex items-center justify-center mx-auto mb-4 font-mono text-gh-accent font-bold">1</div>
+          <div class="font-medium text-gh-text mb-2">元数据层</div>
+          <p class="text-sm text-gh-muted"><code class="text-gh-accent">SKILL.md</code> 的 name + description，常驻上下文</p>
+        </div>
+        <div class="card text-center">
+          <div class="w-12 h-12 rounded-full bg-gh-elevated border border-gh-border flex items-center justify-center mx-auto mb-4 font-mono text-gh-success font-bold">2</div>
+          <div class="font-medium text-gh-text mb-2">核心流程层</div>
+          <p class="text-sm text-gh-muted">通过专用工具按需加载完整 <code class="text-gh-success">SKILL.md</code></p>
+        </div>
+        <div class="card text-center">
+          <div class="w-12 h-12 rounded-full bg-gh-elevated border border-gh-border flex items-center justify-center mx-auto mb-4 font-mono text-gh-purple font-bold">3</div>
+          <div class="font-medium text-gh-text mb-2">细则层</div>
+          <p class="text-sm text-gh-muted">根据需求选择性加载子文档</p>
+        </div>
+      </div>
+      <div class="code-block">
+        <span class="token-comment"># 生产实现：对 KV Cache 友好</span><br />
+        <span class="token-number">1.</span> Skill 元数据以 user 角色 meta 消息注入上下文末尾<br />
+        <span class="token-number">2.</span> 完整内容通过 <span class="token-function">Skill</span> 工具加载，作为 tool result 出现
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10: 08 Agent 状态栏 -->
+  <section class="slide" data-index="9" data-note="状态栏是给模型一个'当前我在哪'的锚点，尤其适合长对话。">
+    <div class="mb-6">
+      <div class="section-number text-sm mb-2">08 / Agent 状态栏</div>
+      <h2 class="text-4xl font-bold">元信息注入：给模型一个锚点</h2>
+    </div>
+    <div class="flex-1 flex flex-col gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-3">类比</div>
+          <p class="text-gh-muted leading-relaxed">手机屏幕顶部的状态栏，让模型随时“瞥一眼”当前状态。</p>
+        </div>
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-3">理论基础</div>
+          <p class="text-gh-muted leading-relaxed">上下文学习是<strong class="text-gh-text">检索而非推理</strong>，模型不擅长主动归纳隐式状态。</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-4">效果</div>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-gh-muted">弱模型</span>
+              <span class="text-gh-success font-medium">准确率大幅提升</span>
+            </div>
+            <div class="h-px bg-gh-border"></div>
+            <div class="flex items-center justify-between">
+              <span class="text-gh-muted">强模型</span>
+              <span class="text-gh-accent font-medium">思考 token、延迟、成本大幅下降</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-4">时间感三轴</div>
+          <div class="flex gap-3">
+            <div class="flex-1 text-center py-4 bg-gh-elevated rounded-lg border border-gh-border">
+              <div class="font-mono text-gh-accent mb-1">Urgency</div>
+              <div class="text-sm text-gh-muted">紧迫度</div>
+            </div>
+            <div class="flex-1 text-center py-4 bg-gh-elevated rounded-lg border border-gh-border">
+              <div class="font-mono text-gh-success mb-1">Tenacity</div>
+              <div class="text-sm text-gh-muted">坚持度</div>
+            </div>
+            <div class="flex-1 text-center py-4 bg-gh-elevated rounded-lg border border-gh-border">
+              <div class="font-mono text-gh-warning mb-1">Vigilance</div>
+              <div class="text-sm text-gh-muted">警觉度</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="text-lg font-medium text-gh-text mb-4">三条经验</div>
+        <ol class="list-num text-gh-muted">
+          <li>状态栏用代码维护，不要让 LLM 批量统计历史。</li>
+          <li>删原始上下文前，先确认状态栏覆盖了所有可能被问到的问题。</li>
+          <li>把状态栏准确率当成一线生产指标。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11: 09 上下文压缩策略 -->
+  <section class="slide" data-index="10" data-note="压缩不是简单摘要，而是基于任务目标提炼结构化知识。">
+    <div class="mb-5">
+      <div class="section-number text-sm mb-2">09 / 上下文压缩策略</div>
+      <h2 class="text-4xl font-bold">控制长度，防止 Context Rot</h2>
+    </div>
+    <div class="flex-1 flex flex-col gap-5 overflow-y-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="card">
+          <div class="pill mb-3 text-gh-accent">动机</div>
+          <ul class="list-dash text-gh-muted text-sm">
+            <li>控制长度与成本</li>
+            <li>提升思考质量</li>
+            <li>防止上下文腐化</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="pill mb-3 text-gh-success">关键概念</div>
+          <ul class="list-dash text-gh-muted text-sm">
+            <li><strong>Trace</strong>：agent_start → agent_end</li>
+            <li><strong>Turn</strong>：一次模型调用 + 触发的工具执行</li>
+            <li><strong>保留区</strong>：切分点后原样保留的近期消息</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="pill mb-3 text-gh-purple">四步流程</div>
+          <div class="font-mono text-sm text-gh-muted leading-relaxed">
+            触发判断 → 找切分点 → 生成摘要 → 存储并重建上下文
+          </div>
+        </div>
+      </div>
+      <div class="card p-0 overflow-hidden">
+        <table class="table-gh">
+          <thead>
+            <tr><th>对象</th><th>是否压缩</th><th>处理方式</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-mono text-gh-accent">System 提示词</td>
+              <td class="text-gh-danger font-medium">❌ 不压</td>
+              <td class="text-gh-muted">保持原样，属于静态前缀</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-gh-accent">工具定义</td>
+              <td class="text-gh-danger font-medium">❌ 不压</td>
+              <td class="text-gh-muted">保持原样，属于静态前缀</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-gh-accent">切分点之前的旧消息</td>
+              <td class="text-gh-success font-medium">✅ 压缩</td>
+              <td class="text-gh-muted">压成摘要</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-gh-accent">切分点之后的近期消息</td>
+              <td class="text-gh-danger font-medium">❌ 原样保留</td>
+              <td class="text-gh-muted">默认约 20K token 的保留区</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="code-block">
+          <span class="token-comment"># 多次压缩：增量更新</span><br />
+          <span class="token-number">1.</span> 第二次压缩从<strong>上次保留区起点</strong>开始<br />
+          <span class="token-number">2.</span> 旧摘要作为 <span class="token-string">&lt;previous-summary&gt;</span> 注入<br />
+          <span class="token-number">3.</span> 合并新对话后生成新摘要
+        </div>
+        <div class="card">
+          <div class="text-lg font-medium text-gh-text mb-3">核心原则</div>
+          <ul class="list-dash text-gh-muted text-sm">
+            <li>不一次性倾倒全文</li>
+            <li>超过阈值必须截断，但不能静默截断</li>
+            <li>关键标识符必须原样保留</li>
+            <li><strong class="text-gh-success">隔离优于压缩</strong>：用子 Agent 让大体积中间信息不进入主上下文</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 12: 10 本章小结 -->
+  <section class="slide" data-index="11" data-note="收束全书脉络：上下文工程是 Agent 系统的'记忆与注意力'基础设施。">
+    <div class="mb-8">
+      <div class="section-number text-sm mb-2">10 / 本章小结</div>
+      <h2 class="text-4xl font-bold">记忆与注意力的基础设施</h2>
+    </div>
+    <div class="flex-1 flex flex-col justify-center max-w-5xl">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div class="card border-l-4 border-l-gh-accent">
+          <div class="text-lg font-medium text-gh-text mb-2">核心</div>
+          <p class="text-gh-muted leading-relaxed">上下文工程的核心是<strong class="text-gh-text">给模型看什么、怎么组织</strong>。</p>
+        </div>
+        <div class="card border-l-4 border-l-gh-success">
+          <div class="text-lg font-medium text-gh-text mb-2">共同目标</div>
+          <p class="text-gh-muted leading-relaxed"><strong class="text-gh-text">主动提供精炼的结构化知识</strong>，而非让模型被动在海量信息中检索。</p>
+        </div>
+        <div class="card border-l-4 border-l-gh-purple">
+          <div class="text-lg font-medium text-gh-text mb-2">框架</div>
+          <p class="text-gh-muted leading-relaxed">本章所有概念都服务于“上下文五个组成部分”的框架。</p>
+        </div>
+        <div class="card border-l-4 border-l-gh-warning">
+          <div class="text-lg font-medium text-gh-text mb-2">下一章</div>
+          <p class="text-gh-muted leading-relaxed"><strong class="text-gh-text">跨越会话的持久化知识体系</strong>——用户记忆和知识库。</p>
+        </div>
+      </div>
+      <div class="text-center">
+        <p class="text-2xl font-serif text-gh-text">
+          “上下文工程是 Agent 系统的<span class="text-gh-accent font-semibold">记忆与注意力</span>基础设施。”
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 13: Q&A -->
+  <section class="slide" data-index="12" data-note="">
+    <div class="flex-1 flex flex-col items-center justify-center text-center">
+      <div class="section-number text-sm mb-4">THANK YOU</div>
+      <h2 class="text-6xl md:text-8xl font-bold mb-6">Q&A</h2>
+      <p class="text-xl text-gh-muted max-w-xl leading-relaxed mb-10">
+        上下文工程决定 Agent 的能力上限。<br />
+        有问题，欢迎一起探讨。
+      </p>
+      <div class="flex items-center gap-3 text-gh-muted font-mono text-sm">
+        <span class="kbd">←</span>
+        <span class="kbd">→</span>
+        <span>切换幻灯片</span>
+        <span class="mx-2 text-gh-border">|</span>
+        <span class="kbd">N</span>
+        <span>演讲者备注</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Status Bar -->
+  <div class="status-bar text-gh-muted">
+    <div class="flex items-center gap-4">
+      <span class="text-gh-accent font-bold">CTX</span>
+      <span id="slideLabel">01 / 13</span>
+      <span class="text-gh-border">|</span>
+      <span id="sectionLabel">Cover</span>
+    </div>
+    <div class="context-strip" id="contextStrip" title="蓝色=静态前缀，绿色=动态轨迹">
+      <!-- filled by JS -->
+    </div>
+    <div class="flex items-center gap-4">
+      <button id="noteToggle" class="hover:text-gh-accent transition-colors focus:outline-none focus:text-gh-accent" aria-label="Toggle speaker notes">
+        <span class="kbd">N</span> 备注
+      </button>
+      <span class="text-gh-border">|</span>
+      <span id="progressText">1 / 13</span>
+    </div>
+  </div>
+
+  <!-- Speaker Note -->
+  <div class="speaker-note" id="speakerNote">
+    <div class="note-label">Speaker Note</div>
+    <div id="noteText"></div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    const slideLabel = document.getElementById('slideLabel');
+    const sectionLabel = document.getElementById('sectionLabel');
+    const progressText = document.getElementById('progressText');
+    const contextStrip = document.getElementById('contextStrip');
+    const speakerNote = document.getElementById('speakerNote');
+    const noteText = document.getElementById('noteText');
+    const noteToggle = document.getElementById('noteToggle');
+    let current = 0;
+    let notesVisible = false;
+
+    const sectionNames = [
+      'Cover', 'Agenda', '核心观点', 'API 上下文结构', '上下文构成',
+      'KV Cache', '提示工程', '提示注入', '动态提示词与 Skills',
+      'Agent 状态栏', '上下文压缩', '本章小结', 'Q&A'
+    ];
+
+    function renderContextStrip() {
+      contextStrip.innerHTML = '';
+      for (let i = 0; i < slides.length; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'context-bar';
+        bar.style.height = i === current ? '20px' : (i < current ? '14px' : '8px');
+        if (i === 0 || i === slides.length - 1) {
+          bar.classList.add('static');
+        } else {
+          bar.classList.add(i === current ? 'dynamic' : 'static');
+        }
+        contextStrip.appendChild(bar);
+      }
+    }
+
+    function updateSlide() {
+      slides.forEach((s, i) => {
+        s.classList.toggle('active', i === current);
+      });
+      const pct = ((current + 1) / slides.length) * 100;
+      progressBar.style.width = pct + '%';
+      slideLabel.textContent = String(current + 1).padStart(2, '0') + ' / ' + slides.length;
+      progressText.textContent = (current + 1) + ' / ' + slides.length;
+      sectionLabel.textContent = sectionNames[current] || '';
+      const note = slides[current].dataset.note;
+      noteText.textContent = note || '无演讲者备注';
+      renderContextStrip();
+    }
+
+    function next() { if (current < slides.length - 1) { current++; updateSlide(); } }
+    function prev() { if (current > 0) { current--; updateSlide(); } }
+    function toggleNotes() {
+      notesVisible = !notesVisible;
+      speakerNote.classList.toggle('visible', notesVisible);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+      if (e.key.toLowerCase() === 'n') { toggleNotes(); }
+    });
+
+    noteToggle.addEventListener('click', toggleNotes);
+
+    updateSlide();
+  </script>
+</body>
+</html>
