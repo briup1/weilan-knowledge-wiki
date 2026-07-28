@@ -29,6 +29,22 @@
       .main-layout { flex-direction: column; }
       #detail-panel { border-left: none; border-top: 1px solid var(--border); max-height: 40vh; }
     }
+    .section-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+    .layer-list { display: flex; flex-direction: column; gap: 8px; }
+    .layer-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: all 0.25s ease; }
+    .layer-row:hover { border-color: var(--layer-color); }
+    .layer-row.active { border-color: var(--layer-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--layer-color) 20%, transparent); }
+    .layer-row.inactive { opacity: 0.35; }
+    .layer-number { font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace; font-size: 12px; color: var(--layer-color); min-width: 28px; }
+    .layer-name { font-weight: 600; font-size: 15px; min-width: 130px; }
+    .layer-short { margin-left: auto; font-size: 12px; color: var(--muted); text-align: right; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .round-timeline { margin-top: auto; }
+    .round-list { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .round-pill { padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+    .round-pill.current { background: var(--accent-blue); color: var(--bg); font-weight: 700; }
+    .round-pill.passed { background: var(--elevated); color: var(--text); border: 1px solid var(--border); }
+    .round-pill.future { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+    .round-arrow { color: var(--border); font-size: 12px; }
   </style>
 </head>
 <body>
@@ -52,7 +68,122 @@
     </div>
   </div>
   <script>
-    // JavaScript will be added in later tasks
+    const layerDefinitions = {
+      'static-prefix': { id: 'static-prefix', label: 'Static Prefix', short: 'System + Tools Schema', color: '#f0883e', layer: 1 },
+      'user': { id: 'user', label: 'User', short: '用户输入 + 元信息', color: '#7ee787', layer: 2 },
+      'assistant': { id: 'assistant', label: 'Assistant', short: '模型回复 / tool_calls', color: '#a371f7', layer: 3 },
+      'tool-result': { id: 'tool-result', label: 'Tool Result', short: '工具执行结果', color: '#58a6ff', layer: 4 },
+      'state-bar': { id: 'state-bar', label: 'State Bar', short: '显式状态栏', color: '#c9d1d9', layer: 5 },
+      'skill-metadata': { id: 'skill-metadata', label: 'Skill Metadata', short: '动态技能元数据', color: '#c9d1d9', layer: 6 },
+      'compaction-summary': { id: 'compaction-summary', label: 'Compaction Summary', short: '压缩摘要层', color: '#c9d1d9', layer: 7 }
+    };
+
+    const script = [
+      {
+        round: 1,
+        title: '用户发起退款',
+        activeLayers: ['static-prefix', 'user', 'assistant', 'tool-result'],
+        userMessage: '我想退掉昨天买的耳机',
+        assistantAction: '理解意图，调用 query_order',
+        toolResult: '订单 #20240728：蓝牙耳机，金额 ¥299，购买时间 2024-07-27',
+        stateBar: { task: '处理退款', orderVerified: false, refundMethod: null },
+        skillLoaded: null,
+        compaction: null
+      },
+      {
+        round: 2,
+        title: '查询退款政策',
+        activeLayers: ['static-prefix', 'user', 'assistant', 'tool-result', 'state-bar'],
+        userMessage: null,
+        assistantAction: '调用 check_policy',
+        toolResult: '7 天内未拆封可退',
+        stateBar: { task: '处理退款', orderVerified: true, policyChecked: true, refundMethod: null },
+        skillLoaded: null,
+        compaction: null
+      },
+      {
+        round: 3,
+        title: '确认退款方式',
+        activeLayers: ['static-prefix', 'user', 'assistant', 'tool-result', 'state-bar', 'skill-metadata'],
+        userMessage: '退到原支付账户',
+        assistantAction: '调用 process_refund',
+        toolResult: '退款已提交，预计 1-3 个工作日到账',
+        stateBar: { task: '处理退款', orderVerified: true, policyChecked: true, refundMethod: '原支付账户' },
+        skillLoaded: '客服退款流程 skill',
+        compaction: null
+      },
+      {
+        round: 4,
+        title: '完成并总结',
+        activeLayers: ['static-prefix', 'user', 'assistant', 'tool-result', 'state-bar', 'skill-metadata', 'compaction-summary'],
+        userMessage: null,
+        assistantAction: '总结并回复用户',
+        toolResult: null,
+        stateBar: { task: '完成', orderVerified: true, refundProcessed: true },
+        skillLoaded: '客服退款流程 skill',
+        compaction: '用户要求退耳机；订单 #20240728 已验证；政策允许；退款至原支付账户，1-3 个工作日到账。'
+      }
+    ];
+
+    function renderStack(roundIndex) {
+      const panel = document.getElementById('stack-panel');
+      const round = script[roundIndex] || { activeLayers: ['static-prefix'] };
+      const activeSet = new Set(round.activeLayers);
+
+      let html = '<div class="section-label">CONTEXT STACK</div>';
+      html += '<div class="layer-list">';
+
+      const orderedIds = ['static-prefix', 'user', 'assistant', 'tool-result', 'state-bar', 'skill-metadata', 'compaction-summary'];
+      orderedIds.forEach(id => {
+        const def = layerDefinitions[id];
+        const isActive = activeSet.has(id);
+        const roundSpecificData = getLayerData(id, round);
+        html += `
+          <div class="layer-row ${isActive ? 'active' : 'inactive'}" data-layer="${id}" style="--layer-color: ${def.color}">
+            <span class="layer-number">L${def.layer}</span>
+            <span class="layer-name">${def.label}</span>
+            <span class="layer-short">${roundSpecificData || def.short}</span>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      // Round timeline
+      html += '<div class="round-timeline">';
+      html += '<div class="section-label">ROUND TIMELINE</div>';
+      html += '<div class="round-list">';
+      script.forEach((r, idx) => {
+        const cls = idx === roundIndex ? 'current' : (idx < roundIndex ? 'passed' : 'future');
+        html += `<div class="round-pill ${cls}" data-round="${idx}">${r.title}</div>`;
+        if (idx < script.length - 1) html += '<span class="round-arrow">→</span>';
+      });
+      html += '</div></div>';
+
+      panel.innerHTML = html;
+      attachLayerClicks();
+    }
+
+    function getLayerData(id, round) {
+      if (id === 'user' && round.userMessage) return round.userMessage;
+      if (id === 'assistant' && round.assistantAction) return round.assistantAction;
+      if (id === 'tool-result' && round.toolResult) return round.toolResult;
+      if (id === 'state-bar' && round.stateBar) {
+        return Object.entries(round.stateBar).map(([k, v]) => `${k}=${v}`).join(' | ');
+      }
+      if (id === 'skill-metadata' && round.skillLoaded) return round.skillLoaded;
+      if (id === 'compaction-summary' && round.compaction) return round.compaction;
+      return null;
+    }
+
+    // Placeholders for later tasks
+    function attachLayerClicks() {}
+    function showDetail(layerId, roundIndex) {}
+    function goToRound(roundIndex) {}
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderStack(0);
+    });
   </script>
 </body>
 </html>
