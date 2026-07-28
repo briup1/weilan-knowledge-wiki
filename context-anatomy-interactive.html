@@ -35,8 +35,8 @@
     .layer-row:hover { border-color: var(--layer-color); }
     .layer-row.active { border-color: var(--layer-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--layer-color) 20%, transparent); }
     .layer-row.inactive { opacity: 0.35; }
-    .layer-number { font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace; font-size: 12px; color: var(--layer-color); min-width: 28px; }
-    .layer-name { font-weight: 600; font-size: 15px; min-width: 130px; }
+    .layer-number { font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace; font-size: 12px; color: var(--layer-color); min-width: 36px; }
+    .layer-name { font-weight: 600; font-size: 15px; min-width: 110px; }
     .layer-short { margin-left: auto; font-size: 12px; color: var(--muted); text-align: right; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .round-timeline { margin-top: auto; }
     .round-list { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -61,6 +61,7 @@
     #control-bar button { background: var(--elevated); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; }
     #control-bar button:hover { border-color: var(--accent-blue); }
     #control-bar button:active { background: var(--surface); }
+    #control-bar button.active { border-color: var(--accent-green); color: var(--accent-green); }
     .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
     .overview-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; cursor: pointer; transition: all 0.2s ease; }
     .overview-card:hover { border-color: var(--layer-color); transform: translateY(-2px); }
@@ -84,11 +85,11 @@
       <button type="button" id="btn-reset">重置</button>
       <div style="width: 1px; height: 20px; background: var(--border);"></div>
       <span style="color: var(--muted); font-size: 12px;">自动播放：</span>
-      <button type="button" data-speed="3000">3s</button>
-      <button type="button" data-speed="5000">5s</button>
-      <button type="button" data-speed="10000">10s</button>
+      <button type="button" data-speed="3000">3 秒</button>
+      <button type="button" data-speed="5000">5 秒</button>
+      <button type="button" data-speed="10000">10 秒</button>
       <button type="button" id="btn-overview" style="margin-left: auto;">查看完整剖面</button>
-      <span id="progress" style="font-size: 12px; color: var(--muted);">第 0 / 4 回合</span>
+      <span id="progress" style="font-size: 12px; color: var(--muted);">第 1 / 4 回合</span>
     </div>
   </div>
   <script>
@@ -97,13 +98,13 @@
     let isOverviewMode = false;
 
     const layerDefinitions = {
-      'static-prefix': { id: 'static-prefix', label: 'Static Prefix', short: 'System + Tools Schema', color: '#f0883e', layer: 1 },
-      'user': { id: 'user', label: 'User', short: '用户输入 + 元信息', color: '#7ee787', layer: 2 },
-      'assistant': { id: 'assistant', label: 'Assistant', short: '模型回复 / tool_calls', color: '#a371f7', layer: 3 },
-      'tool-result': { id: 'tool-result', label: 'Tool Result', short: '工具执行结果', color: '#58a6ff', layer: 4 },
-      'state-bar': { id: 'state-bar', label: 'State Bar', short: '显式状态栏', color: '#c9d1d9', layer: 5 },
-      'skill-metadata': { id: 'skill-metadata', label: 'Skill Metadata', short: '动态技能元数据', color: '#c9d1d9', layer: 6 },
-      'compaction-summary': { id: 'compaction-summary', label: 'Compaction Summary', short: '压缩摘要层', color: '#c9d1d9', layer: 7 }
+      'static-prefix': { id: 'static-prefix', label: '静态前缀', short: '系统提示词 + 工具模式', color: '#f0883e', layer: 1 },
+      'user': { id: 'user', label: '用户输入', short: '用户输入 + 元信息', color: '#7ee787', layer: 2 },
+      'assistant': { id: 'assistant', label: '模型回复', short: '模型回复 / 工具调用', color: '#a371f7', layer: 3 },
+      'tool-result': { id: 'tool-result', label: '工具结果', short: '工具执行结果', color: '#58a6ff', layer: 4 },
+      'state-bar': { id: 'state-bar', label: '状态栏', short: '显式状态栏', color: '#c9d1d9', layer: 5 },
+      'skill-metadata': { id: 'skill-metadata', label: '技能元数据', short: '动态技能元数据', color: '#c9d1d9', layer: 6 },
+      'compaction-summary': { id: 'compaction-summary', label: '压缩摘要', short: '压缩摘要层', color: '#c9d1d9', layer: 7 }
     };
 
     const script = [
@@ -155,8 +156,8 @@
 
     const layerDetails = {
       'static-prefix': {
-        title: 'Static Prefix',
-        scenario: '在客服退款场景中，Static Prefix 定义了 Agent 的身份（"你是客服助手"）和可用工具（query_order / check_policy / process_refund）。',
+        title: '静态前缀',
+        scenario: '在客服退款场景中，静态前缀定义了 Agent 的身份（"你是客服助手"）和可用工具（query_order / check_policy / process_refund）。',
         code: `{
   "role": "system",
   "content": "你是客服助手，帮助用户处理退款。可用工具：query_order, check_policy, process_refund。"
@@ -168,7 +169,7 @@
         ]
       },
       'user': {
-        title: 'User',
+        title: '用户输入',
         scenario: '用户说"我想退掉昨天买的耳机"，这条消息被追加到上下文末尾，同时也可能携带框架注入的元信息（如用户 ID、会话 ID）。',
         code: `{
   "role": "user",
@@ -181,7 +182,7 @@
         ]
       },
       'assistant': {
-        title: 'Assistant',
+        title: '模型回复',
         scenario: 'Agent 理解了退款意图，决定先查询订单。它在 assistant 角色中输出思考过程和 tool_calls。',
         code: `{
   "role": "assistant",
@@ -195,22 +196,22 @@
         ]
       },
       'tool-result': {
-        title: 'Tool Result',
-        scenario: 'query_order 返回了订单信息。Tool Result 通过 tool_call_id 精确关联到 Assistant 层的调用。',
+        title: '工具结果',
+        scenario: 'query_order 返回了订单信息。工具结果通过 tool_call_id 精确关联到模型回复层的调用。',
         code: `{
   "role": "tool",
   "tool_call_id": "call_001",
   "content": "订单 #20240728：蓝牙耳机，金额 ¥299"
 }`,
         points: [
-          'tool_call_id 是关联 Assistant 调用和工具结果的关键',
-          'Tool Result 是 ReAct 循环的反馈输入',
-          '在长对话中，旧 Tool Result 可能被 Compaction Summary 替代'
+          'tool_call_id 是关联模型回复调用和工具结果的关键',
+          '工具结果是 ReAct 循环的反馈输入',
+          '在长对话中，旧工具结果可能被压缩摘要替代'
         ]
       },
       'state-bar': {
-        title: 'State Bar',
-        scenario: 'State Bar 是显式状态栏，让模型随时"瞥一眼"当前状态，而不必自己从历史中推断。',
+        title: '状态栏',
+        scenario: '状态栏是显式状态栏，让模型随时"瞥一眼"当前状态，而不必自己从历史中推断。',
         code: `任务=处理退款 | 订单已验证=true | 政策已确认=true | 退款方式=原支付账户`,
         points: [
           '把隐式状态提炼为显式状态栏',
@@ -219,7 +220,7 @@
         ]
       },
       'skill-metadata': {
-        title: 'Skill Metadata',
+        title: '技能元数据',
         scenario: '当对话进入退款流程时，系统加载"客服退款流程 skill"的元数据，完整内容按需通过 Skill 工具加载。',
         code: `Skill: 客服退款流程\nDescription: 处理用户退款请求，包括查询订单、核对政策、执行退款。`,
         points: [
@@ -229,7 +230,7 @@
         ]
       },
       'compaction-summary': {
-        title: 'Compaction Summary',
+        title: '压缩摘要',
         scenario: '四轮对话结束后，早期细节被压缩成结构化摘要，保留关键事实而丢弃冗余中间信息。',
         code: `用户要求退耳机；订单 #20240728 已验证；政策允许；退款至原支付账户，1-3 个工作日到账。`,
         points: [
@@ -246,7 +247,7 @@
       const round = script[roundIndex] || { activeLayers: ['static-prefix'] };
       const activeSet = new Set(round.activeLayers);
 
-      let html = '<div class="section-label">CONTEXT STACK</div>';
+      let html = '<div class="section-label">上下文栈</div>';
       html += '<div class="layer-list">';
 
       const orderedIds = ['static-prefix', 'user', 'assistant', 'tool-result', 'state-bar', 'skill-metadata', 'compaction-summary'];
@@ -256,7 +257,7 @@
         const roundSpecificData = getLayerData(id, round);
         html += `
           <div class="layer-row ${isActive ? 'active' : 'inactive'}" data-layer="${id}" style="--layer-color: ${def.color}">
-            <span class="layer-number">L${def.layer}</span>
+            <span class="layer-number">第 ${def.layer} 层</span>
             <span class="layer-name">${def.label}</span>
             <span class="layer-short">${roundSpecificData || def.short}</span>
           </div>
@@ -267,7 +268,7 @@
 
       // Round timeline
       html += '<div class="round-timeline">';
-      html += '<div class="section-label">ROUND TIMELINE</div>';
+      html += '<div class="section-label">回合时间线</div>';
       html += '<div class="round-list">';
       script.forEach((r, idx) => {
         const cls = idx === roundIndex ? 'current' : (idx < roundIndex ? 'passed' : 'future');
@@ -277,7 +278,6 @@
       html += '</div></div>';
 
       panel.innerHTML = html;
-      attachLayerClicks();
       document.querySelectorAll('.round-pill').forEach(el => {
         el.addEventListener('click', () => goToRound(parseInt(el.dataset.round, 10)));
       });
@@ -288,14 +288,16 @@
       if (id === 'assistant' && round.assistantAction) return round.assistantAction;
       if (id === 'tool-result' && round.toolResult) return round.toolResult;
       if (id === 'state-bar' && round.stateBar) {
-        return Object.entries(round.stateBar).map(([k, v]) => `${k}=${v}`).join(' | ');
+        return Object.entries(round.stateBar)
+          .filter(([k, v]) => v != null)
+          .map(([k, v]) => `${k}=${v}`)
+          .join(' | ');
       }
       if (id === 'skill-metadata' && round.skillLoaded) return round.skillLoaded;
       if (id === 'compaction-summary' && round.compaction) return round.compaction;
       return null;
     }
 
-    // Placeholders for later tasks
     let currentLayer = null;
 
     function showDetail(layerId) {
@@ -307,7 +309,7 @@
 
       let html = `<div class="detail-header" style="border-left: 4px solid ${def.color}; padding-left: 12px; margin-bottom: 20px;">`;
       html += `<h2 style="margin: 0 0 6px 0;">${detail.title}</h2>`;
-      html += `<div style="font-size: 12px; color: var(--muted);">L${def.layer} · ${def.short}</div>`;
+      html += `<div style="font-size: 12px; color: var(--muted);">第 ${def.layer} 层 · ${def.short}</div>`;
       html += '</div>';
 
       html += `<p class="detail-scenario">${detail.scenario}</p>`;
@@ -334,12 +336,6 @@
     function highlightSelectedLayer(layerId) {
       document.querySelectorAll('.layer-row, .overview-card').forEach(el => {
         el.classList.toggle('selected', el.dataset.layer === layerId);
-      });
-    }
-
-    function attachLayerClicks() {
-      document.querySelectorAll('.layer-row').forEach(el => {
-        el.addEventListener('click', () => showDetail(el.dataset.layer));
       });
     }
 
@@ -394,10 +390,20 @@
           startAutoPlay(speed);
         });
       });
+
+      document.getElementById('stack-panel').addEventListener('click', (e) => {
+        const layerRow = e.target.closest('.layer-row');
+        const overviewCard = e.target.closest('.overview-card');
+        if (layerRow) showDetail(layerRow.dataset.layer);
+        if (overviewCard) showDetail(overviewCard.dataset.layer);
+      });
     }
 
     function startAutoPlay(intervalMs) {
       stopAutoPlay();
+      document.querySelectorAll('[data-speed]').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.speed, 10) === intervalMs);
+      });
       if (currentRound >= script.length - 1) {
         goToRound(0);
       }
@@ -415,6 +421,7 @@
         clearInterval(autoPlayTimer);
         autoPlayTimer = null;
       }
+      document.querySelectorAll('[data-speed]').forEach(btn => btn.classList.remove('active'));
     }
 
     function enterOverviewMode() {
@@ -430,7 +437,7 @@
         html += `
           <div class="overview-card" data-layer="${id}" style="--layer-color: ${def.color}">
             <div class="overview-card-header">
-              <span class="layer-number">L${def.layer}</span>
+              <span class="layer-number">第 ${def.layer} 层</span>
               <span class="layer-name">${def.label}</span>
             </div>
             <p class="overview-card-desc">${detail.scenario}</p>
@@ -440,10 +447,7 @@
       html += '</div>';
       panel.innerHTML = html;
 
-      document.querySelectorAll('.overview-card').forEach(el => {
-        el.addEventListener('click', () => showDetail(el.dataset.layer));
-      });
-
+      if (currentLayer) highlightSelectedLayer(currentLayer);
       document.getElementById('btn-overview').textContent = '返回逐步播放';
     }
 
@@ -455,8 +459,8 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') { e.preventDefault(); nextRound(); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); prevRound(); }
-      if (e.key === 'Escape') {
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prevRound(); }
+      else if (e.key === 'Escape') {
         document.querySelectorAll('.layer-row').forEach(el => el.classList.remove('selected'));
         document.getElementById('detail-panel').innerHTML = '<div class="placeholder-text">点击左侧任意层级查看详情。</div>';
       }
