@@ -1,5 +1,30 @@
 # Knowledge Forest 日志
 
+## [2026-08-02] synthesis | 创建 Agent 系统概念地图
+
+**操作**: 创建 `wiki/synthesis/agent-concept-map.md`，用四级 Mermaid 思维导图呈现 Agent 系统概念体系。
+
+**完成项**:
+- 新建 `wiki/synthesis/agent-concept-map.md`，覆盖 10 个一级模块、17 个二级概念、四级深度。
+- Mermaid 图中二级节点链接到对应 `wiki/concepts/` 页面。
+- 更新 `index.md`，在 Synthesis 分类下加入 `[[agent-concept-map]]`。
+
+**规范遵循**:
+- 页面 `sources` 字段列出 17 个引用的 concept 页面。
+- 所有 `[[page-name]]` 均指向已存在的 wiki 页面。
+
+## [2026-08-02] draft published | Agent 系统入门书稿发布归档
+
+**操作**: 将 `drafts/agent-book-beginner/` 标记为 `published` 并移出 `drafts/`。
+
+**完成项**:
+- 更新 `raw/archive/drafts/agent-book-beginner/README.md`：状态从 `writing` 改为 `published`。
+- 将 `drafts/agent-book-beginner/` 移动到 `raw/archive/drafts/agent-book-beginner/`。
+- 更新 `index.md`：Drafts 分类清空，当前无进行中的 draft 项目。
+
+**规范遵循**:
+- 按 `CLAUDE.md` 约定，`published` 项目已在 30 天内移出 `drafts/`，归档至 `raw/archive/drafts/<project>/`。
+
 ## [2026-07-27] policy | 制定 drafts/ 生命周期治理规范
 
 **操作**: 制定并落地轻量约定型的 `drafts/` 治理规范。
