@@ -121,10 +121,11 @@
 [[rag-knowledge-retrieval-landscape]] —— RAG 与知识检索领域全景：从向量检索到知识网络的演进
 [[knowledge-base-audit-and-flywheel]] —— 知识库现状诊断与知识飞轮设计：从资料库到复利系统的闭环
 [[agent-framework-12-dimensions-comparison]] —— 四大开源 Agent 框架 12 维度对比：Hermes / nanobot / OpenClaw / OpenCode
+[[agent-concept-map]] —— Agent 系统四级概念地图：模块 → 能力 → 方法 → 技术
 
 ## Drafts
 
-[Agent 系统入门书稿](drafts/agent-book-beginner/README.md) —— 面向小白开发者的 Agent 系统入门书（实习生比喻版）
+（当前没有进行中的 draft 项目）
 
 ## Queries
 

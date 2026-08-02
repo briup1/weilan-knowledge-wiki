@@ -1,6 +1,6 @@
 # 项目：Agent 系统入门书（实习生比喻版）
 
-**状态**: `writing`
+**状态**: `published`
 
 本目录存放基于 `Harness_agent_docs` 整合而来的 Agent 系统入门书稿。
 
