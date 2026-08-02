@@ -128,14 +128,14 @@ Final answer: Paris
 
 最小实现只展示思想，生产环境还需要：
 
-| 增强项 | 作用 | 相关概念 |
-|---|---|---|
-| 结构化输出 | 用 JSON Schema / function calling 替代字符串解析 | [[output-parsing]] |
-| 迭代预算 | 限制最大轮数，防止无限循环 | [[orchestration-loop]] |
-| 工具权限校验 | 执行前检查工具是否允许被调用 | [[validation-loop]] |
-| 上下文压缩 | 历史过长时摘要或截断 | [[context-management]] |
-| 错误恢复 | 工具失败时重试或降级 | [[error-handling]] |
-| 可观测性 | 记录每轮 Thought/Action/Observation 为 trace | [[agent-trace]] |
+| 增强项    | 作用                                       | 相关概念                   |
+| ------ | ---------------------------------------- | ---------------------- |
+| 结构化输出  | 用 JSON Schema / function calling 替代字符串解析 | [[output-parsing]]     |
+| 迭代预算   | 限制最大轮数，防止无限循环                            | [[orchestration-loop]] |
+| 工具权限校验 | 执行前检查工具是否允许被调用                           | [[validation-loop]]    |
+| 上下文压缩  | 历史过长时摘要或截断                               | [[context-management]] |
+| 错误恢复   | 工具失败时重试或降级                               | [[error-handling]]     |
+| 可观测性   | 记录每轮 Thought/Action/Observation 为 trace  | [[agent-trace]]        |
 
 ## ReAct vs Plan-and-Execute
 
