@@ -1,8 +1,8 @@
 ---
 type: synthesis
 created: 2026-08-02
-updated: 2026-08-02
-markmind: true
+updated: 2026-08-03
+mindmap-plugin: markdown
 sources:
   - agent-turn
   - agent-trace
