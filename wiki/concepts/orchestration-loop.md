@@ -53,6 +53,8 @@ tags: [agent-architecture, orchestration-loop, agent-control-flow]
 ## 与相关概念的关系
 
 - 编排循环内部会调用 [[agent-tool-system]] 执行工具。
+- 最常见的编排模式是 [[react-pattern|ReAct]]：每轮迭代让模型输出 Thought → Action → Observation。
+- 与 ReAct 平级的另一种模式是 Plan-and-Execute（先规划再执行），后续补充。
 - 每轮迭代前可能触发 [[context-management]] 做上下文压缩。
 - 预算耗尽时可能调用 [[error-handling]] 的收尾策略。
 - 复杂任务可拆分到 [[sub-agent-orchestration]]。

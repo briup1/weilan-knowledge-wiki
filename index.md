@@ -34,6 +34,7 @@
 [[mcp]] —— MCP (Model Context Protocol)：标准化工具调用协议
 [[multi-agent-collaboration]] —— 多 Agent 协作：Team Mode、子 Agent 与角色分工
 [[rag]] —— RAG (Retrieval-Augmented Generation)：检索增强生成流程
+[[react-pattern]] —— ReAct：推理-行动交替的 Agent 执行模式
 [[vibe-coding]] —— Vibe Coding：信任 AI、减少微观管理的编程范式
 
 ### Agent 架构（来自 Hermes Agent 调研）

@@ -1,5 +1,20 @@
 # Knowledge Forest 日志
 
+## [2026-08-03] concept | 新增 ReAct 概念页面
+
+**操作**: 创建 `wiki/concepts/react-pattern.md`，并更新相关页面建立链接关系。
+
+**完成项**:
+- 新增 `wiki/concepts/react-pattern.md` —— ReAct 模式的定义、核心流程、最小代码示例、生产级增强、与 Plan-and-Execute 的对比。
+- 更新 `wiki/concepts/orchestration-loop.md` —— 在「与相关概念的关系」中链接 ReAct，并说明 Plan-and-Execute 后续补充。
+- 更新 `wiki/synthesis/agent-concept-map.md` —— 把 `2.1.1 ReAct` 节点改为 wiki-link。
+- 更新 `index.md` —— 在 Concepts 分类加入 `[[react-pattern]]`。
+
+**规范遵循**:
+- ReAct 是抽象设计模式，归入 `wiki/concepts/`。
+- 所有 `[[page-name]]` 指向已存在的 wiki 页面。
+- 页面 `sources` 字段引用四大框架调研来源。
+
 ## [2026-08-02] synthesis | 创建 Agent 系统概念地图
 
 **操作**: 创建 `wiki/synthesis/agent-concept-map.md`，用四级 Mermaid 思维导图呈现 Agent 系统概念体系。
