@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "13dbadbc6fa8d7e5",
+        "id": "429f60538bc86bec",
         "type": "tabs",
         "children": [
           {
-            "id": "d01722955bd27631",
+            "id": "8428542b80cfd7a9",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "wiki/synthesis/agent-concept-map.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "agent-concept-map"
             }
           }
         ]
@@ -37,7 +41,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "文件列表"
@@ -74,7 +80,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 459.5
+    "width": 294.5
   },
   "right": {
     "id": "e99e3fc8ce9c9278",
@@ -179,43 +185,43 @@
       "bases:新建数据库": false
     }
   },
-  "active": "2b055373325ab1e8",
+  "active": "8428542b80cfd7a9",
   "lastOpenFiles": [
-    "context-engineering-deck.md",
+    "wiki/concepts/orchestration-loop.md.tmp.385195.18f33c2e6f9c",
+    "wiki/concepts/orchestration-loop.md.tmp.385195.a3a9dea3a6a8",
+    "wiki/concepts/orchestration-loop.md.tmp.385195.533cd1506c18",
+    "wiki/concepts/orchestration-loop.md.tmp.385195.486dd5eccd73",
+    "wiki/concepts/react-pattern.md.tmp.385195.6eea19d89919",
+    "wiki/concepts/react-pattern.md.tmp.385195.cda663a1a02f",
+    "wiki/concepts/react-pattern.md.tmp.385195.edf9f0f83a97",
+    "wiki/concepts/context-management.md",
+    "wiki/concepts/react-pattern.md",
+    "wiki/concepts/output-parsing.md",
+    "wiki/synthesis/agent-concept-map-mindmap.md",
+    "wiki/synthesis/agent-concept-map.md",
+    "log.md.tmp.385195.cf5067fa4c0a",
+    "index.md.tmp.385195.b245c5b61bf2",
+    "wiki/synthesis/agent-concept-map.md.tmp.385195.18e5a589bd4b",
+    "wiki/concepts/orchestration-loop.md.tmp.385195.0967e2ac71d8",
+    "index.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/16_第12章_入职第一天——初始化与环境.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/15_第11章_团队协作——子Agent编排.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/14_第10章_自我检查——验证循环.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/13_第三部分_Agent的进阶.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/12_第9章_职业底线——安全防护.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/11_第8章_注意力分配——上下文管理.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/10_第7章_抗压与纠错——错误处理.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/09_第6章_工作台——状态管理.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/08_第二部分_Agent的韧性.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/07_第5章_汇报成果——输出解析.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/06_第4章_理解任务——Prompt构建.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/05_第3章_笔记本——记忆系统.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/04_第2章_双手——工具系统.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/03_第1章_工作节奏——编排循环.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/02_第一部分_Agent的骨架.md",
+    "raw/archive/drafts/agent-book-beginner/chapters/01_第0章_初识Agent：这位实习生是谁.md",
+    "raw/archive/drafts/agent-book-beginner/README.md",
     "drafts/agent-context-sharing/03-static-prefix.md",
-    "drafts/agent-context-sharing/01-opening.md",
-    "drafts/agent-book-beginner/chapters/04_第2章_双手——工具系统.md",
-    "drafts/agent-book-beginner/chapters/03_第1章_工作节奏——编排循环.md",
-    "drafts/agent-book-beginner/chapters/02_第一部分_Agent的骨架.md",
-    "wiki/concepts/agent-memory-system.md",
-    "drafts/agent-context-sharing/02-context-anatomy.md",
-    "drafts/agent-context-sharing/html/agent-graph.html",
-    "docs/superpowers/plans/2026-07-28-upgrade-agent-context-cross-section.md",
-    "docs/superpowers/plans/2026-07-28-upgrade-agent-context-cross-section.md.tmp.15934.f6d9d8e05016",
-    "drafts/agent-context-sharing/html/chapter2-context-cross-section.html",
-    "drafts/agent-context-sharing/html",
-    "drafts/agent-context-sharing/chapter2-context-cross-section.html",
-    "drafts/agent-context-sharing/agent-graph.html",
-    "wiki/queries/what-are-turn-and-trace-in-agents.md",
-    "wiki/concepts/agent-trace.md",
-    "wiki/concepts/agent-turn.md",
-    "wiki/synthesis/agent-framework-12-dimensions-comparison.md",
-    "wiki/sources/opencode-framework-analysis.md",
-    "wiki/sources/openclaw-framework-analysis.md",
-    "wiki/sources/nanobot-framework-analysis.md",
-    "raw/archive/research/agent-frameworks/opencode_维度12-初始化与环境.md",
-    "raw/archive/research/agent-frameworks/opencode_维度11-子Agent编排.md",
-    "raw/archive/research/agent-frameworks/opencode_维度10-验证循环.md",
-    "raw/archive/research/agent-frameworks/opencode_维度09-安全防护.md",
-    "raw/archive/research/agent-frameworks/opencode_维度08-错误处理.md",
-    "raw/archive/research/agent-frameworks/opencode_维度07-状态管理.md",
-    "raw/archive/research/agent-frameworks/opencode_维度06-输出解析.md",
-    "raw/archive/research/agent-frameworks/opencode_维度05-Prompt构建.md",
-    "raw/archive/research/agent-frameworks/opencode_维度04-上下文管理.md",
-    "raw/archive/research/agent-frameworks/opencode_维度03-记忆系统.md",
-    "wiki/concepts",
-    "scripts/ingest/download_wechat_album.py",
-    "scripts/ingest",
-    "scripts"
+    "context-engineering-deck.md"
   ]
 }

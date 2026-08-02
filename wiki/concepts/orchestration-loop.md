@@ -1,7 +1,7 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-07-26
+updated: 2026-08-03
 sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
 tags: [agent-architecture, orchestration-loop, agent-control-flow]
 ---
@@ -10,7 +10,7 @@ tags: [agent-architecture, orchestration-loop, agent-control-flow]
 
 ## 定义
 
-编排循环是 Agent 在 **LLM 推理 → 工具执行 → 观察结果 → 再次推理** 之间反复迭代的主控制流。它是 Agent 从「单次问答」进化到「自主任务执行」的最小必要结构。
+编排循环是 Agent 在 **LLM 推理 → 工具执行 → 观察结果 → 再次推理** 之间反复迭代的主控制流，也是 [[react-pattern|ReAct]] 等模式运行的基础设施。它是 Agent 从「单次问答」进化到「自主任务执行」的最小必要结构。
 
 ## 为什么需要
 
@@ -22,14 +22,14 @@ tags: [agent-architecture, orchestration-loop, agent-control-flow]
 
 一个生产级编排循环至少包含：
 
-| 组件 | 作用 |
-|---|---|
-| 迭代计数/预算 | 防止无限循环 |
-| 中断机制 | 允许用户或系统优雅停止 |
-| 工具调用解析 | 把 LLM 输出转成可执行动作 |
-| 工具执行 | 同步或异步调用外部能力 |
-| 结果回灌 | 把工具结果重新放入上下文 |
-| 终止判断 | 任务完成、预算耗尽、用户中断 |
+| 组件 | 作用 | 相关概念 |
+|---|---|---|
+| 迭代计数/预算 | 防止无限循环 | [[orchestration-loop]] |
+| 中断机制 | 允许用户或系统优雅停止 | [[orchestration-loop]] |
+| 工具调用解析 | 把 LLM 输出转成可执行动作 | [[output-parsing]] |
+| 工具执行 | 同步或异步调用外部能力 | [[agent-tool-system]] |
+| 结果回灌 | 把工具结果重新放入上下文 | [[context-management]] |
+| 终止判断 | 任务完成、预算耗尽、用户中断 | [[error-handling]] |
 
 ## 设计权衡
 

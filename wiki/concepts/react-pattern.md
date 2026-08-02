@@ -38,7 +38,7 @@ ReAct 是 [[orchestration-loop]] 最常见的一种具体实现。编排循环�
 from typing import Callable
 import json
 
-# 假设的工具注册表
+# 假设的工具注册表（tool registry 是 [[agent-tool-system]] 的一部分）
 tools: dict[str, Callable] = {
     "search": lambda q: f"Search results for '{q}': Paris is the capital of France.",
     "calculate": lambda expr: str(eval(expr)),
@@ -161,11 +161,11 @@ CoT 只要求模型"一步一步想"，不强制与外部工具交互。ReAct �
 
 ## 与其他概念的关系
 
-- ReAct 运行在 [[orchestration-loop]] 内部。
+- ReAct 运行在 [[orchestration-loop]] 内部，每次 Action 都需要 [[agent-tool-system]] 分发执行。
 - 每次 Action 前通常需要 [[prompt-building-for-agents]] 组装合适的 system prompt。
 - Action 的输出由 [[output-parsing]] 解析为工具调用。
 - 工具调用本身由 [[agent-tool-system]] 分发执行。
-- 多轮历史由 [[agent-memory-system]] 或 [[state-management]] 维护。
+- 多轮历史由 [[agent-memory-system]]、[[state-management]] 或 [[context-management]] 维护。
 
 ## 原始文件
 
