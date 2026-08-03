@@ -1,9 +1,9 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-04-20
-sources: [understand-anything-mcp, panniantong-agent]
-tags: [mcp, model-context-protocol, tool-calling, agent, interoperability]
+updated: 2026-08-03
+sources: [understand-anything-mcp, panniantong-agent, mcp-permission-middleware]
+tags: [mcp, model-context-protocol, tool-calling, agent, interoperability, oauth, authorization]
 ---
 
 # MCP (Model Context Protocol)
@@ -60,7 +60,49 @@ MCP 采用类似 LSP（Language Server Protocol）的客户端-服务器模式�
 - 性能开销：协议转换带来额外延迟。
 - 错误处理：跨服务调用的错误传播和调试较复杂。
 
+## 授权与权限控制
+
+远程 MCP 服务器（HTTP transport）推荐基于 **OAuth 2.1 + PKCE** 的标准授权流程：
+
+1. 客户端首次请求收到 `401 Unauthorized` + `WWW-Authenticate: Bearer` + `resource_metadata` 地址。
+2. 客户端拉取 **Protected Resource Metadata (PRM)**，获得授权服务器地址和 `scopes_supported`。
+3. 做 OIDC/OAuth discovery，拿到 authorize/token endpoint。
+4. 用户授权后，客户端获得 access token。
+5. 后续 MCP 请求在 `Authorization: Bearer <token>` 中携带 token。
+
+服务端拿到 token 后必须校验：
+
+- **有效性**：introspection endpoint 或 JWT 签名验证。
+- **Audience (`aud`)**：确认 token 是发给本 MCP 服务器的，防止 token passthrough。
+- **Scope**：检查 token 是否包含当前工具所需的 scope。
+- **主体身份**：从 `sub` / `client_id` 取出身份，用于后续 RBAC/ABAC。
+
+### 权限模式分层
+
+| 模式 | 粒度 | 说明 |
+|---|---|---|
+| **Scope** | 粗 | OAuth scope，如 `mcp:tools:read` / `mcp:tools:write` / `mcp:tools:admin` |
+| **RBAC** | 中 | 按角色决定可见/可调用的工具 |
+| **ABAC** | 细 | 按属性判断，如部门、金额、时间 |
+| **CBAC** | 上下文 | 身份 + 上下文 + 资源同时评估，如未信任输入禁止高风险工具 |
+
+安全最佳实践反对 wildcard scope（`files:*`、`admin:*`），主张 **scope minimization** 和按需 step-up 授权。
+
+## MCP 安全威胁
+
+| 风险 | 要点 |
+|---|---|
+| **Confused Deputy** | MCP proxy 用静态 client_id 代理多客户端，攻击者利用 consent cookie 跳过授权，把 code 转发到恶意 redirect_uri |
+| **Token Passthrough** | 服务端不校验 audience，把客户端 token 原样透传给下游 API |
+| **SSRF** | 恶意 MCP 服务器在 OAuth metadata 里填内网/云元数据地址，诱导客户端发起内网请求 |
+| **Local MCP Server Compromise** | 一键安装的本地 MCP server 可能是恶意二进制，执行任意命令 |
+| **State Handle Hijacking** | 工具返回的 state handle 未绑定用户身份，可被猜测或冒用 |
+| **Scope 过度授权** | 一次性请求全部 scope，stolen token 影响面大 |
+
+参考实现与 demo 见 [[mcp-permission-middleware]]。
+
 ## 相关来源
 
 - [[understand-anything-mcp]] —— Understand-Anything 项目及其 MCP 集成实践
 - [[panniantong-agent]] —— Agent-Reach 通过 MCP 为 Agent 提供互联网访问能力
+- [[mcp-permission-middleware]] —— MCP 授权与 RBAC/ABAC/CBAC 中间件示例

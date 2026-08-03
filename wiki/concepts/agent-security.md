@@ -1,9 +1,9 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-07-26
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
-tags: [agent-architecture, security, prompt-injection, ssrf, sandbox]
+updated: 2026-08-03
+sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, mcp-permission-middleware]
+tags: [agent-architecture, security, prompt-injection, ssrf, sandbox, mcp, authorization, rbac, abac, cbac]
 ---
 
 # Agent Security（Agent 安全防护）
@@ -60,3 +60,33 @@ Agent 安全防护是一套分层纵深防御体系，防止 LLM 被诱导执行
 ## 当前证据
 
 当前分析主要来自 [[hermes-agent]] 的 `approval.py`、`url_safety.py`、`redact.py`、`skills_guard.py` 实现。其他框架待补充。
+
+## 上下文感知授权（CBAC / ABAC / RBAC）
+
+Agent 的权限不能只由身份决定。推荐把 **身份 + 上下文 + 资源** 三者一起评估：
+
+| 维度 | 示例属性 |
+|---|---|
+| 身份 | 用户角色、部门、Agent ID |
+| 上下文 | 数据来源（内部/外部未验证）、数据敏感度（PII/PHI）、当前任务 |
+| 资源 | 目标工具、API、文件路径 |
+
+典型规则：
+- 普通员工 Agent 只能 `add_expense`。
+- 经理可以 `approve_expense`，但金额 `< 1000`。
+- 处理未信任外部输入时，禁止调用 `shell_exec` / `send_email` 等高风险工具。
+
+实现上可由外部策略引擎（如 Cerbos、OpenFGA）统一决策，避免把权限规则硬编码在每个工具里。
+
+## MCP 协议层特有风险
+
+| 风险 | 要点 | 缓解 |
+|---|---|---|
+| **Confused Deputy** | MCP proxy 用静态 client_id 代理多客户端，攻击者利用 consent cookie 跳过授权，把 code 转发到恶意 redirect_uri | 每客户端单独 consent；严格校验 redirect_uri；state 单用短时效 |
+| **Token Passthrough** | 服务端不校验 audience，把客户端 token 原样透传给下游 API | 必须验证 `aud`，拒绝非本服务 token |
+| **SSRF** | 恶意 MCP 服务器在 OAuth metadata 里填内网/云元数据地址，诱导客户端发起内网请求 | 限制 OAuth URL 只能 HTTPS；阻断私有 IP；用 egress proxy |
+| **Local MCP Server Compromise** | 一键安装的本地 MCP server 可能是恶意二进制，执行任意命令 | 安装前显式 consent；沙盒运行；最小权限 |
+| **State Handle Hijacking** | 工具返回的 state handle 未绑定用户身份，可被猜测或冒用 | handle 绑定已验证用户；安全随机数；设置过期 |
+| **Scope 过度授权** | 一次性请求全部 scope， stolen token 影响面大 | scope minimization；按需 step-up |
+
+参考实现见 [[mcp-permission-middleware]]。

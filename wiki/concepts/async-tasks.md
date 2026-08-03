@@ -1,9 +1,9 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-04-20
+updated: 2026-08-03
 sources: [fastapi-celery-redis]
-tags: [celery, async, distributed-tasks, message-queue, fastapi]
+tags: [celery, async, distributed-tasks, message-queue, fastapi, agent-orchestration]
 ---
 
 # 异步任务
@@ -37,6 +37,16 @@ Celery 是 Python 生态中最成熟的异步任务框架，其核心架构包�
 - **图片/视频处理**：缩略图生成、格式转换、视频切片等多媒体处理任务。
 - **第三方 API 调用**：支付回调、物流查询、社交媒体发布等外部依赖操作。
 - **定时任务**：每日数据备份、定期统计报表、缓存预热等周期性工作。
+
+## 与 Agent 编排的关系
+
+在 Agent 系统里，异步任务不仅仅是后台执行，还涉及 **事件驱动的异步 Agent 架构**：
+
+- Agent 需要管理长时间运行的工具调用，不被同步等待阻塞。
+- 外部事件（邮件、日历、系统告警、第三方回调）可能随时打断当前任务。
+- 需要事件队列 + 优先级策略：取消式（紧急）、队列式（常规）、并行式（独立轻量查询）。
+
+这与 [[orchestration-loop]] 的 ReAct 循环形成张力：LLM 训练范式假设同步序列（tool call → tool result），而真实部署需要异步打断与恢复。当前工程上常用占位符、异步工具接口（`initiate_*` / `on_*_event`）和事件状态栏来缓解。
 
 ## 相关来源
 

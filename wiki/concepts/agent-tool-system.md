@@ -1,9 +1,9 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-07-26
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
-tags: [agent-architecture, tool-system, mcp, tool-registry]
+updated: 2026-08-03
+sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, mcp-permission-middleware]
+tags: [agent-architecture, tool-system, mcp, tool-registry, rbac, abac, adapter]
 ---
 
 # Agent Tool System（工具系统）
@@ -49,12 +49,50 @@ tags: [agent-architecture, tool-system, mcp, tool-registry]
 | 沙箱/权限 | 环境后端 ABC | `restrict_to_workspace` 注入 allowed_dir | Docker 沙箱 + `SandboxFsBridge` | `PermissionNext` 规则引擎 |
 | 独特设计 | 工具集分组 + `check_fn` TTL 缓存 | 先 cast 再 validate 的"类型防火墙" | 多层策略管道 + 循环检测 | DSL 定义 + zod 一体 |
 
+## 工具类型学（五类工具）
+
+参考 Agent 工具调用方向与作用对象，可把工具分为五类：
+
+| 类型 | 调用方向 | 作用对象 | 设计重点 |
+|---|---|---|---|
+| 感知工具 | Agent 主动调用 | 获取信息 | 返回结构化候选、分页/offset、显式截断、可缓存可并行 |
+| 执行工具 | Agent 主动调用 | 改变世界 | 安全优先：输入校验、权限、沙箱、自动验证、幂等 |
+| 协作工具 | Agent 主动调用 | 驱动其他 Agent 或人类 | 上下文传递策略、任务边界、HITL、通知机制 |
+| 事件触发工具 | Agent 注册、外部触发 | 驱动 Agent 开始执行 | 触发条件过滤、事件载荷设计、异步队列 |
+| 用户沟通工具 | Agent 主动调用 | 向用户传递信息 | 异步消息、多渠道、召回机制、虚拟身份 |
+
+## Adapter 归一化模式
+
+当同一类工具可能对接多个外部服务（如搜索可用 DuckDuckGo / SerpAPI / Bing，天气可用 Open-Meteo / OpenWeatherMap）时，建议在工具层与外部 API 之间加一层 **Adapter**：
+
+- 把不同 API 的入参/出参映射为统一内部 schema。
+- 处理认证、重试、限流、分页、错误包装。
+- 工具层只依赖统一接口，换源时不改工具逻辑。
+
+典型接口：
+
+```python
+class BaseSearchAdapter:
+    async def search(self, query: str, cursor: str | None = None) -> SearchPage: ...
+```
+
+## 执行-验证-反馈闭环
+
+执行工具（尤其是写文件、运行代码）应在工具内部集成自动验证：
+
+- 写代码文件后自动调用 linter（如 `py_compile`、`eslint`）。
+- 执行命令后检查返回码，长输出做截断持久化。
+- 验证结果作为工具返回值的一部分回传给 Agent，使其能在下一轮自修正。
+
+这与 [[validation-loop]] 的“调用后护栏”是同一理念在不同层级的落地。
+
 ## 与相关概念的关系
 
 - 工具系统在 [[orchestration-loop]] 内被反复调用。
 - 工具执行结果需要 [[output-parsing]] 规范化后回灌上下文。
 - 危险工具需要 [[agent-security]] 和 [[validation-loop]] 审批。
 - MCP 工具是工具系统与 [[mcp]] 协议的交汇点。
+- 权限钩子与动态工具可见性可参考 [[mcp-permission-middleware]]。
 
 ## 当前证据
 

@@ -46,6 +46,9 @@ tags:
       - [[react-pattern|ReAct：推理 → 行动 → 观察]]
       - 2.1.2 Token 预算与中断
       - 2.1.3 串行 / 并行执行
+      - 2.1.4 异步事件驱动
+        - 2.1.4.1 事件队列与优先级
+        - 2.1.4.2 取消 / 队列 / 并行处理
   - 3. 认知能力
     - 3.1 记忆系统
       - 3.1.1 四类记忆：User / Feedback / Project / Reference
@@ -73,18 +76,33 @@ tags:
     - 5.1 工具注册与发现
       - 5.1.1 自注册 / 装饰器扫描
       - 5.1.2 MCP 动态刷新
+      - 5.1.3 工具类型学
+        - 5.1.3.1 感知 / 执行 / 协作 / 事件触发 / 用户沟通
+      - 5.1.4 动态发现策略
+        - 5.1.4.1 MCP 动态刷新
+        - 5.1.4.2 Skills 渐进式披露
     - 5.2 Schema 编排
       - 5.2.1 Schema 序列化
       - 5.2.2 参数强制 / 修复
+      - 5.2.3 Adapter 归一化
     - 5.3 工具调度
       - 5.3.1 Dispatch handler
       - 5.3.2 权限钩子
+      - 5.3.3 Scope / RBAC / ABAC 校验
     - 5.4 工具裁剪
       - 5.4.1 子 Agent 工具集交集
       - 5.4.2 黑名单 / 权限组
+      - 5.4.3 动态工具可见性
     - 5.5 MCP 协议
       - 5.5.1 Client-Server 标准
       - 5.5.2 外部服务接入
+      - 5.5.3 授权与权限
+        - 5.5.3.1 OAuth 2.1 / PRM / audience 校验
+        - 5.5.3.2 scope minimization / step-up
+      - 5.5.4 MCP 协议层风险
+        - 5.5.4.1 confused deputy
+        - 5.5.4.2 token passthrough
+        - 5.5.4.3 SSRF / local server compromise
   - 6. 状态与持久化
     - 6.1 运行时状态
       - 6.1.1 内存状态
@@ -99,11 +117,19 @@ tags:
       - 7.1.1 Schema 清洗
       - 7.1.2 审批状态
       - 7.1.3 调用后护栏
+      - 7.1.4 执行后自动验证（linter / 测试）
     - 7.2 安全防护
       - 7.2.1 HARDLINE / DANGEROUS 命令列表
       - 7.2.2 SSRF / 路径遍历防护
       - 7.2.3 凭证脱敏
       - 7.2.4 沙箱后端
+      - 7.2.5 MCP 协议层风险
+        - 7.2.5.1 confused deputy
+        - 7.2.5.2 token passthrough
+        - 7.2.5.3 SSRF / local server compromise
+      - 7.2.6 上下文感知授权
+        - 7.2.6.1 RBAC / ABAC / CBAC
+        - 7.2.6.2 动态最小权限 / scope minimization
   - 8. 韧性
     - 8.1 错误处理
       - 8.1.1 ClassifiedError 分类
