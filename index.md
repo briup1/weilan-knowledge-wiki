@@ -9,18 +9,29 @@
 [[boris-cherny]] —— Claude Code 之父，分享 13 个高效使用技巧
 [[celery]] —— Python 分布式任务队列，支持异步任务和定时任务
 [[claude-code]] —— Anthropic 的终端 AI 编程助手
+[[codex]] —— OpenAI 的 AI 编程助手生态（CLI + 桌面端 App）
 [[cursor]] —— AI 驱动的代码编辑器，VS Code 分支
 [[docker]] —— 容器化平台，支持镜像、容器、Compose 编排
 [[fastapi]] —— 现代、高性能的 Python Web 框架
 [[fastapi-users]] —— FastAPI 的用户认证库，支持 OAuth/JWT
+[[hermes-agent]] —— NousResearch 开源的持久化自主 Agent，10 万+ Star
+[[langgraph]] —— LangChain 旗下 Agent 编排框架，显式状态图，厚 Harness 哲学代表
 [[moneyprinterturbo]] —— AI 一键生成高清短视频
 [[obsidian]] —— 本地优先的知识管理工具，支持双向链接
+[[oh-my-claudecode]] —— Claude Code 多智能体编排插件，31K+ Star
+[[openai-agents-sdk]] —— OpenAI 代码优先的 Agent Harness 框架（Codex + Symphony）
 [[redis]] —— 内存数据结构存储，用作缓存和消息队列
 [[remotion]] —— React 编程式视频创作库
+[[warp]] —— 现代智能终端（Agentic Development Environment），70 万+ 开发者
 [[yt-dlp]] —— 视频下载与字幕提取工具，支持 1800+ 站点
+[[superpowers]] —— AI 编程代理技能框架，强制 TDD + 七阶段工作流，146k+ Star
+[[bmad-method]] —— 文档驱动敏捷框架，12+ 专业代理角色
+[[openspec]] —— 规格驱动开发框架，轻量级需求规格层
+[[openharness]] —— AI 代理运行引擎，支持国内模型
 
 ## Concepts
 
+[[agent-harness]] —— Agent Harness：LLM 之外的工程化基础设施，12 大模块的系统框架
 [[agent-memory-system]] —— Agent 记忆系统：user/feedback/project/reference 四类结构化记忆
 [[ai-video-generation]] —— AI 视频生成：文本/图片到视频的自动化工作流
 [[async-tasks]] —— 异步任务：Celery 架构与适用场景
@@ -28,6 +39,7 @@
 [[containerization]] —— 容器化：Docker 与虚拟机的对比及微服务部署
 [[jwt-authentication]] —— JWT 认证：结构与原理，及与 Session 认证对比
 [[knowledge-graph]] —— 知识图谱：实体-关系模型，与向量检索对比
+[[llm-wiki]] —— LLM Wiki：Karpathy 提出的知识沉淀范式，提前编译可持续演化的知识结构
 [[load-testing]] —— 负载测试：Locust 并发模拟与性能指标
 [[mcp]] —— MCP (Model Context Protocol)：标准化工具调用协议
 [[multi-agent-collaboration]] —— 多 Agent 协作：Team Mode、子 Agent 与角色分工
@@ -36,7 +48,15 @@
 
 ## Sources
 
+[[ai-knowledge-evolution]] —— AI 知识库技术演进拆解：从 RAG 到 NotebookLM，再到 LLM Wiki
+[[agent-harness-anatomy]] —— 万字讲透 Agent Harness 十二大模块：2026 年 AI 工程化最核心的基础设施
 [[agent-skills-design]] —— Agent Skills 实战：把设计文档写成 Skill
+[[agent-teams-tmux-worktrees]] —— Agent Teams 全景：tmux + worktrees 跑 4 个 Claude 并行交付
+[[harness-engineering-guide]] —— Harness Engineering 完全指南：让 Claude Code 真正可靠地完成任务
+[[hermes-agent-guide]] —— Hermes Agent 完全新手指南：AI界最快破10万星的开源项目
+[[openai-codex-guide]] —— OpenAI Codex 完全新手指南：Codex 凭什么和 Claude Code 抢饭碗？
+[[warp-guide]] —— Warp 完全指南：70万开发者都在用的AI终端，从安装到实战一篇搞定
+[[oh-my-claudecode-guide]] —— oh-my-claudecode 深度实战：3w星神级插件，5 种模式 + 19 Agent
 [[aicomicbuilder]] —— AIComicBuilder：AI 驱动的动画漫画生成器
 [[aidc-aipixelle-video]] —— AIDC AI Pixelle Video：全自动短视频引擎
 [[aitoearn]] —— AiToEarn：AI 变现项目
@@ -75,10 +95,17 @@
 [[treesearch-retrieval]] —— TreeSearch：让文档检索回归本质
 [[understand-anything-mcp]] —— Understand-Anything：代码库转交互式知识图谱
 [[vimax-agentic-video]] —— ViMax：Agentic 视频生成（导演+编剧+制片人）
+[[superpowers-guide]] —— Superpowers 完全指南：安装教程、横向对比、七阶段工作流详解
+
+## Threads
+
+[[rag-thread]] —— RAG 技术栈模块化技能树：从 Chunking 到 Evaluation 的完整脉络 + 面试题
+[[agent-harness-thread]] —— Agent Harness 十二模块技能树：从编排循环到环境初始化的工程化脉络 + 面试题
 
 ## Synthesis
 
 [[ai-memory-vs-human-km]] —— AI 记忆系统与 Obsidian 知识管理的趋同与分野
+[[ai-terminal-tools-comparison]] —— 终端 AI 工具选型对比：Claude Code/Codex/Warp/Hermes 四维度决策矩阵
 [[ai-video-media-landscape]] —— AI 视频/媒体创作领域全景：生成→编辑→控制→分发的能力分层与工作流组合
 [[claude-code-agent-ecosystem-landscape]] —— Claude Code/AI Agent 辅助开发生态全景：从终端助手到工程团队的演进
 [[fastapi-ecosystem-landscape]] —— FastAPI 技术栈知识全景图：分层结构、学习路径与实战组合

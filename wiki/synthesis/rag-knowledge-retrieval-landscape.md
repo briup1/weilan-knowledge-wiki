@@ -251,6 +251,10 @@ ideal-knowledge-system/
 
 ---
 
+## 技能树脉络
+
+- [[rag-thread]] —— RAG 技术栈模块化技能树：从 Chunking 到 Evaluation 的完整学习路径 + 面试题
+
 ## 关键概念速查
 
 - [[rag]] —— 检索增强生成的核心流程与适用场景

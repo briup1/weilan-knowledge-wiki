@@ -70,7 +70,9 @@
       "Bash(mv \"PanniantongAgent-Reach Give your AI agent eyes to see the entire internet. Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, XiaoHongShu — one CLI, zero API fees.md\" \"Agent-Reach AI agent internet search tool.md\")",
       "Bash(git commit *)",
       "Bash(git push *)",
-      "Bash(curl -I https://github.com)"
+      "Bash(curl -I https://github.com)",
+      "WebSearch",
+      "Bash(grep -E \"\\\\.py$\")"
     ]
   }
 }

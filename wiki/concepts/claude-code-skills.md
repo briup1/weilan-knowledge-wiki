@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-04-20
-sources: [claude-code-gstack, agent-skills-design, fireworks-tech-graph]
+updated: 2026-05-18
+sources: [claude-code-gstack, agent-skills-design, fireworks-tech-graph, superpowers-guide]
 tags: [claude-code-skills, skill-system, agent, workflow, slash-command]
 ---
 
@@ -58,13 +58,15 @@ Skills 可安装在两个层级：
 
 ## 与其他工具扩展机制的对比
 
-| 维度 | Claude Code Skills | VS Code 插件 | Cursor 插件 |
-|------|-------------------|-------------|-------------|
-| 扩展方式 | SKILL.md 配置文件 | TypeScript/JavaScript 代码 | 类似 VS Code 插件 |
-| 开发门槛 | 低（写 Markdown） | 高（需编程） | 高（需编程） |
-| 触发方式 | 自然语言 / 斜杠命令 | 命令面板 / 快捷键 | 命令面板 / 快捷键 |
-| 适用场景 | AI 工作流、规范模板 | UI 扩展、编辑器功能 | AI 辅助编码 |
-| 团队协作 | 随仓库共享 | 通过市场发布 | 通过市场发布 |
+| 维度 | Claude Code Skills | Superpowers | VS Code 插件 | Cursor 插件 |
+|------|-------------------|-------------|-------------|-------------|
+| 扩展方式 | SKILL.md 配置文件 | SKILL.md 技能文件 | TypeScript/JavaScript 代码 | 类似 VS Code 插件 |
+| 开发门槛 | 低（写 Markdown） | 极低（安装即用） | 高（需编程） | 高（需编程） |
+| 触发方式 | 自然语言 / 斜杠命令 | 自动触发 / 名称触发 | 命令面板 / 快捷键 | 命令面板 / 快捷键 |
+| 核心侧重 | 团队规范与自定义角色 | 工程纪律与 TDD 强制流程 | UI 扩展、编辑器功能 | AI 辅助编码 |
+| 适用场景 | AI 工作流、规范模板 | 全链路开发工作流标准化 | UI 扩展、编辑器功能 | AI 辅助编码 |
+| 团队协作 | 随仓库共享 | 个人+小团队 | 通过市场发布 | 通过市场发布 |
+| 跨平台 | 仅 Claude Code | Claude/Cursor/Codex/Gemini 等 | VS Code 专属 | Cursor 专属 |
 
 ## 适用场景
 
@@ -72,6 +74,7 @@ Skills 可安装在两个层级：
 - **重复工作流自动化**：将每天重复多次的内循环工作流（如 `/commit-push-pr`）固化为斜杠命令。
 - **领域知识注入**：为特定技术栈（如 FastAPI + React）创建 Skill，注入最佳实践和常见模式。
 - **质量门禁**：创建自动化检查 Skill，在提交前验证代码风格、测试覆盖率和文档完整性。
+- **叠加 Superpowers**：将 Claude Code Skills 用于团队特有的规范模板，同时叠加 [[superpowers]] 约束通用的 TDD 和代码审查流程，实现「自定义规范 + 通用纪律」的组合。
 
 ## 最佳实践
 
@@ -86,3 +89,4 @@ Skills 可安装在两个层级：
 - [[claude-code-gstack]] —— gstack 的 28 个专业角色 Skill 体系
 - [[agent-skills-design]] —— 将设计文档写成 Skill 的实战教程
 - [[fireworks-tech-graph]] —— 自然语言生成架构图的 Skill 案例
+- [[superpowers-guide]] —— Superpowers 技能框架的完整指南与横向对比

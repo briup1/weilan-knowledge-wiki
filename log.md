@@ -1,5 +1,114 @@
 # Knowledge Forest 日志
 
+## [2026-05-18] ingest | Superpowers 完全指南：AI 编程代理技能框架与四工具横向对比
+
+**操作**: 入库（ingest）
+**源文件数**: 1
+**新增 source 页面**: 1
+- `wiki/sources/superpowers-guide.md` —— Superpowers 安装教程、四框架横向对比、七阶段工作流详解
+
+**新增 entity 页面**: 4
+- `wiki/entities/superpowers.md` —— AI 编程代理技能框架（146k Star，TDD 强制工作流）
+- `wiki/entities/bmad-method.md` —— 文档驱动敏捷框架（44k Star，12+ 专业角色）
+- `wiki/entities/openspec.md` —— 规格驱动开发框架（39k Star，轻量需求规格层）
+- `wiki/entities/openharness.md` —— AI 代理运行引擎（8.6k Star，支持国内模型）
+
+**更新 synthesis 页面**: 1
+- `wiki/synthesis/claude-code-agent-ecosystem-landscape.md` —— 新增 AI 编程代理框架选型小节，纳入 Superpowers/BMAD/OpenSpec/OpenHarness 四款工具
+
+**更新 concept 页面**: 1
+- `wiki/concepts/claude-code-skills.md` —— 新增 Superpowers 横向对比表格与叠加使用建议
+
+**更新 entity 页面**: 1
+- `wiki/entities/claude-code.md` —— 生态插件章节新增 Superpowers 上架信息
+
+## [2026-05-18] ingest | 7篇文章入库：Codex/Warp/Hermes/Harness/Agent Teams/OMC/LLM Wiki
+
+**操作**: 批量入库（ingest）
+**源文件数**: 7
+**新增 source 页面**: 7
+- `wiki/sources/ai-knowledge-evolution.md` —— NotebookLM 七层架构与 LLM Wiki 演进
+- `wiki/sources/agent-teams-tmux-worktrees.md` —— tmux + worktrees 跑 4 个 Claude 并行交付
+- `wiki/sources/harness-engineering-guide.md` —— Harness Engineering 完全指南
+- `wiki/sources/hermes-agent-guide.md` —— Hermes Agent 完全新手指南
+- `wiki/sources/openai-codex-guide.md` —— OpenAI Codex 完全新手指南
+- `wiki/sources/warp-guide.md` —— Warp 完全指南
+- `wiki/sources/oh-my-claudecode-guide.md` —— oh-my-claudecode 深度实战
+
+**新增 entity 页面**: 4
+- `wiki/entities/codex.md` —— OpenAI Codex（CLI + 桌面端）
+- `wiki/entities/warp.md` —— Warp 智能终端
+- `wiki/entities/oh-my-claudecode.md` —— OMC 多 Agent 编排插件
+- `wiki/entities/hermes-agent.md` —— Hermes 持久化自主 Agent
+
+**新增 concept 页面**: 1
+- `wiki/concepts/llm-wiki.md` —— Karpathy 提出的知识沉淀范式
+
+**更新 entity 页面**: 1
+- `wiki/entities/claude-code.md` —— 新增 Agent Teams、Harness Engineering、OMC 集成章节
+
+**更新 concept 页面**: 3
+- `wiki/concepts/agent-harness.md` —— 新增 Harness Engineering 四要素、3-Agent 架构、Sprint Contract
+- `wiki/concepts/multi-agent-collaboration.md` —— 新增 Agent Teams 工程模式、OMC 19 Agent 体系
+- `wiki/concepts/rag.md` —— 新增 NotebookLM 七层架构、AI 知识库三阶段演进
+
+**新增 synthesis 页面**: 1
+- `wiki/synthesis/ai-terminal-tools-comparison.md` —— 四工具七维对比矩阵 + 选型决策树 + 推荐组合方案
+
+**更新 synthesis 页面**: 1
+- `wiki/synthesis/claude-code-agent-ecosystem-landscape.md` —— 扩展终端层、IDE 层、常驻 Agent 层，新增 Claude Code vs Codex/Warp/Hermes 对比
+
+**关键发现**:
+- 终端 AI 工具正在分化：Claude Code（深度编码）↔ Codex（生态+桌面）↔ Warp（终端体验）↔ Hermes（常驻运维），四者占据不同 niche
+- LLM Wiki 是 RAG 的进化方向：从「查询时组装」到「预编译知识」
+- Harness Engineering 四要素（Prompt 结构 + 状态文件 + 工具配置 + 验证机制）使 Agent 产出可靠性提升 2-3 倍
+- OMC 的 19 Agent + 3 级模型路由代表了「编排层」的崛起
+
+---
+
+## [2026-05-08] thread | 引入知识脉络（Thread）页面类型
+
+**操作**: 架构升级 + 内容创建
+**新增页面类型**: `type: thread`，存储于 `wiki/threads/`
+**新增 thread 页面**: 2
+- `wiki/threads/rag-thread.md` —— RAG 技术栈 5 模块技能树（Chunking→Embedding→Retrieval→Generation→Evaluation），含 15+ 面试题
+- `wiki/threads/agent-harness-thread.md` —— Agent Harness 12 模块技能树，含 20+ 面试题
+
+**架构变更**:
+- `CLAUDE.md`: 目录结构增加 `threads/`，type 枚举增加 `thread`，入库流程增加"知识脉络（纵向）"方向
+- `index.md`: 增加 "Threads" 分类
+- 反向链接: `rag.md` / `agent-harness.md` 增加"相关脉络"小节
+- 交叉引用: `rag-knowledge-retrieval-landscape.md` / `claude-code-agent-ecosystem-landscape.md` 增加"技能树脉络"小节
+
+**Thread 格式规范**:
+- 模块关系图（Mermaid）+ 模块速查表
+- 每模块包含：核心概念、具体实现表格、面试题/关注问题、相关来源
+- 学习路径建议 + 推荐实践项目
+- 版本记录（可追加更新）
+
+---
+
+## [2026-05-08] ingest | 万字讲透Agent Harness的十二大模块
+
+**操作**: 入库（ingest）
+**源文件**: raw/万字讲透Agent Harness的十二大模块：2026 年 AI 工程化最核心的基础设施.md
+**新增页面**: 4
+- `wiki/sources/agent-harness-anatomy.md`（source 页面）
+- `wiki/concepts/agent-harness.md`（核心概念：Agent Harness）
+- `wiki/entities/langgraph.md`（实体：LangGraph 框架）
+- `wiki/entities/openai-agents-sdk.md`（实体：OpenAI Agents SDK）
+**更新页面**: 4
+- `wiki/entities/claude-code.md`（添加 Harness 架构章节）
+- `wiki/concepts/agent-memory-system.md`（添加 Harness 三层记忆架构 + 8 优先级层级）
+- `wiki/concepts/multi-agent-collaboration.md`（添加子 Agent 编排模式 + Token 经济学）
+- `wiki/synthesis/claude-code-agent-ecosystem-landscape.md`（添加 Harness 层视角）
+
+**关键发现**:
+- Agent Harness 是 2026 年 AI 工程领域最核心的新概念——"如果你不是模型，你就是 Harness"
+- LangChain TerminalBench 2.0：同一模型通过 Harness 优化，排名从 30+ 跃升至第 5
+- 生态分化为薄 Harness（Claude Code）vs 厚 Harness（LangGraph）两条路线
+- "脚手架原则"（为移除而构建）提供了两者的调和框架
+
 ## [2026-04-20] ingest | 首批39篇文章入库
 
 **操作**: 批量入库（ingest）

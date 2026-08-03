@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "13dbadbc6fa8d7e5",
+        "id": "67314bab420173a9",
         "type": "tabs",
         "children": [
           {
-            "id": "d01722955bd27631",
+            "id": "876706b668ccd5cf",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "wiki/threads/rag-thread.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "rag-thread"
             }
           }
         ]
@@ -31,7 +35,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "2b055373325ab1e8",
+            "id": "2ae2bf4ffec6d456",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -49,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:FastAPI-Users",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -179,43 +183,46 @@
       "bases:新建数据库": false
     }
   },
-  "active": "d01722955bd27631",
+  "active": "876706b668ccd5cf",
   "lastOpenFiles": [
-    "pyproject.toml",
-    "log.md",
-    "index.md",
-    "CLAUDE.md",
+    "wiki/threads/未命名.md",
+    "wiki/threads/rag-thread.md",
     "wiki/synthesis/rag-knowledge-retrieval-landscape.md",
-    "wiki/synthesis/multi-agent-architecture-comparison.md",
-    "wiki/synthesis/knowledge-graph-tools-comparison.md",
-    "wiki/synthesis/fastapi-ecosystem-landscape.md",
+    "raw/archive/MaxKB-v2-RAG-Domain-Flow-Map.md",
+    "wiki/threads/agent-harness-thread.md",
+    "2026-06-12.md",
+    "未命名 2.canvas",
+    "未命名 1.canvas",
+    "未命名.canvas",
+    "未命名.base",
+    "index.md",
     "wiki/synthesis/claude-code-agent-ecosystem-landscape.md",
-    "wiki/synthesis/ai-video-media-landscape.md",
-    "wiki/synthesis/ai-memory-vs-human-km.md",
-    "wiki/sources/vimax-agentic-video.md",
-    "wiki/sources/understand-anything-mcp.md",
-    "wiki/sources/treesearch-retrieval.md",
-    "wiki/sources/panniantong-agent.md",
-    "wiki/sources/openscreen.md",
-    "wiki/sources/openmontage.md",
-    "wiki/sources/openmaic.md",
-    "wiki/sources/opencode-remotion.md",
-    "wiki/sources/open-source-short-drama-projects.md",
-    "wiki/sources/obsidian-knowledge-base.md",
-    "wiki/sources/moneyprinterturbo.md",
-    "wiki/sources/last30days-skill.md",
-    "wiki/sources/hyperframes.md",
-    "wiki/sources/hyper-extract.md",
-    "wiki/sources/hermes-agent-setup.md",
-    "wiki/synthesis",
-    "wiki/sources",
-    "wiki/queries",
-    "wiki/entities",
-    "wiki/concepts",
-    "wiki",
-    "raw/assets",
-    "raw/archive",
-    "raw",
-    "wiki/Knowledge-Management/articles"
+    "raw/archive/20250904_FastAPI-Users保姆级教程（七）：实战篇——构建包含用户认证的项目模板.md",
+    "wiki/concepts/agent-harness.md",
+    "CLAUDE.md",
+    "raw/archive/Harness Engineering 完全指南：让 Claude Code 真正可靠地完成任务.md",
+    "log.md.tmp.1720643.0772ce06240f",
+    "raw/Superpowers 完全指南：用它少返工80%.md",
+    "raw/archive/Superpowers 完全指南：用它少返工80%.md",
+    "index.md.tmp.1720643.d50b95b18c64",
+    "index.md.tmp.1720643.742a89f64690",
+    "wiki/entities/claude-code.md.tmp.1720643.bbc8706b791f",
+    "wiki/entities/claude-code.md.tmp.1720643.c0e12da55944",
+    "wiki/synthesis/claude-code-agent-ecosystem-landscape.md.tmp.1720643.5a9740585f04",
+    "wiki/synthesis/claude-code-agent-ecosystem-landscape.md.tmp.1720643.6c04e8ab456d",
+    "wiki/synthesis/claude-code-agent-ecosystem-landscape.md.tmp.1720643.10111e952459",
+    "wiki/synthesis/claude-code-agent-ecosystem-landscape.md.tmp.1720643.9a29bca357fa",
+    "wiki/sources/superpowers-guide.md",
+    "wiki/entities/openharness.md",
+    "wiki/entities/openspec.md",
+    "wiki/entities/bmad-method.md",
+    "wiki/entities/superpowers.md",
+    "raw/archive/oh-my-claudecode 深度实战：3w星神级插件—5 种模式 + 19 Agent，把 AI 编程提效 2-5 倍.md",
+    "raw/archive/Warp完全指南：70万开发者都在用的AI终端，从安装到实战一篇搞定.md",
+    "raw/archive/OpenAI Codex 完全新手指南：Codex 凭什么和 Claude Code 抢饭碗？.md",
+    "raw/archive/Hermes Agent 完全新手指南：AI界最快破10万星的开源项目.md",
+    "raw/archive/Agent Teams 全景tmux + worktrees 跑 4 个 Claude 并行交付.md",
+    "raw/archive/AI 知识库技术演进拆解：从 RAG 到 NotebookLM，再到 LLM Wiki.md",
+    "wiki/synthesis/ai-terminal-tools-comparison.md"
   ]
 }

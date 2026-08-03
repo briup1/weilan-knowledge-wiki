@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-04-20
-sources: [obsidian-knowledge-base, treesearch-retrieval]
+updated: 2026-05-18
+sources: [obsidian-knowledge-base, treesearch-retrieval, ai-knowledge-evolution]
 tags: [rag, llm, retrieval, vector-search, knowledge-management]
 ---
 
@@ -42,7 +42,46 @@ RAG 的核心流程分为两个阶段：
 - **领域专家系统**：医学、法律等专业领域，通过检索权威文献增强回答可信度。
 - **时效性内容**：新闻、股价等动态信息，通过检索最新文档弥补模型训练数据的截止日期限制。
 
+## 相关脉络
+
+- [[rag-thread]] —— RAG 技术栈模块化技能树：Chunking → Embedding → Retrieval → Generation → Evaluation
+
+## NotebookLM 的七层架构视角
+
+NotebookLM 是 RAG 产品化的标杆，其隐藏的技术架构揭示了高阶 RAG 的完整链路：
+
+```
+Source 接入
+    ↓
+文档理解（最难）—— 恢复标题层级、章节树、表格结构、图注
+    ↓
+多粒度 Chunk —— Source/Chapter/Section/Paragraph/Chunk/Sentence 六级
+    ↓
+混合索引 —— 向量索引 + BM25 + 元数据索引 + 文档树索引 + 引用索引
+    ↓
+Retrieval and Ranking —— Query Plan → 多路召回 → 相关性/可信度/引用质量排序
+    ↓
+Context Engineering —— 组装上下文包（证据 + 章节摘要 + source 摘要 + 历史对话）
+    ↓
+答案生成 —— 只基于资料、保守回答、关键结论绑定证据、冲突时指出矛盾
+```
+
+**关键洞察**：NotebookLM 把「开发者工具链」变成「用户产品」——把分块、向量化、TopK、重排模型等复杂配置收进系统内部。用户只感知「上传资料 → 提问 → 获得带引用的回答」。
+
+**文档理解是上限决定层**：如果文档结构不能被正确还原（标题层级、表格、章节树），后续所有检索和生成都在「垃圾进垃圾出」的循环中。Google 在搜索、OCR、网页理解领域的 T0 积累是其天然优势。
+
+## AI 知识库三阶段演进
+
+| 阶段 | 名称 | 核心特征 |
+|------|------|---------|
+| 第一阶段 | 低配 RAG | 资料切块 → 向量化 → 检索 → 回答 |
+| 第二阶段 | 产品化 RAG | 文档理解 → 多索引 → 检索排序 → 上下文工程 → Source Grounding |
+| 第三阶段 | LLM Wiki | 知识抽取 → 实体识别 → 主题页生成 → 关系链接 → 冲突检测 → 持续演化 |
+
+三个阶段是**逐层叠加**关系。LLM Wiki 的核心差异见 [[llm-wiki]]。
+
 ## 相关来源
 
-- [[obsidian-knowledge-base]]
-- [[treesearch-retrieval]]
+- [[obsidian-knowledge-base]] —— 个人知识库搭建
+- [[treesearch-retrieval]] —— 非向量检索方案
+- [[ai-knowledge-evolution]] —— NotebookLM 七层架构与 LLM Wiki 演进

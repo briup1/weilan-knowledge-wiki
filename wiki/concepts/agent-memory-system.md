@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-04-20
-sources: [claude-code-memory-system]
+updated: 2026-05-08
+sources: [claude-code-memory-system, agent-harness-anatomy]
 tags: [agent-memory, memory-system, claude-code, context-management, ai-agent]
 ---
 
@@ -89,6 +89,36 @@ Claude Code 的记忆系统将信息分为四个维度：
 - **团队知识沉淀**：将团队规范、API 使用模式、常见陷阱固化为共享记忆。
 - **复杂工作流追踪**：跨会话追踪多步骤任务的进度和中间结果。
 
+## Harness 视角下的记忆架构
+
+从 [[agent-harness]] 视角看，记忆系统是"跨越时间尺度的状态保持"，是生产级 Agent 与 Demo 级 Agent 的根本分水岭。Claude Code 实现了三层记忆层次结构：
+
+### 三层记忆架构
+
+**第一层：上下文内记忆（In-Context Memory）**——当前会话的对话历史，存在于上下文窗口中。最快但最脆弱，会话结束或上下文被压缩后丢失。
+
+**第二层：memory.md 指针索引层**——核心创新。`memory.md` 不是存储文件而是**指针索引**，只包含指向其他记忆文件的引用（每条约 150 字符）。实际内容存储在独立的域特定文件中。Agent 需要回忆时先读 `memory.md` 找到指针，再只加载需要的文件。**自愈合机制**：发现假设有误时重写相关记忆文件使更正持久化。
+
+**第三层：CLAUDE.md 项目级静态记忆**——项目的"宪法"。与动态更新的 memory.md 不同，包含架构目标、编码标准、禁区目录、测试指令。**每轮都会被重新注入，不受上下文压缩影响。**
+
+### 8 个优先级层级
+
+从低到高：Auto Memory → User-Level Rules → User Memory → Project Rules → Project Memory → Managed Drop-ins → Managed Policy → 动态规则注入（`system-reminder`）。高层级覆盖低层级冲突指令。
+
+### "不信任自己的记忆"原则
+
+据泄露的系统提示词，Claude Code 被明确指示："记忆只是提示——在行动前根据实际文件进行验证。" 记忆系统不是替代文件系统查询的缓存，而是**引导查询方向的启发式工具**。
+
+### 其他框架的记忆方案
+
+| 框架 | 方案 |
+|------|------|
+| LangGraph | 命名空间组织的 JSON Store，跨会话持久化 |
+| OpenAI | SQLite 或 Redis 支持的 Sessions |
+| Letta | 内置 compaction + 滑动窗口 summarization |
+| CrewAI | ChromaDB 存储离散事实，RAG 召回 |
+
 ## 相关来源
 
 - [[claude-code-memory-system]] —— Claude Code 源码级记忆系统万字解析
+- [[agent-harness-anatomy]] —— Agent Harness 十二大模块深度解析（记忆系统作为 Harness 第三大模块）

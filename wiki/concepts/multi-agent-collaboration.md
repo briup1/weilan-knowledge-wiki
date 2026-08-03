@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-04-20
-sources: [claude-code-gstack, hermes-agent-setup, openmaic]
+updated: 2026-05-18
+sources: [claude-code-gstack, hermes-agent-setup, openmaic, agent-harness-anatomy, agent-teams-tmux-worktrees, oh-my-claudecode-guide]
 tags: [multi-agent, collaboration, team-mode, agent-orchestration, ai-programming]
 ---
 
@@ -58,6 +58,45 @@ team-plan → team-prd → team-exec → team-verify → team-fix
 - **verify**：独立 Agent 进行测试和审查。
 - **fix**：根据验证结果修复问题，循环直至通过。
 
+## Agent Teams 工程模式
+
+当多个 Claude Code 实例在同一 repo 上并行工作时，需要解决**隔离**和**合并**两个核心问题：
+
+**隔离：Git Worktrees**
+- `claude -w <name>` 自动创建 worktree，每个实例独立工作目录
+- 共享同一个 .git 目录（commit 历史、分支、remote 统一）
+- 文件系统层面完全隔离，谁也不碰谁的东西
+
+**任务分派策略**：
+| 策略 | 分配方式 | 适用条件 |
+|------|---------|---------|
+| 按模块分 | 前端/后端/测试/文档各一个 Agent | 模块耦合度低，文件不重叠 |
+| 按功能分 | 每个 Agent 负责完整 feature | 每个 Agent 有完整上下文，但可能改到同一基础组件 |
+| 按阶段分 | 写代码 → 审代码 → 修代码 | 需要 code review，避免「自己审自己」 |
+
+**合并最佳实践**：
+- 逐个合并（先文档→测试→后端→前端），每合一个跑一次测试
+- 遇到冲突让 Claude 分析 diff
+- 预防冲突：共享类型定义单独文件、package.json 统一处理、每个 Agent 开始前声明文件清单
+
+**成本**：四个 Claude 并行 token 成本约为单 Agent 的 1.6 倍，但时间从 4 小时压缩到 1 小时。
+
+### `/batch` 扇出大规模变更
+
+适合「同一种改动应用到很多文件」的场景（如改 200 个文件的 import 路径）。Claude 自动扫描、按目录分组、为每组启动 sub-agent 并行处理、合并结果。
+
+## OMC 19 Agent 体系
+
+[[oh-my-claudecode]] 提供了最完整的工程化多 Agent 体系：
+
+**构建与分析（7 个）**：explore → analyst → planner → architect → executor（并行）→ debugger → architect（验证）
+
+**审查质量（3 个）**：security-reviewer / code-reviewer / critic（构成多维度代码审查流水线）
+
+**领域专家（9 个）**：document-specialist / test-engineer / designer / writer / qa-tester / scientist / git-master / tracer
+
+**三级模型路由**：Haiku（快速查找）→ Sonnet（代码生成）→ Opus（复杂推理），根据任务复杂度自动选择，Ecomode 激进化降级节省 30-50% token。
+
 ## 与其他协作模式的对比
 
 | 维度 | 单 Agent 串行 | 多 Agent 协作 | 人类团队协作 |
@@ -90,8 +129,33 @@ team-plan → team-prd → team-exec → team-verify → team-fix
 4. **阶段性检查点**：在 plan → prd → exec → verify 各阶段设置检查点，确保质量 gate 通过后再进入下一阶段。
 5. **从双 Agent 开始**：不要一开始就启动 10 个 Agent，先从 2-3 个角色的协作开始，逐步扩展。
 
+## Harness 视角下的子 Agent 编排
+
+从 [[agent-harness]] 视角看，子 Agent 编排是"并行化的艺术"——当任务复杂度超过单个 Agent 处理能力时的扩展手段。存在两种核心哲学：**中心化管理 vs 去中心化协作**。
+
+### Claude Code 三种执行模型
+
+| 模型 | 隔离级别 | 通信方式 | 适用场景 |
+|------|---------|---------|---------|
+| Fork | 父上下文字节级精确副本 | 子 Agent 完成后结果返回父 Agent | 完全独立的并行任务 |
+| Teammate | 独立终端面板 | 基于文件的邮箱通信，可互相直接通信 | 需协作但不完全独立的任务 |
+| Worktree | 各自 git worktree 独立分支 | Git merge 合并 | 最彻底隔离，代码变更互不干扰 |
+
+### OpenAI 两种编排模式
+
+**Handoffs（交接）**：分流 Agent 将对话完全转移给专业 Agent，专业 Agent 成为活跃 Agent。适用于专业 Agent 需要拥有对话控制权的场景。
+
+**Agents-as-Tools（工具模式）**：管理 Agent 保持控制权，将专业 Agent 作为工具调用，结果返回管理 Agent。适用于需要综合多个专家意见的场景。
+
+### Token 经济学
+
+实际测试表明 **Agent Teams 模式在大规模并行任务中通常比子 Agent 模式省 3-5 倍 token**：子 Agent 编排器上下文随每个结果增长，Teams 模式每个 Agent 只加载当前任务相关上下文。
+
 ## 相关来源
 
 - [[claude-code-gstack]] —— Garry Tan 的 gstack 多 Agent 协作工作流，28 个专业角色
 - [[hermes-agent-setup]] —— Hermes Agent 框架的 Skills 体系和多 Agent 支持
 - [[openmaic]] —— 清华大学 OpenMAIC 多智能体互动课堂平台
+- [[agent-harness-anatomy]] —— Agent Harness 十二大模块深度解析
+- [[agent-teams-tmux-worktrees]] —— Agent Teams 并行交付工程实践
+- [[oh-my-claudecode-guide]] —— oh-my-claudecode 19 Agent 体系深度解析
