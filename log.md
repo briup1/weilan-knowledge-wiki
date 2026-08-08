@@ -408,3 +408,11 @@
 - 更新 [[orchestration-loop]]、[[agent-concept-map]] 与 `index.md`，将异步事件驱动纳入现有 Agent 执行核心。
 - 验证结果：核心 Python 文件通过 `py_compile`；`parallel` 演示墙钟耗时约由 4.5 秒降至 1.5 秒；`interrupt` 演示确认后台任务可取消，且演示运行时随后仍可启动并完成新任务。
 - 实现边界：实验仅用关键词判断紧急度；`turn_task.cancel()` 不保证停止供应商侧推理；模拟工具取消不等于终止真实进程、容器或远程任务。
+
+## [2026-08-08] synthesis | Agent 工具系统能力主干与异步唤醒
+
+- 重构 [[agent-concept-map]] 第 5 节，将工具域整理为供给发现、契约设计、可见性选择、调用生命周期、异步执行与唤醒、故障恢复和外部互操作七个二级能力。
+- 新增 [[async-tool-execution-and-wakeup]]，统一同步/异步声明、`job_id` 两阶段协议、定时轮询、完成事件回注、可靠去重和多任务汇合策略。
+- 更新 [[agent-tool-system]]、[[agent-extension-system]]、[[tool-call-lifecycle]] 与 [[error-handling]]，补齐动态加载、原子刷新、异步分叉和迟到结果等边界。
+- 层级修正：MCP 从二级能力下沉为“外部工具互操作”的具体协议；`execution_mode`、`event_id`、OAuth 等实现字段下沉到四级节点。
+- 设计结论：同步或异步由工具契约声明、Runtime 最终裁决，Agent 不临场猜；多个任务相继完成时，各自写入汇合状态，由最后一个满足 all/race/quorum/dependency 条件的事件恢复父任务。

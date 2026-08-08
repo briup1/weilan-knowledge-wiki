@@ -1,7 +1,7 @@
 ---
 type: synthesis
 created: 2026-08-02
-updated: 2026-08-05
+updated: 2026-08-08
 mindmap-plugin: markdown
 sources:
   - hermes-agent-orchestration-loop
@@ -108,40 +108,53 @@ tags:
     - 4.3 工具结果配对：维护 ToolCall 与 ToolResult 的结构完整性
       - 4.3.1 孤儿工具调用修复
   - [[agent-tool-system|5. 工具系统]]
-    - 5.1 工具注册与发现：建立工具定义来源、分类与动态发现入口
-      - 5.1.1 自注册 / 装饰器扫描
-      - 5.1.2 MCP 动态刷新
-      - 5.1.3 工具类型学
-        - 5.1.3.1 感知 / 执行 / 协作 / 事件触发 / 用户沟通
-      - 5.1.4 动态发现策略
-        - 5.1.4.1 MCP 动态刷新
-        - 5.1.4.2 Skills 渐进式披露
-    - 5.2 Schema 编排：把工具参数约束转换为模型可理解的调用契约
-      - 5.2.1 Schema 序列化
-      - 5.2.2 参数强制 / 修复
-      - 5.2.3 Adapter 归一化
-    - [[tool-call-lifecycle|5.3 ToolCall 生命周期]]：覆盖意图解析、校验、授权、执行与结果回填
-      - 5.3.1 Lookup / Repair / Schema Validation
-      - 5.3.2 beforeToolCall / execute / afterToolCall
-      - 5.3.3 ToolResult 回填与可恢复错误
-    - 5.4 工具可用性管道：区分已注册、模型可见与本次允许执行的工具集合
-      - 5.4.1 Definition Registry 准入
-      - 5.4.2 Active Tools 模型暴露
-      - 5.4.3 beforeToolCall 执行授权
-    - 5.5 工具裁剪：按任务、角色与权限缩小工具暴露范围
-      - 5.5.1 子 Agent 工具集交集
-      - 5.5.2 黑名单 / 权限组
-      - 5.5.3 动态工具可见性
-    - [[mcp|5.6 MCP 协议]]：标准化外部工具接入、调用与授权边界
-      - 5.6.1 Client-Server 标准
-      - 5.6.2 外部服务接入
-      - 5.6.3 授权与权限
-        - 5.6.3.1 OAuth 2.1 / PRM / audience 校验
-        - 5.6.3.2 scope minimization / step-up
-      - 5.6.4 MCP 协议层风险
-        - 5.6.4.1 confused deputy
-        - 5.6.4.2 token passthrough
-        - 5.6.4.3 SSRF / local server compromise
+    - 5.1 工具供给与发现：建立工具定义来源，并把本地、插件与远程能力汇入统一注册表
+      - 5.1.1 静态注册与模块扫描
+      - [[agent-extension-system|5.1.2 Extension 与资源加载]]
+        - 5.1.2.1 registerTool / ResourceLoader.reload
+      - 5.1.3 远程能力发现与缓存刷新
+        - 5.1.3.1 tools/list / TTL / generation
+    - 5.2 工具契约设计：让模型与 Runtime 共享参数、执行语义和错误边界
+      - 5.2.1 统一 ToolDefinition
+        - 5.2.1.1 name / description / inputSchema / outputSchema
+      - 5.2.2 执行语义声明
+        - 5.2.2.1 execution_mode / cancellable / progress_events
+      - 5.2.3 副作用与可靠性契约
+        - 5.2.3.1 idempotency_key / timeout / retryable
+      - 5.2.4 Adapter 归一化
+    - 5.3 工具可见性与选择：从已注册工具中筛出模型可见且本次允许执行的最小集合
+      - 5.3.1 Definition Registry 准入
+      - 5.3.2 Active Tools 模型暴露
+      - 5.3.3 beforeToolCall 执行授权
+      - 5.3.4 按任务、角色与权限裁剪
+        - 5.3.4.1 工具集交集 / 黑名单 / 权限组
+    - [[tool-call-lifecycle|5.4 工具调用生命周期]]：覆盖意图解析、校验、授权、执行、观测与结果回填
+      - 5.4.1 Lookup / Repair / Schema Validation
+      - 5.4.2 beforeToolCall / execute / afterToolCall
+      - 5.4.3 ToolResult 配对与上下文回填
+      - 5.4.4 串行、并行与副作用排序
+    - [[async-tool-execution-and-wakeup|5.5 异步执行与完成唤醒]]：把长耗时工具拆成启动、后台执行和完成事件恢复三个阶段
+      - 5.5.1 两阶段异步调用协议
+        - 5.5.1.1 job_id / queued / running / terminal status
+      - 5.5.2 完成事件回注
+        - 5.5.2.1 callback / webhook / broker / inbox
+      - 5.5.3 定时等待与轮询降级
+        - 5.5.3.1 next_check_at / timer event / poll_after
+      - 5.5.4 多任务汇合
+        - 5.5.4.1 all / race / quorum / dependency barrier
+    - [[error-handling|5.6 工具故障隔离与恢复]]：把工具故障限制在调用或后台任务边界并转换为可处理结果
+      - 5.6.1 查找、参数、权限与执行错误
+      - 5.6.2 超时、取消与迟到结果
+      - 5.6.3 重试、幂等与去重
+        - 5.6.3.1 idempotency key / event_id / dead letter
+      - 5.6.4 ToolResult / JobEvent 错误载体
+    - 5.7 外部工具互操作：以标准客户端、能力发现和授权边界接入外部工具生态
+      - 5.7.1 Client-Server Adapter
+        - [[mcp|5.7.1.1 MCP]]
+      - 5.7.2 授权与最小权限
+        - 5.7.2.1 OAuth 2.1 / scope minimization / step-up
+      - 5.7.3 协议层风险控制
+        - 5.7.3.1 confused deputy / token passthrough / SSRF
   - 6. 状态与持久化
     - [[state-management|6.1 状态管理]]：管理运行时状态、并发一致性与状态恢复
       - 6.1.1 双轨状态模型

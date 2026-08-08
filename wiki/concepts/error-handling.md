@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-08-05
-sources: [hermes-agent-error-handling, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-provider-unified-event-protocol, pi-tool-call-lifecycle]
+updated: 2026-08-08
+sources: [hermes-agent-error-handling, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-provider-unified-event-protocol, pi-tool-call-lifecycle, ai-agent-book-async-agent-experiment]
 tags: [agent-architecture, error-handling, retry, failover, resilience]
 ---
 
@@ -74,11 +74,31 @@ Pi 展示了两种不同的错误归一化策略：
 
 注册、模型查找等“流创建前错误”仍可直接抛出。核心原则是：**错误不是都应该重试或抛出；应转换成该边界的消费者能够理解并采取行动的协议对象。**
 
+## 异步工具的错误边界
+
+异步工具把一次调用拆成“接受任务”和“任务终态”，因此错误也必须分层：
+
+| 阶段 | 典型错误 | 载体与动作 |
+|---|---|---|
+| 启动前 | 工具不存在、参数非法、权限拒绝 | 与 ToolCall 配对的错误 ToolResult |
+| 启动时 | 队列不可用、任务创建失败 | Job 未成立，返回错误 ToolResult |
+| 运行中 | Worker 异常、依赖超时、进度停滞 | 更新 Job 状态，可按幂等策略重试 |
+| 终态投递 | 回调重复、消息乱序、父任务不存在 | 按 `event_id` 去重，孤儿事件进隔离区 |
+| 取消后 | 远端未真正停止，迟到结果返回 | 留档并按策略忽略或提示，不重复恢复 |
+
+必须同时防住两类重复：
+
+1. **重复启动**：用 `idempotency_key` 防止重试创建两个有副作用任务。
+2. **重复完成**：用 `event_id`、Job 状态机和原子恢复标记防止 Agent 被唤醒两次。
+
+超时只是 Runtime 停止等待，不等于底层工作已经终止。取消同样需要区分 Agent Turn、工具协程和远程资源三层语义。详见 [[async-tool-execution-and-wakeup]]。
+
 ## 与相关概念的关系
 
 - 错误处理在 [[orchestration-loop]] 的每次 API 调用和工具执行后触发。
 - context-length 错误需要 [[context-management]] 的压缩配合。
 - 工具执行错误需要 [[validation-loop]] 的护栏记录。
+- 异步工具的终态、迟到结果和重复唤醒由 [[async-tool-execution-and-wakeup]] 定义。
 
 ## 当前证据
 

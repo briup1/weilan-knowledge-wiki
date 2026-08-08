@@ -45,12 +45,13 @@
 [[agent-turn]] —— 区分 Business/User Turn 与 Runtime/Model Turn 的双层回合语义
 [[agent-memory-system]] —— Agent 记忆系统：内置 MemoryStore + 外部 MemoryProvider 插件
 [[agent-security]] —— Agent 安全防护：分层纵深防御与 fail-closed 原则
-[[agent-tool-system]] —— Agent 工具系统：发现、注册、schema 编排与调度分发
+[[agent-tool-system]] —— Agent 工具系统：供给发现、契约设计、选择调度、异步恢复与故障隔离
 [[agent-extension-system]] —— Agent 插件系统：能力注册、ResourceLoader 与生命周期 Hook
+[[async-tool-execution-and-wakeup]] —— 异步工具执行与完成唤醒：job_id、事件回注、定时轮询与多任务汇合
 [[context-management]] —— 上下文管理：把 token 当作受限资源主动经营
 [[context-compaction]] —— 上下文压缩：时机、目标、切点、方法和增量更新的五维决策模型
 [[context-compaction-checkpoint]] —— 上下文压缩检查点：追加摘要节点，投影时替代旧消息
-[[error-handling]] —— 错误处理：结构化分类器与六类恢复动作
+[[error-handling]] —— 错误处理：结构化分类、同步 ToolResult 与异步 JobEvent 恢复边界
 [[initialization-environment]] —— 初始化与环境：profile、配置合并、沙箱后端
 [[orchestration-loop]] —— 编排循环：LLM 推理与工具执行的迭代主控制流
 [[parallel-interruptible-async-agent]] —— 并行和可打断的异步 Agent：事件路由、可取消 Turn 与异步任务管理
@@ -63,7 +64,7 @@
 [[session-entry-tree]] —— 会话条目树：用 parentId 和 leaf 保存可分支历史
 [[session-context-projection]] —— 会话上下文投影：从当前 leaf 生成模型可见 messages
 [[session-branching-and-forking]] —— 会话分支与派生：移动 leaf 或复制路径创建独立 Session
-[[tool-call-lifecycle]] —— ToolCall 从模型意图到校验、授权、执行和 ToolResult 回填
+[[tool-call-lifecycle]] —— ToolCall 从模型意图到校验、授权、同步结果或异步任务恢复
 [[sub-agent-orchestration]] —— 子 Agent 编排：受限临时实例的任务外包
 [[validation-loop]] —— 验证循环：LLM 决策到实际执行的多层把关
 

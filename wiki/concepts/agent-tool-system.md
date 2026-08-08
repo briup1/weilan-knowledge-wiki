@@ -1,62 +1,108 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-08-05
-sources: [hermes-agent-tool-system, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension]
-tags: [agent-architecture, tool-system, mcp, tool-registry, rbac, abac, adapter]
+updated: 2026-08-08
+sources: [hermes-agent-tool-system, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension, ai-agent-book-async-agent-experiment]
+tags: [agent-architecture, tool-system, mcp, tool-registry, tool-contract, async-tool, rbac, abac, adapter]
 ---
 
 # Agent Tool System（工具系统）
 
 ## 定义
 
-工具系统是 Agent 与外部世界交互的「双手」：负责工具的**发现、注册、schema 编排、过滤和调度分发**。它把 LLM 生成的工具调用意图转化为实际可执行动作，并把结果回传给 LLM。
+工具系统是 Agent 与外部世界之间的执行层。它负责工具的**供给与发现、契约设计、可见性选择、调用调度、异步恢复和故障隔离**，把模型提出的调用意图转换为 Runtime 可控制、可观测、可恢复的动作。
 
-## 为什么需要
+核心边界是：**模型选择工具，Runtime 拥有执行权；工具声明能力，Agent 不应靠猜测决定同步、异步、权限或错误语义。**
 
-- LLM 本身不能读文件、查数据库、调用 API；需要工具扩展能力边界。
-- 工具数量多时，必须解决发现、分组、动态启用/禁用、命名空间冲突等问题。
-- 不同 provider 对 tool schema 的容忍度不同，需要统一出口做兼容处理。
-- MCP 等动态工具协议要求运行时可增删工具，需要可变的注册表。
+## 能力主干
 
-## 核心组成
+```text
+工具来源
+  → 发现与注册
+  → 契约归一化
+  → 可见性与选择
+  → 调用生命周期
+       ├─ 同步：执行后直接返回 ToolResult
+       └─ 异步：返回 job_id，完成后用事件恢复
+  → 故障隔离与恢复
+```
 
-| 组件 | 作用 |
-|---|---|
-| 工具注册表 | 统一存储 name → schema/handler/check_fn |
-| 发现机制 | 自动发现内置工具、插件、MCP server |
-| Schema 编排 | 按启用 toolset 过滤、做 provider 兼容转换 |
-| 调度分发 | 把 LLM 调用的 name/args 路由到对应 handler |
-| 参数校验/修复 | 把模型输出的松散参数转换成 handler 期望类型 |
+| 能力 | 解决的问题 | 主要产物 |
+|---|---|---|
+| 工具供给与发现 | 工具从哪里来，何时加入或退出系统 | Tool Registry、版本快照 |
+| 工具契约设计 | 模型和 Runtime 如何理解同一个工具 | ToolDefinition、执行语义 |
+| 可见性与选择 | 哪些工具能被本次模型看到并执行 | Active Tools、授权决策 |
+| 调用生命周期 | 调用如何校验、执行、观测和回填 | ToolResult、Tool Event |
+| 异步执行与唤醒 | 长任务如何释放 Agent 并在完成时恢复 | Job Record、Completion Event |
+| 故障隔离与恢复 | 单个工具失败如何不拖垮整个 Loop | Error ToolResult、JobEvent |
+| 外部互操作 | 如何接入远程工具与协议生态 | Client Adapter、协议网关 |
 
-## 设计模式
+## 工具供给与发现
+
+工具定义可来自四类入口：
+
+| 来源 | 典型方法 | 生命周期 |
+|---|---|---|
+| 内置工具 | 静态清单、自注册 | 随 Runtime 启动 |
+| 应用工具 | SDK `customTools` | 随应用实例创建 |
+| Extension | `registerTool`、ResourceLoader | 可加载、重载、卸载 |
+| 远程工具 | 服务端能力发现 | 按连接、TTL 或版本刷新 |
+
+所有入口应汇入同一 Registry，避免内置工具、插件工具和远程工具各走一条执行链。动态发现需要缓存失效、命名冲突、版本切换和失败回退；详见 [[agent-extension-system]]。
+
+### 注册与发现模式
 
 | 模式 | 说明 | 优缺点 |
 |---|---|---|
-| 自注册 | 每个工具模块顶层调用 `registry.register(...)` | 新增工具只改一处；依赖图清晰；需显式 import |
-| 装饰器扫描 | 用装饰器标记函数，启动时扫描 | 集中注册；但装饰器顺序/导入顺序可能引入魔法 |
-| 中心化清单 | 手工维护 name → handler 映射表 | 简单直接；但 schema/handler 容易不同步 |
-| MCP 动态 | 从 MCP server 拉 tool list，运行时刷新 | 支持外部工具生态；需要失效和缓存策略 |
+| 自注册 | 每个工具模块调用 `registry.register(...)` | 新增工具只改一处；但仍需显式加载模块 |
+| 装饰器扫描 | 用装饰器标记函数，启动时扫描 | 集中注册；需防导入顺序和隐式副作用 |
+| 中心化清单 | 手工维护 name → handler 映射 | 简单直接；Schema 与 Handler 容易漂移 |
+| 远程动态发现 | 从外部服务获取工具列表并刷新 | 支持外部生态；需要缓存、健康检查和回退 |
 
-## 四框架实现对比
+### 四框架实现对比
 
 | 维度 | Hermes | nanobot | OpenClaw | OpenCode |
 |---|---|---|---|---|
-| 注册方式 | 模块顶层 `registry.register(...)` 自注册 + AST 扫描兜底 | `Tool` ABC + 手动 `ToolRegistry` 字典注册 | 多层策略管道 + 沙箱隔离 | 统一 DSL 定义 + 注册中心 |
-| Schema 处理 | `sanitize_tool_schemas` + `coerce_tool_args` 兼容多 provider | `parameters` property 与 `to_schema()` 共用同一份 dict；手写轻量校验 | `anyOf`/`oneOf` 扁平化；参数别名兼容 | zod 参数校验；模型级工具过滤 |
-| 错误处理 | 错误降级为字符串，不中断循环 | 错误字符串 + `_HINT` 后缀 | 循环检测 + 策略阻断 | `experimental_repairToolCall` 修复/降级 |
-| 动态工具 | MCP 动态刷新 + `_generation` 计数器 + TTL | MCP 懒加载，MCPToolWrapper 也继承 `Tool` | 6 层策略管道控制 | 注册中心运行时组装 |
-| 沙箱/权限 | 环境后端 ABC | `restrict_to_workspace` 注入 allowed_dir | Docker 沙箱 + `SandboxFsBridge` | `PermissionNext` 规则引擎 |
-| 独特设计 | 工具集分组 + `check_fn` TTL 缓存 | 先 cast 再 validate 的"类型防火墙" | 多层策略管道 + 循环检测 | DSL 定义 + zod 一体 |
+| 注册方式 | 自注册 + AST 扫描兜底 | `Tool` 抽象 + Registry 字典 | 多层策略管道 + 沙箱 | DSL 定义 + 注册中心 |
+| Schema 处理 | Schema 清洗 + 参数强制 | 同一参数定义生成 Schema 和校验 | 组合 Schema 扁平化、参数别名 | zod 参数校验、模型级过滤 |
+| 错误处理 | 错误降级为字符串 | 错误字符串 + 修复提示 | 循环检测 + 策略阻断 | ToolCall 修复与降级 |
+| 动态工具 | MCP 刷新 + generation + TTL | MCP 懒加载 + Wrapper | 策略管道控制可见性 | 注册中心运行时组装 |
+| 沙箱与权限 | 环境后端抽象 | 工作区路径限制 | Docker 沙箱 + FS Bridge | Permission 规则引擎 |
+
+## 工具契约设计
+
+一个完整 ToolDefinition 不只是参数 Schema，还要告诉 Runtime 该工具如何运行：
+
+```json
+{
+  "name": "start_report_generation",
+  "description": "启动报表生成",
+  "input_schema": {},
+  "output_schema": {},
+  "execution_mode": "async",
+  "cancellable": true,
+  "progress_events": true,
+  "timeout_seconds": 900,
+  "idempotent": true
+}
+```
+
+这是一种**通用契约形状**，不是 Codex、MCP 或某个框架的固定声明格式。具体字段可变，但以下语义必须明确：
+
+- **输入输出**：参数类型、必填项、结果结构和截断规则。
+- **执行模式**：同步、异步，或由 Runtime 根据策略选择。
+- **副作用**：只读还是写操作，是否要求审批或串行化。
+- **可靠性**：超时、幂等、重试条件、取消能力。
+- **观测性**：是否产生进度事件、日志和审计记录。
+
+同步或异步应优先由工具契约声明，Runtime 可根据超时预算、部署形态和用户策略收紧或覆盖；不应让 Agent 根据工具名称或自然语言描述临场猜测。
 
 ## 工具可用性的三阶段管道
-
-Pi 的实现补充了工具系统中三个容易混淆的决策点：
 
 ```text
 Definition Registry
   → 准入：allowedToolNames
-  → 暴露：Active Tools → agent.state.tools → Provider tools
+  → 暴露：Active Tools → Provider tools
   → 执行授权：beforeToolCall
 ```
 
@@ -64,53 +110,71 @@ Definition Registry
 - **暴露**决定模型本次请求能看到哪些工具。
 - **执行授权**决定模型已经请求后是否允许真正运行。
 
-内置工具、Extension 工具和 SDK `customTools` 应汇入同一 Registry；System Prompt 的工具描述不是调用能力来源，Provider 的结构化 `tools` 字段才是。工具执行统一经过 [[tool-call-lifecycle]]，插件化供给与 Hook 参见 [[agent-extension-system]]。
+工具过多时，应按任务、角色、权限和当前环境裁剪，而不是把整个仓库塞给模型。System Prompt 中的工具描述不是调用能力来源，Provider 的结构化 `tools` 字段才是。
 
-## 工具类型学（五类工具）
+## Schema 与 Adapter 归一化
 
-参考 Agent 工具调用方向与作用对象，可把工具分为五类：
+不同 Provider 和外部服务对 Schema、认证、分页、错误格式的要求不同。工具层应通过 Adapter 收口：
 
-| 类型 | 调用方向 | 作用对象 | 设计重点 |
-|---|---|---|---|
-| 感知工具 | Agent 主动调用 | 获取信息 | 返回结构化候选、分页/offset、显式截断、可缓存可并行 |
-| 执行工具 | Agent 主动调用 | 改变世界 | 安全优先：输入校验、权限、沙箱、自动验证、幂等 |
-| 协作工具 | Agent 主动调用 | 驱动其他 Agent 或人类 | 上下文传递策略、任务边界、HITL、通知机制 |
-| 事件触发工具 | Agent 注册、外部触发 | 驱动 Agent 开始执行 | 触发条件过滤、事件载荷设计、异步队列 |
-| 用户沟通工具 | Agent 主动调用 | 向用户传递信息 | 异步消息、多渠道、召回机制、虚拟身份 |
-
-## Adapter 归一化模式
-
-当同一类工具可能对接多个外部服务（如搜索可用 DuckDuckGo / SerpAPI / Bing，天气可用 Open-Meteo / OpenWeatherMap）时，建议在工具层与外部 API 之间加一层 **Adapter**：
-
-- 把不同 API 的入参/出参映射为统一内部 schema。
-- 处理认证、重试、限流、分页、错误包装。
-- 工具层只依赖统一接口，换源时不改工具逻辑。
-
-典型接口：
+- 将外部入参与结果映射为统一内部 Schema。
+- 处理认证、重试、限流、分页和错误包装。
+- 对 Provider 不支持的 Schema 关键字做兼容转换。
+- 保持 ToolDefinition 与 Handler 使用同一份类型事实，避免两套定义漂移。
 
 ```python
 class BaseSearchAdapter:
     async def search(self, query: str, cursor: str | None = None) -> SearchPage: ...
 ```
 
-## 执行-验证-反馈闭环
+## 调用与执行边界
 
-执行工具（尤其是写文件、运行代码）应在工具内部集成自动验证：
+模型生成 ToolCall 后，统一经过 [[tool-call-lifecycle]]：
 
-- 写代码文件后自动调用 linter（如 `py_compile`、`eslint`）。
-- 执行命令后检查返回码，长输出做截断持久化。
-- 验证结果作为工具返回值的一部分回传给 Agent，使其能在下一轮自修正。
+```text
+lookup → repair → validate → authorize
+       → execute → observe → normalize result
+       → ToolResult 或 JobAccepted
+```
 
-这与 [[validation-loop]] 的“调用后护栏”是同一理念在不同层级的落地。
+- 同步工具在当前 Runtime Turn 内返回 ToolResult。
+- 异步工具只完成“启动”，立即返回 `job_id` 和接受状态；真实结果由完成事件在后续恢复，详见 [[async-tool-execution-and-wakeup]]。
+- 只读、互不依赖的调用可以并行；有副作用、共享资源或顺序依赖的调用必须串行或显式加锁。
+
+## 工具类型学
+
+| 类型 | 调用方向 | 作用对象 | 设计重点 |
+|---|---|---|---|
+| 感知工具 | Agent 主动调用 | 获取信息 | 结构化结果、分页、截断、缓存、可并行 |
+| 执行工具 | Agent 主动调用 | 改变世界 | 校验、权限、沙箱、验证、幂等 |
+| 协作工具 | Agent 主动调用 | 其他 Agent 或人类 | 上下文传递、任务边界、HITL |
+| 事件触发工具 | 外部事件触发 | 启动或恢复 Agent | 事件过滤、载荷、去重和队列 |
+| 用户沟通工具 | Agent 主动调用 | 用户或外部渠道 | 异步消息、送达状态、召回机制 |
+
+## 执行—验证—反馈闭环
+
+执行工具尤其是写文件、运行代码和修改外部状态时，应把自动验证纳入结果：
+
+- 写代码后执行语法检查、linter 或测试。
+- 执行命令后检查返回码，长输出截断并持久化原文位置。
+- 验证结果作为工具结果的一部分回传，使 Agent 下一轮可以修正。
+
+这与 [[validation-loop]] 的调用后护栏是同一原则在工具层的落地。
+
+## 故障边界
+
+工具不存在、参数非法、权限拒绝、Handler 异常等可恢复故障，应转成与原调用配对的 ToolResult。异步任务的超时、取消、迟到结果和重复完成，则应转成带 `job_id`、`event_id` 和终态的 JobEvent。详见 [[error-handling]]。
 
 ## 与相关概念的关系
 
-- 工具系统在 [[orchestration-loop]] 内被反复调用。
-- 工具执行结果需要 [[output-parsing]] 规范化后回灌上下文。
-- 危险工具需要 [[agent-security]] 和 [[validation-loop]] 审批。
-- MCP 工具是工具系统与 [[mcp]] 协议的交汇点。
+- [[agent-extension-system]] 负责插件发现、动态加载与 Hook。
+- [[tool-call-lifecycle]] 负责单次 ToolCall 的执行协议。
+- [[async-tool-execution-and-wakeup]] 负责长耗时工具的任务状态和完成恢复。
+- [[agent-runtime-event-stream]] 负责在线进度和生命周期观测。
+- [[agent-security]] 与 [[validation-loop]] 负责危险工具审批和执行护栏。
+- [[mcp]] 是外部工具互操作的一种具体协议，不等于整个工具系统。
+- 工具系统在 [[orchestration-loop]] 中被反复调度，结果经 [[output-parsing]] 归一化后回灌上下文。
 - 权限钩子与动态工具可见性可参考 [[mcp-permission-middleware]]。
 
 ## 当前证据
 
-当前证据来自四个 Agent 框架调研，以及 Pi 对 ToolDefinition Registry、active tools、Extension、`customTools` 与 `beforeToolCall` 的完整链路分析。
+当前证据来自 Hermes、nanobot、OpenClaw、OpenCode、Pi 的工具与 Extension 实现，以及 AI Agent Book 异步 Agent 实验中的后台任务、`task_id` 和完成事件回注机制。

@@ -1,7 +1,7 @@
 ---
 type: concept
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-08
 sources: [pi-tool-registration-and-extension, pi-custom-tools-and-extension, pi-tool-call-lifecycle]
 tags: [agent, extension, plugin, hooks, tool-registry]
 ---
@@ -38,6 +38,34 @@ Extension
   → Extension 观察、修改或阻止
 ```
 
+## 动态加载与原子刷新
+
+动态加载不是“扫描到文件就立刻改 Registry”。它需要一条可回滚的发布管道：
+
+```text
+发现候选资源
+  → 读取与校验定义
+  → 解析依赖和权限
+  → 在临时 Registry 构建新版本
+  → 冲突检查
+  → 原子切换 Active Tools 快照
+  → 旧版本排空或卸载
+```
+
+关键状态包括：
+
+| 状态 | 作用 |
+|---|---|
+| `generation` / `version` | 标识某次完整工具快照 |
+| `loaded_at` / `expires_at` | 控制 TTL 和刷新时机 |
+| `source` | 追踪内置、Extension、配置或远程服务来源 |
+| `health` | 防止失效工具继续暴露给模型 |
+| `in_flight_count` | 决定旧版本何时可以安全卸载 |
+
+刷新失败时保留最后一个健康快照，不能把半套工具暴露给模型。正在执行的 ToolCall 绑定启动时的版本；新调用使用新版本，避免运行中 Handler 被替换。名称冲突应由命名空间、显式优先级或 fail-closed 策略处理，不能依赖加载顺序碰运气。
+
+关闭目录扫描、远程发现和 inline factory 应分别控制。所谓“动态卸载”还要说明：只是不再向模型暴露，还是连同 Handler、连接池和后台任务一起终止。
+
 ## 设计原则
 
 1. **注册与执行解耦。** Extension 负责供给定义，Core 负责统一执行。
@@ -54,3 +82,4 @@ Extension
 - [[agent-security]]
 - [[agent-runtime-event-stream]]
 - [[provider-protocol-normalization]]
+- [[async-tool-execution-and-wakeup]]

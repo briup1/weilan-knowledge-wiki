@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-08-05
-updated: 2026-08-05
-sources: [pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension, pi-agent-loop-and-turn, hermes-agent-tool-system, hermes-agent-validation-loop]
+updated: 2026-08-08
+sources: [pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension, pi-agent-loop-and-turn, hermes-agent-tool-system, hermes-agent-validation-loop, ai-agent-book-async-agent-experiment]
 tags: [agent, tool-call, lifecycle, validation, error-recovery]
 ---
 
@@ -21,11 +21,23 @@ AssistantMessage.toolCall
        ├─ validate：Schema 校验
        └─ authorize：beforeToolCall
   → execute(args, onUpdate)
-  → afterToolCall
-  → ToolResultMessage
+       ├─ 同步完成 → afterToolCall → ToolResultMessage
+       └─ 异步接受 → JobAccepted(job_id) → 后台执行
+                                      → CompletionEvent
+                                      → ToolResult / 恢复事件
   → context
   → 下一 Runtime Turn
 ```
+
+## 同步与异步分叉
+
+同步或异步不应由 Agent 根据工具名称猜测，而应由 ToolDefinition 声明执行能力，再由 Runtime 根据等待预算和部署策略作最终选择：
+
+- **同步工具**：当前 Runtime Turn 持有执行权，完成后直接产生 ToolResult。
+- **异步工具**：当前调用只产生 `JobAccepted`；Runtime 保存 `tool_call_id`、`job_id` 和父任务关系后释放执行槽。
+- **完成恢复**：后台任务终态事件进入统一 inbox，按恢复策略触发新 Turn 或父任务汇合。
+
+异步启动结果不能伪装成最终 ToolResult。它表达的是“任务已接受”，真实业务结果必须通过同一 `job_id` 的终态事件补齐。详细协议见 [[async-tool-execution-and-wakeup]]。
 
 ## 结果模型
 
@@ -55,3 +67,4 @@ AssistantMessage.toolCall
 - [[agent-runtime-event-stream]]
 - [[orchestration-loop]]
 - [[context-management]]
+- [[async-tool-execution-and-wakeup]]
