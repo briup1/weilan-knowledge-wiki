@@ -16,6 +16,7 @@
 [[hermes-agent]] —— NousResearch 开源的 Python AI Agent 框架，强调生产级错误恢复与可扩展工具体系
 [[moneyprinterturbo]] —— AI 一键生成高清短视频
 [[obsidian]] —— 本地优先的知识管理工具，支持双向链接
+[[pi-coding-agent]] —— 开源 LLM Agent Harness，覆盖 Runtime、Provider、Tool、Extension 与 Session
 [[redis]] —— 内存数据结构存储，用作缓存和消息队列
 [[remotion]] —— React 编程式视频创作库
 [[yt-dlp]] —— 视频下载与字幕提取工具，支持 1800+ 站点
@@ -37,25 +38,38 @@
 [[react-pattern]] —— ReAct：推理-行动交替的 Agent 执行模式
 [[vibe-coding]] —— Vibe Coding：信任 AI、减少微观管理的编程范式
 
-### Agent 架构（来自 Hermes Agent 调研）
+### Agent 架构
 
 [[agent-trace]] —— Agent 执行过程的结构化可观测记录（Trace/Span/Event）
-[[agent-turn]] —— Agent 与用户一次完整交互回合的业务语义单位
+[[agent-runtime-event-stream]] —— Agent、Runtime Turn、消息与工具执行的类型化事件协议
+[[agent-turn]] —— 区分 Business/User Turn 与 Runtime/Model Turn 的双层回合语义
 [[agent-memory-system]] —— Agent 记忆系统：内置 MemoryStore + 外部 MemoryProvider 插件
 [[agent-security]] —— Agent 安全防护：分层纵深防御与 fail-closed 原则
 [[agent-tool-system]] —— Agent 工具系统：发现、注册、schema 编排与调度分发
+[[agent-extension-system]] —— Agent 插件系统：能力注册、ResourceLoader 与生命周期 Hook
 [[context-management]] —— 上下文管理：把 token 当作受限资源主动经营
+[[context-compaction]] —— 上下文压缩：时机、目标、切点、方法和增量更新的五维决策模型
+[[context-compaction-checkpoint]] —— 上下文压缩检查点：追加摘要节点，投影时替代旧消息
 [[error-handling]] —— 错误处理：结构化分类器与六类恢复动作
 [[initialization-environment]] —— 初始化与环境：profile、配置合并、沙箱后端
 [[orchestration-loop]] —— 编排循环：LLM 推理与工具执行的迭代主控制流
+[[parallel-interruptible-async-agent]] —— 并行和可打断的异步 Agent：事件路由、可取消 Turn 与异步任务管理
 [[output-parsing]] —— 输出解析：多 provider 响应归一化与防御性修复
+[[provider-protocol-normalization]] —— Provider 厂商身份与 API wire format 的双向协议归一化
 [[prompt-building-for-agents]] —— Agent 的 Prompt 构建：洋葱式 system prompt 组装
-[[state-management]] —— 状态管理：运行时内存状态与 SQLite 持久化双轨架构
+[[state-management]] —— 状态管理：运行时与持久化状态的双轨生命周期、并发控制和恢复
+[[session-persistence]] —— 会话持久化：事务型存储、Append-only 日志、恢复与 Schema 演进
+[[append-only-session-persistence]] —— 只追加会话持久化：用 JSONL 事件日志增量写入与恢复
+[[session-entry-tree]] —— 会话条目树：用 parentId 和 leaf 保存可分支历史
+[[session-context-projection]] —— 会话上下文投影：从当前 leaf 生成模型可见 messages
+[[session-branching-and-forking]] —— 会话分支与派生：移动 leaf 或复制路径创建独立 Session
+[[tool-call-lifecycle]] —— ToolCall 从模型意图到校验、授权、执行和 ToolResult 回填
 [[sub-agent-orchestration]] —— 子 Agent 编排：受限临时实例的任务外包
 [[validation-loop]] —— 验证循环：LLM 决策到实际执行的多层把关
 
 ## Sources
 
+[[ai-agent-book-async-agent-experiment]] —— AI Agent Book 实验 4-5：并行和可打断的异步 Agent
 [[agent-skills-design]] —— Agent Skills 实战：把设计文档写成 Skill
 [[aicomicbuilder]] —— AIComicBuilder：AI 驱动的动画漫画生成器
 [[aidc-aipixelle-video]] —— AIDC AI Pixelle Video：全自动短视频引擎
@@ -107,6 +121,13 @@
 [[openmontage]] —— OpenMontage 项目
 [[openscreen]] —— OpenScreen：免费开源录屏神器
 [[panniantong-agent]] —— Agent-Reach：给 AI Agent 一键装上互联网能力
+[[pi-agent-runtime-event-flow]] —— Pi 01：Agent Runtime 的类型化事件流
+[[pi-agent-loop-and-turn]] —— Pi 02：Business Turn、Runtime Turn 与双层 Agent loop
+[[pi-provider-unified-event-protocol]] —— Pi 03：Provider 抽象与统一流式事件协议
+[[pi-tool-call-lifecycle]] —— Pi 04：ToolCall 的查找、校验、授权、执行与结果回填
+[[pi-tool-registration-and-extension]] —— Pi 05：工具 Registry、模型暴露、权限与 Extension
+[[pi-custom-tools-and-extension]] —— Pi 06：customTools 与 Extension 两种工具注册入口
+[[pi-session-system]] —— Pi Session 系统：Entry 树、上下文投影、分支、压缩与 JSONL 恢复
 [[treesearch-retrieval]] —— TreeSearch：让文档检索回归本质
 [[understand-anything-mcp]] —— Understand-Anything：代码库转交互式知识图谱
 [[vimax-agentic-video]] —— ViMax：Agentic 视频生成（导演+编剧+制片人）
@@ -123,6 +144,8 @@
 [[knowledge-base-audit-and-flywheel]] —— 知识库现状诊断与知识飞轮设计：从资料库到复利系统的闭环
 [[agent-framework-12-dimensions-comparison]] —— 四大开源 Agent 框架 12 维度对比：Hermes / nanobot / OpenClaw / OpenCode
 [[agent-concept-map]] —— Agent 系统四级概念地图：模块 → 能力 → 方法 → 技术
+[[agent-session-storage-and-context-views]] —— Agent 会话事实存储、Session 视图与模型上下文的三层架构
+[[pi-agent-runtime-architecture]] —— Pi 01–07 Runtime、Provider、Tool、Extension 与 Session 的端到端架构
 
 ## Drafts
 

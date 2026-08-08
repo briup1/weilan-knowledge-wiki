@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-07-26
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
+updated: 2026-08-05
+sources: [hermes-agent-error-handling, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-provider-unified-event-protocol, pi-tool-call-lifecycle]
 tags: [agent-architecture, error-handling, retry, failover, resilience]
 ---
 
@@ -63,6 +63,17 @@ tags: [agent-architecture, error-handling, retry, failover, resilience]
 | 工具失败处理 | 单工具失败降级为字符串 | 错误字符串 + `_HINT` | 工具循环检测 | 工具修复 + Doom Loop 检测 |
 | 独特设计 | metadata.raw 嵌套解析避免误判 | error 响应不写入历史防 400 循环 | cooldown 状态驱动的模型选择 | `fromError` 统一错误转换 |
 
+## 按边界选择错误载体
+
+Pi 展示了两种不同的错误归一化策略：
+
+| 边界 | 错误载体 | 目的 |
+|---|---|---|
+| Provider 请求/解析运行期 | 统一 `error` 终止事件 | 让流和 Agent loop 走一致收尾 |
+| Tool 不存在、参数非法、权限阻止、执行失败 | 与 ToolCall 配对的 ToolResultMessage | 让模型在下一 Runtime Turn 自我修复 |
+
+注册、模型查找等“流创建前错误”仍可直接抛出。核心原则是：**错误不是都应该重试或抛出；应转换成该边界的消费者能够理解并采取行动的协议对象。**
+
 ## 与相关概念的关系
 
 - 错误处理在 [[orchestration-loop]] 的每次 API 调用和工具执行后触发。
@@ -71,4 +82,4 @@ tags: [agent-architecture, error-handling, retry, failover, resilience]
 
 ## 当前证据
 
-当前分析主要来自 [[hermes-agent]] 的 `error_classifier` 实现。其他框架待补充。
+当前证据来自四个 Agent 框架调研，以及 Pi 对 Provider 错误事件和 ToolResult 错误降级边界的分析。

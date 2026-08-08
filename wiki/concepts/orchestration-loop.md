@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-08-03
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
+updated: 2026-08-05
+sources: [hermes-agent-orchestration-loop, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-agent-runtime-event-flow, pi-agent-loop-and-turn, pi-tool-call-lifecycle, ai-agent-book-async-agent-experiment]
 tags: [agent-architecture, orchestration-loop, agent-control-flow]
 ---
 
@@ -50,6 +50,18 @@ tags: [agent-architecture, orchestration-loop, agent-control-flow]
 | 错误隔离 | 单工具失败降级为字符串 | `finish_reason=="error"` 不写入历史 | 多种检测器 + 运行时阻断 | Doom Loop 检测 |
 | 独特设计 | grace call 体面总结 | 派发异步、执行串行，保证 `/stop` 可插队 | macOS TCC 权限保留的 in-process 重启 | 流式事件路由 |
 
+## Pi 的双层循环与继续判据
+
+Pi 将编排分成两个循环：
+
+```text
+外层 loop：消费 follow-up
+  → 内层 loop：模型 → ToolCall → ToolResult → 再调用模型
+       └─ pending steering 在下一 Runtime Turn 注入
+```
+
+内层是否继续，以 AssistantMessage 中真实存在的 ToolCall、工具批次终止结果和 steering 队列为准，而不是只读取 Provider 的 `stopReason`。这体现了一个通用原则：**控制流应依赖归一化后的结构化事实，不依赖厂商声明字段。** 详见 [[agent-turn]] 与 [[tool-call-lifecycle]]。
+
 ## 与相关概念的关系
 
 - 编排循环内部会调用 [[agent-tool-system]] 执行工具。
@@ -58,7 +70,8 @@ tags: [agent-architecture, orchestration-loop, agent-control-flow]
 - 每轮迭代前可能触发 [[context-management]] 做上下文压缩。
 - 预算耗尽时可能调用 [[error-handling]] 的收尾策略。
 - 复杂任务可拆分到 [[sub-agent-orchestration]]。
+- 需要在后台工具运行时继续接收请求，并支持外部打断时，可采用 [[parallel-interruptible-async-agent]] 的事件路由、可取消 Turn 和任务管理机制。
 
 ## 当前证据
 
-当前分析主要来自 [[hermes-agent]] 的实现：带预算控制、可中断、支持并发工具执行的 ReAct 风格主循环。其他框架（nanobot、OpenClaw、OpenCode）的实现待补充。
+当前证据来自 Hermes、nanobot、OpenClaw、OpenCode 的框架调研，[[pi-agent-loop-and-turn]] 对双层循环、steering、follow-up 和真实 ToolCall 继续判据的源码分析，以及 [[ai-agent-book-async-agent-experiment]] 对事件队列、可取消 Turn 和异步任务回注的可运行实验。

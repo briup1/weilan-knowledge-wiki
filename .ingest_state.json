@@ -263,6 +263,34 @@
     },
     "raw/archive/research/agent-frameworks/opencode_维度06-输出解析.md": {
       "hash": "857cf288e6d08761"
+    },
+    "raw/archive/pi-session-system.md": {
+      "hash": "72e9353dc405a7dd",
+      "ingested_at": "2026-08-05 11:35"
+    },
+    "raw/archive/pi-agent-runtime-event-flow.md": {
+      "hash": "6c74741e0acca83d",
+      "ingested_at": "2026-08-05 16:27"
+    },
+    "raw/archive/pi-agent-loop-and-turn.md": {
+      "hash": "6953e4b5c0efe0d2",
+      "ingested_at": "2026-08-05 16:27"
+    },
+    "raw/archive/pi-provider-unified-event-protocol.md": {
+      "hash": "5215c963437efd1b",
+      "ingested_at": "2026-08-05 16:27"
+    },
+    "raw/archive/pi-tool-call-lifecycle.md": {
+      "hash": "117461b1995b4c01",
+      "ingested_at": "2026-08-05 16:27"
+    },
+    "raw/archive/pi-tool-registration-and-extension.md": {
+      "hash": "8d44736c85ed5967",
+      "ingested_at": "2026-08-05 16:27"
+    },
+    "raw/archive/pi-custom-tools-and-extension.md": {
+      "hash": "35940ffa46dde0d2",
+      "ingested_at": "2026-08-05 16:27"
     }
   }
 }

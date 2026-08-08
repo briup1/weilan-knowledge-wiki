@@ -1,26 +1,32 @@
 ---
 type: synthesis
 created: 2026-08-02
-updated: 2026-08-03
+updated: 2026-08-05
 mindmap-plugin: markdown
 sources:
-  - agent-turn
-  - agent-trace
-  - orchestration-loop
-  - agent-memory-system
-  - prompt-building-for-agents
-  - output-parsing
-  - context-management
-  - agent-tool-system
-  - mcp
-  - state-management
-  - validation-loop
-  - agent-security
-  - error-handling
-  - sub-agent-orchestration
-  - multi-agent-collaboration
-  - claude-code-skills
-  - initialization-environment
+  - hermes-agent-orchestration-loop
+  - hermes-agent-tool-system
+  - hermes-agent-memory-system
+  - hermes-agent-context-management
+  - hermes-agent-prompt-building
+  - hermes-agent-output-parsing
+  - hermes-agent-state-management
+  - hermes-agent-error-handling
+  - hermes-agent-security
+  - hermes-agent-validation-loop
+  - hermes-agent-sub-agent-orchestration
+  - hermes-agent-initialization-environment
+  - nanobot-framework-analysis
+  - openclaw-framework-analysis
+  - opencode-framework-analysis
+  - pi-agent-runtime-event-flow
+  - pi-agent-loop-and-turn
+  - pi-provider-unified-event-protocol
+  - pi-tool-call-lifecycle
+  - pi-tool-registration-and-extension
+  - pi-custom-tools-and-extension
+  - pi-session-system
+  - ai-agent-book-async-agent-experiment
 tags:
   - agent
   - concept-map
@@ -29,51 +35,80 @@ tags:
 
 # Agent 系统概念地图
 
-一张四级思维导图，从模块（1）到能力（1.1）、方法（1.1.1）、具体技术/算法（1.1.1.1）。每个二级节点链接到对应的 wiki concept 页面。
+本图及后续概念地图必须遵循根目录 [CLAUDE.md 的“概念地图层级规范”](../../CLAUDE.md#概念地图层级规范强制)：一级是模块，二级是核心能力/稳定概念，三级是实现方法/设计模式，四级才是具体技术、算法、协议、数据结构或产品。概念树同时承担结构、简述与导航：二级节点直接内联职责说明，已有稳定 Concept 页面时添加链接，不再维护重复的“节点说明”章节。
 
 ## 概念地图
 
 - Agent 系统
   - 1. 交互与可观测
-    - 1.1 Agent Turn
-      - 1.1.1 业务交互回合
-      - 1.1.2 预算与持久化边界
-    - 1.2 Agent Trace
-      - 1.2.1 Trace → Span → Event
-      - 1.2.2 延迟 / Token / 错误记录
+    - [[agent-turn|1.1 Agent Turn]]：区分一次用户交互与一次模型行动的回合边界
+      - 1.1.1 Business / User Turn：用户输入 → 最终回答
+      - 1.1.2 Runtime / Model Turn：一次模型行动 + 工具结果
+      - 1.1.3 预算与持久化边界
+    - [[agent-trace|1.2 Agent Trace]]：用 Trace、Span 与 Event 记录业务回合及运行步骤
+      - 1.2.1 Business Turn → Trace
+      - 1.2.2 Runtime Turn / LLM / Tool → Span
+      - 1.2.3 延迟 / Token / 错误记录
+    - [[agent-runtime-event-stream|1.3 Runtime Event Stream]]：统一 Agent、Turn、Message 与 Tool 的类型化流式事件
+      - 1.3.1 Agent / Turn / Message / Tool 四层事件
+      - 1.3.2 Delta + Partial 流式状态
   - 2. 执行核心
-    - 2.1 编排循环
+    - [[orchestration-loop|2.1 编排循环]]：迭代组织模型推理、工具执行、观察与后续行动
       - [[react-pattern|ReAct：推理 → 行动 → 观察]]
-      - 2.1.2 Token 预算与中断
-      - 2.1.3 串行 / 并行执行
-      - 2.1.4 异步事件驱动
-        - 2.1.4.1 事件队列与优先级
-        - 2.1.4.2 取消 / 队列 / 并行处理
+      - 2.1.2 内层工具 / steering 循环
+      - 2.1.3 外层 follow-up 循环
+      - 2.1.4 真实 ToolCall 继续判据
+      - 2.1.5 Token 预算与中断
+      - 2.1.6 串行 / 并行执行
+      - [[parallel-interruptible-async-agent|2.1.7 异步事件驱动]]：用事件路由、可取消 Turn 与后台任务解耦接收、决策和执行
+        - 2.1.7.1 inbox / work / pending 分层队列
+        - 2.1.7.2 Agent Turn / 工具协程 / 底层资源三层取消
   - 3. 认知能力
-    - 3.1 记忆系统
+    - [[agent-memory-system|3.1 记忆系统]]：沉淀跨回合可检索、可更新的结构化知识
       - 3.1.1 四类记忆：User / Feedback / Project / Reference
       - 3.1.2 本地 Markdown + 索引
       - 3.1.3 KAIROS 日志与 /dream 整合
-    - 3.2 Prompt 构建
+    - [[prompt-building-for-agents|3.2 Prompt 构建]]：按稳定前缀与动态上下文组装模型指令
       - 3.2.1 洋葱模型分层
       - 3.2.2 缓存 vs 临时 system prompt
       - 3.2.3 上下文文件优先级
-    - 3.3 输出解析
-      - 3.3.1 Provider 响应归一化
+    - [[output-parsing|3.3 输出解析]]：将 Provider 响应归一化为文本、推理与工具调用
+      - [[provider-protocol-normalization|3.3.1 Provider 协议归一化]]：分离厂商身份与 wire format，统一流式事件
+        - Provider 厂商身份与 API wire format 分离
+        - start / delta / done / error 统一事件
       - 3.3.2 推理 / Tool Calls 提取
       - 3.3.3 JSON 修复与孤儿工具保护
-  - 4. 上下文管理
-    - 4.1 上下文压缩
-      - 4.1.1 预填充压缩 Preflight
-      - 4.1.2 响应压缩 Response
-      - 4.1.3 错误压缩 Error
-    - 4.2 缓存保护
+  - [[context-management|4. 上下文管理]]
+    - [[context-compaction|4.1 上下文压缩]]：在窗口超限前后选择安全切点并保留任务状态
+      - 4.1.1 压缩时机
+        - Preflight 主动压缩
+        - 响应后真实 token 校准
+        - Overflow 错误恢复
+        - 手动 / 阶段性压缩
+      - 4.1.2 压缩目标
+        - Goal / Constraints / Progress / Decisions / Next Steps
+        - 保护最后 user 消息与工具调用配对
+        - 保留路径、函数、错误等精确信息
+      - 4.1.3 findCutPoint 切点选择
+        - 反向累计 keepRecentTokens
+        - 调整到 turn / tool-pair 安全边界
+        - firstKeptEntryId 标记近期原文起点
+      - 4.1.4 压缩方法
+        - 结构化 checkpoint + 近期原文
+        - 工具结果 head/tail 裁剪
+        - 分层 / 多阶段摘要
+        - [[context-compaction-checkpoint|Append-only compaction 节点]]
+      - 4.1.5 更新压缩
+        - 旧 checkpoint + 新增历史增量合并
+        - Done / In Progress / Blocked 状态迁移
+        - Anti-thrashing 与质量校验
+    - 4.2 缓存保护：稳定可复用 Prompt 前缀，减少重复计算与缓存失效
       - 4.2.1 System prompt 隔离
       - 4.2.2 缓存前缀固定
-    - 4.3 工具结果配对
+    - 4.3 工具结果配对：维护 ToolCall 与 ToolResult 的结构完整性
       - 4.3.1 孤儿工具调用修复
-  - 5. 工具系统
-    - 5.1 工具注册与发现
+  - [[agent-tool-system|5. 工具系统]]
+    - 5.1 工具注册与发现：建立工具定义来源、分类与动态发现入口
       - 5.1.1 自注册 / 装饰器扫描
       - 5.1.2 MCP 动态刷新
       - 5.1.3 工具类型学
@@ -81,44 +116,79 @@ tags:
       - 5.1.4 动态发现策略
         - 5.1.4.1 MCP 动态刷新
         - 5.1.4.2 Skills 渐进式披露
-    - 5.2 Schema 编排
+    - 5.2 Schema 编排：把工具参数约束转换为模型可理解的调用契约
       - 5.2.1 Schema 序列化
       - 5.2.2 参数强制 / 修复
       - 5.2.3 Adapter 归一化
-    - 5.3 工具调度
-      - 5.3.1 Dispatch handler
-      - 5.3.2 权限钩子
-      - 5.3.3 Scope / RBAC / ABAC 校验
-    - 5.4 工具裁剪
-      - 5.4.1 子 Agent 工具集交集
-      - 5.4.2 黑名单 / 权限组
-      - 5.4.3 动态工具可见性
-    - 5.5 MCP 协议
-      - 5.5.1 Client-Server 标准
-      - 5.5.2 外部服务接入
-      - 5.5.3 授权与权限
-        - 5.5.3.1 OAuth 2.1 / PRM / audience 校验
-        - 5.5.3.2 scope minimization / step-up
-      - 5.5.4 MCP 协议层风险
-        - 5.5.4.1 confused deputy
-        - 5.5.4.2 token passthrough
-        - 5.5.4.3 SSRF / local server compromise
+    - [[tool-call-lifecycle|5.3 ToolCall 生命周期]]：覆盖意图解析、校验、授权、执行与结果回填
+      - 5.3.1 Lookup / Repair / Schema Validation
+      - 5.3.2 beforeToolCall / execute / afterToolCall
+      - 5.3.3 ToolResult 回填与可恢复错误
+    - 5.4 工具可用性管道：区分已注册、模型可见与本次允许执行的工具集合
+      - 5.4.1 Definition Registry 准入
+      - 5.4.2 Active Tools 模型暴露
+      - 5.4.3 beforeToolCall 执行授权
+    - 5.5 工具裁剪：按任务、角色与权限缩小工具暴露范围
+      - 5.5.1 子 Agent 工具集交集
+      - 5.5.2 黑名单 / 权限组
+      - 5.5.3 动态工具可见性
+    - [[mcp|5.6 MCP 协议]]：标准化外部工具接入、调用与授权边界
+      - 5.6.1 Client-Server 标准
+      - 5.6.2 外部服务接入
+      - 5.6.3 授权与权限
+        - 5.6.3.1 OAuth 2.1 / PRM / audience 校验
+        - 5.6.3.2 scope minimization / step-up
+      - 5.6.4 MCP 协议层风险
+        - 5.6.4.1 confused deputy
+        - 5.6.4.2 token passthrough
+        - 5.6.4.3 SSRF / local server compromise
   - 6. 状态与持久化
-    - 6.1 运行时状态
-      - 6.1.1 内存状态
-      - 6.1.2 并发控制
-    - 6.2 持久化状态
-      - 6.2.1 SQLite / JSONL
-      - 6.2.2 WAL 与 FTS5
-    - 6.3 模式演进
-      - 6.3.1 Schema reconciliation
+    - [[state-management|6.1 状态管理]]：管理运行时状态、并发一致性与状态恢复
+      - 6.1.1 双轨状态模型
+        - 6.1.1.1 内存对象与索引
+        - 6.1.1.2 持久化记录
+      - 6.1.2 并发与一致性控制
+        - 6.1.2.1 锁
+        - 6.1.2.2 事务
+        - 6.1.2.3 版本控制
+      - 6.1.3 状态恢复
+        - 6.1.3.1 Snapshot
+        - 6.1.3.2 Replay
+    - [[session-persistence|6.2 会话持久化]]：统一事务型存储、Append-only 日志、恢复与 Schema 演进
+      - 6.2.1 事务型数据库存储
+        - 6.2.1.1 SQLite
+        - 6.2.1.2 WAL
+        - 6.2.1.3 FTS5
+      - [[append-only-session-persistence|6.2.2 Append-only 事件日志]]
+        - 6.2.2.1 JSONL
+        - 6.2.2.2 Entry-per-line
+        - 6.2.2.3 Replay 恢复
+      - 6.2.3 Schema 演进
+        - 6.2.3.1 Schema reconciliation
+        - 6.2.3.2 版本门控迁移
+    - [[session-branching-and-forking|6.3 分支历史管理]]：通过父指针、leaf 移动和路径复制管理历史分支
+      - [[session-entry-tree|6.3.1 父指针条目树]]
+        - 6.3.1.1 parentId
+        - 6.3.1.2 leaf cursor
+      - 6.3.2 分支与派生
+        - 6.3.2.1 移动 leaf
+        - 6.3.2.2 复制祖先路径
+    - [[session-context-projection|6.4 上下文视图投影]]：从当前祖先路径生成模型可见视图并解释路径状态
+      - 6.4.1 祖先路径投影
+        - 6.4.1.1 Entry → Message
+      - 6.4.2 路径局部状态解析
+        - 6.4.2.1 Model Change
+        - 6.4.2.2 Thinking Level Change
+        - 6.4.2.3 Compaction State
+      - 6.4.3 压缩检查点投影
+        - [[context-compaction-checkpoint|6.4.3.1 Summary + Recent Messages]]
   - 7. 安全与验证
-    - 7.1 验证循环
+    - [[validation-loop|7.1 验证循环]]：在执行前后设置 Schema、审批与结果验证门
       - 7.1.1 Schema 清洗
       - 7.1.2 审批状态
       - 7.1.3 调用后护栏
       - 7.1.4 执行后自动验证（linter / 测试）
-    - 7.2 安全防护
+    - [[agent-security|7.2 安全防护]]：以纵深防御和 fail-closed 策略约束危险行为
       - 7.2.1 HARDLINE / DANGEROUS 命令列表
       - 7.2.2 SSRF / 路径遍历防护
       - 7.2.3 凭证脱敏
@@ -131,63 +201,28 @@ tags:
         - 7.2.6.1 RBAC / ABAC / CBAC
         - 7.2.6.2 动态最小权限 / scope minimization
   - 8. 韧性
-    - 8.1 错误处理
+    - [[error-handling|8.1 错误处理]]：分类故障并选择重试、修复、降级或终止策略
       - 8.1.1 ClassifiedError 分类
       - 8.1.2 恢复阶梯
       - 8.1.3 指数退避 + 抖动
       - 8.1.4 孤儿工具修复
   - 9. 扩展与协作
-    - 9.1 子 Agent 编排
+    - [[sub-agent-orchestration|9.1 子 Agent 编排]]：把受限子任务委派给隔离的临时 Agent
       - 9.1.1 delegate_task 触发
       - 9.1.2 隔离上下文
       - 9.1.3 中断级联
-    - 9.2 多 Agent 协作
+    - [[multi-agent-collaboration|9.2 多 Agent 协作]]：通过角色分工与消息传递协同完成复杂任务
       - 9.2.1 角色分工
       - 9.2.2 消息传递
-    - 9.3 Claude Code Skills
-      - 9.3.1 SKILL.md 扩展
-      - 9.3.2 Slash 命令触发
+    - [[agent-extension-system|9.3 Agent Extension System]]：注册工具、命令、Provider 与生命周期 Hook
+      - 9.3.1 Tool / Command / Provider 注册
+      - 9.3.2 Context / ToolCall 生命周期 Hook
+      - 9.3.3 ResourceLoader 与 reload
+    - [[claude-code-skills|9.4 Claude Code Skills]]：通过 SKILL.md 和命令触发扩展能力
+      - 9.4.1 SKILL.md 扩展
+      - 9.4.2 Slash 命令触发
   - 10. 运行环境
-    - 10.1 初始化与环境
+    - [[initialization-environment|10.1 初始化与环境]]：合并配置、隔离 Profile 并选择执行后端
       - 10.1.1 配置合并
       - 10.1.2 Profile 隔离
       - 10.1.3 执行后端抽象
-
-## 节点说明
-
-### 1. 交互与可观测
-- [[agent-turn]]：一次用户请求到最终响应的完整业务回合。
-- [[agent-trace]]：Agent 执行过程的结构化可观测记录。
-
-### 2. 执行核心
-- [[orchestration-loop]]：ReAct 主控制流，迭代 LLM 推理 → 工具执行 → 观察。
-
-### 3. 认知能力
-- [[agent-memory-system]]：结构化持久记忆。
-- [[prompt-building-for-agents]]：洋葱式 system prompt 组装。
-- [[output-parsing]]：Provider 响应归一化与防御性修复。
-
-### 4. 上下文管理
-- [[context-management]]：上下文窗口的主动经营，包括压缩、缓存保护、孤儿工具修复。
-
-### 5. 工具系统
-- [[agent-tool-system]]：工具发现、注册、schema、调度。
-- [[mcp]]：标准化工具调用协议。
-
-### 6. 状态与持久化
-- [[state-management]]：运行时内存状态与 SQLite/JSONL 持久化。
-
-### 7. 安全与验证
-- [[validation-loop]]：执行前后的多层验证门。
-- [[agent-security]]：纵深防御与 fail-closed 默认。
-
-### 8. 韧性
-- [[error-handling]]：结构化错误分类与恢复阶梯。
-
-### 9. 扩展与协作
-- [[sub-agent-orchestration]]：子任务委派与隔离。
-- [[multi-agent-collaboration]]：多 Agent 角色分工与消息传递。
-- [[claude-code-skills]]：基于 SKILL.md 的能力扩展。
-
-### 10. 运行环境
-- [[initialization-environment]]：配置合并、Profile 隔离、执行后端抽象。

@@ -349,3 +349,62 @@
 - 五方案对比矩阵（TreeSearch/Hyper-Extract/GitNexus/Understand-Anything/Obsidian）
 - 三种组合方案（开发者场景/研究者场景/协作场景）
 - 从RAG到知识网络的三大演进趋势（隐式→显式、静态→动态、自动化→人机协作）
+
+## [2026-08-05] ingest | Pi 系列 07｜Session 系统：对话怎么存、恢复、分支
+
+- 归档原文：`raw/archive/pi-session-system.md`，并本地归档 8 张文章配图。
+- 新增来源：[[pi-session-system]]。
+- 新增概念：[[session-entry-tree]]、[[session-context-projection]]、[[session-branching-and-forking]]、[[context-compaction-checkpoint]]、[[append-only-session-persistence]]。
+- 更新概念：[[context-management]]、[[state-management]]。
+- 新增综合：[[agent-session-storage-and-context-views]]；更新 [[agent-concept-map]]。
+- 关键发现：Pi 将完整会话保存为 append-only Entry Tree；`leafId` 直接取新 `entry.id`；分支通过移动 leaf 改变祖先链，压缩通过追加 compaction checkpoint 改变模型投影，历史均不删除。
+
+## [2026-08-05] synthesis | 上下文压缩五维方案模型
+
+- 新增概念：[[context-compaction]]。
+- 概念维度：压缩时机、压缩目标、`findCutPoint` 切点选择、压缩方法、更新压缩。
+- 更新页面：[[context-compaction-checkpoint]]、[[context-management]]、[[agent-concept-map]] 和 `index.md`。
+- 设计结论：推荐采用“Preflight 主动压缩 + 真实 token 校准 + Overflow 兜底”，切点需保护 turn 与工具配对，压缩结果使用结构化 checkpoint + 近期原文，多次压缩采用增量合并和 anti-thrashing。
+
+
+## [2026-08-05] docs | Pi Session Message Flow 交互式演示
+
+- 新增演示资产：`docs/demos/session-message-flow-demo.html`。
+- 关联页面：[[pi-session-system]]、[[session-context-projection]]、[[session-branching-and-forking]]、[[context-compaction-checkpoint]]。
+- 演示范围：消息 Entry 创建与持久化、`leafId` 分支切换、上下文投影、append-only 压缩节点与摘要视图。
+- 资产定位：这是基于已摄取来源制作的派生教学材料，不作为新的 Source 或 Concept 重复摄取。
+
+## [2026-08-05 16:27] ingest | Pi 系列 01–06：Runtime、Loop、Provider 与 Tool 系统
+
+- 新增 Source：[[pi-agent-runtime-event-flow]]、[[pi-agent-loop-and-turn]]、[[pi-provider-unified-event-protocol]]、[[pi-tool-call-lifecycle]]、[[pi-tool-registration-and-extension]]、[[pi-custom-tools-and-extension]]。
+- 新增 Entity/Concept/Synthesis：[[pi-coding-agent]]、[[agent-runtime-event-stream]]、[[provider-protocol-normalization]]、[[tool-call-lifecycle]]、[[agent-extension-system]]、[[pi-agent-runtime-architecture]]。
+- 更新 [[agent-turn]] 的 Business/User Turn 与 Runtime/Model Turn 双层语义，并反哺编排、工具、输出解析、错误处理、Trace、概念地图和全局索引。
+
+## [2026-08-05] schema | 概念地图四级层级约束
+
+- 在 `CLAUDE.md` 中新增概念地图强制规范：模块 → 核心能力/稳定概念 → 实现方法/设计模式 → 具体技术/算法/协议/数据结构/产品。
+- 明确二级节点必须能力导向、跨框架稳定、可独立成 Concept 页面；禁止将 SQLite、JSONL、Hook、字段名等具体实现放入二级或三级。
+- [[agent-concept-map]] 已改为引用根目录规范，后续概念地图以 `CLAUDE.md` 为唯一规则来源。
+
+## [2026-08-05] refactor | Agent 概念地图“状态与持久化”层级重构
+
+- 按强制四级规范重构 [[agent-concept-map]] 第 6 节：状态管理、会话持久化、分支历史管理、上下文视图投影成为四个二级能力。
+- 新增 [[session-persistence]]，统一事务型数据库、Append-only 事件日志、Snapshot/Replay、Schema 演进和崩溃恢复方案。
+- 将 SQLite、JSONL、WAL、FTS5、parentId、leaf cursor 等具体实现下沉到四级节点。
+- 更新 [[state-management]]、[[append-only-session-persistence]] 与 `index.md`，明确“持久化事实”和“模型可见视图”的边界。
+
+## [2026-08-05] refactor | 概念地图与节点说明融合
+
+- 将 [[agent-concept-map]] 原 `## 节点说明` 的链接与职责说明内联到对应二级节点，删除重复章节。
+- 概念树现在同时承担结构、简述和导航；详细解释继续由各 Concept 页面承载。
+- 更新 `CLAUDE.md`：禁止生成重复的节点说明章节，统一二级节点内联一句话职责，已有 Concept 页面时直接链接。
+- 顺带修正异步事件驱动子节点编号，并拆分规范示例中的 WAL 与 FTS5 混合节点。
+
+## [2026-08-05] ingest | AI Agent Book 实验 4-5：并行和可打断的异步 Agent
+
+- 归档源码快照：`raw/archive/ai-agent-book-async-agent/`，包含核心代码、设计说明、演示入口与 `SHA256SUMS`。
+- 新增来源：[[ai-agent-book-async-agent-experiment]]。
+- 新增概念：[[parallel-interruptible-async-agent]]，说明 Query 分类、分层事件队列、可取消 Agent Turn、后台任务管理、结果回注和三层取消语义。
+- 更新 [[orchestration-loop]]、[[agent-concept-map]] 与 `index.md`，将异步事件驱动纳入现有 Agent 执行核心。
+- 验证结果：核心 Python 文件通过 `py_compile`；`parallel` 演示墙钟耗时约由 4.5 秒降至 1.5 秒；`interrupt` 演示确认后台任务可取消，且演示运行时随后仍可启动并完成新任务。
+- 实现边界：实验仅用关键词判断紧急度；`turn_task.cancel()` 不保证停止供应商侧推理；模拟工具取消不等于终止真实进程、容器或远程任务。

@@ -1,0 +1,1255 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session Message Flow</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f2f0e9;
+      --panel: #fffdf8;
+      --ink: #20231f;
+      --muted: #6d736c;
+      --line: #d7d5cc;
+      --soft: #ece9df;
+      --green: #176f57;
+      --green-soft: #def1e9;
+      --orange: #a94d1e;
+      --orange-soft: #f6e5d9;
+      --blue: #2a5c91;
+      --blue-soft: #e1eaf4;
+      --radius: 10px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #151815;
+        --panel: #1e221e;
+        --ink: #edf0eb;
+        --muted: #aab1aa;
+        --line: #3b423b;
+        --soft: #292e29;
+        --green: #69c9ab;
+        --green-soft: #194738;
+        --orange: #f09a68;
+        --orange-soft: #50301f;
+        --blue: #8eb9e8;
+        --blue-soft: #243b54;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "PingFang SC", "Microsoft YaHei", monospace;
+    }
+
+    button, input { font: inherit; }
+    code, pre { font-family: inherit; }
+
+    .page {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(330px, 470px);
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .18em;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: clamp(26px, 4vw, 44px);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .truth {
+      display: grid;
+      gap: 4px;
+      padding: 13px 15px;
+      border-left: 4px solid var(--orange);
+      background: var(--orange-soft);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .truth strong { color: var(--orange); }
+    .truth code { font-weight: 800; }
+
+    .scenario-switch {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+
+    .scenario-switch button {
+      background: transparent;
+      color: var(--muted);
+      border-color: var(--line);
+      padding: 7px 10px;
+      font-size: 10px;
+    }
+
+    .scenario-switch button[aria-pressed="true"] {
+      border-color: var(--green);
+      background: var(--green-soft);
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .composer {
+      display: grid;
+      grid-template-columns: auto minmax(220px, 1fr) auto auto auto;
+      gap: 8px;
+      align-items: center;
+      padding: 9px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+    }
+
+    .composer label {
+      padding-left: 6px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .composer input {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 11px;
+      outline: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    button {
+      border: 1px solid var(--ink);
+      border-radius: 6px;
+      padding: 9px 12px;
+      background: var(--ink);
+      color: var(--bg);
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    button:disabled { opacity: .4; cursor: wait; }
+    button:focus-visible, input:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--green) 30%, transparent);
+      outline-offset: 2px;
+    }
+
+    .workbench {
+      display: grid;
+      grid-template-columns: minmax(350px, .78fr) minmax(620px, 1.5fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .data-area { display: grid; gap: 10px; }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 42px;
+      padding: 10px 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 12px;
+    }
+
+    .panel-title span {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .code-panel { position: sticky; top: 10px; }
+
+    .code {
+      margin: 0;
+      padding: 9px 0;
+      overflow: auto;
+      font-size: 11px;
+      line-height: 1.64;
+      tab-size: 2;
+    }
+
+    .line {
+      display: block;
+      min-height: 18px;
+      padding: 1px 12px;
+      border-left: 3px solid transparent;
+      white-space: pre;
+      transition: background .18s, border-color .18s, color .18s;
+    }
+
+    .line b {
+      display: inline-block;
+      width: 30px;
+      color: var(--muted);
+      font-weight: 400;
+      user-select: none;
+    }
+
+    .line.critical { color: var(--orange); font-weight: 700; }
+    .line.active {
+      border-left-color: var(--green);
+      background: var(--green-soft);
+      color: var(--ink);
+    }
+    .line.done { opacity: .58; }
+    .line.blank { min-height: 10px; }
+
+    .explain {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 10px;
+      padding: 13px;
+      border-top: 1px solid var(--line);
+      background: var(--soft);
+    }
+
+    .step-no {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--panel);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .explain strong { display: block; font-size: 11px; margin-bottom: 4px; }
+    .explain p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+
+    .transform-row {
+      display: grid;
+      grid-template-columns: minmax(0, .72fr) auto minmax(0, 1.28fr);
+      gap: 9px;
+      align-items: stretch;
+      padding: 12px;
+    }
+
+    .data-box {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--bg);
+      padding: 9px;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+
+    .data-box.active {
+      border-color: var(--green);
+      background: var(--green-soft);
+      transform: translateY(-2px);
+    }
+
+    .data-box label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .data-box pre {
+      margin: 0;
+      overflow: auto;
+      font-size: 10px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .operator {
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .leaf-register {
+      display: grid;
+      grid-template-columns: auto auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--orange);
+      background: var(--orange-soft);
+      transition: transform .2s;
+    }
+
+    .leaf-register.bump { animation: bump .42s ease; }
+    .leaf-register span { color: var(--orange); font-size: 11px; font-weight: 800; }
+    .leaf-register code { font-size: 15px; font-weight: 800; }
+    .leaf-register small { color: var(--muted); font-size: 10px; }
+
+    .tree-shell {
+      margin: 0 12px 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .tree-shell h3 {
+      margin: 0;
+      padding: 8px 9px;
+      border-bottom: 1px solid var(--line);
+      font-size: 10px;
+    }
+
+    .tree-shell h3 small { color: var(--muted); font-weight: 400; }
+
+    .tree-view {
+      display: grid;
+      gap: 2px;
+      min-height: 56px;
+      padding: 8px 10px;
+      overflow-x: auto;
+      font-size: 9px;
+      line-height: 1.55;
+    }
+
+    .tree-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      width: max-content;
+      min-width: 100%;
+      padding: 2px 5px;
+      border-left: 3px solid transparent;
+      white-space: pre;
+    }
+
+    .tree-row.leaf {
+      border-left-color: var(--orange);
+      background: var(--orange-soft);
+      font-weight: 800;
+    }
+
+    .tree-row.excluded,
+    .store-row.excluded { opacity: .45; text-decoration: line-through; }
+    .tree-row.summary-source,
+    .store-row.summary-source { background: var(--orange-soft); }
+    .tree-row.kept,
+    .store-row.kept { background: var(--green-soft); }
+    .tree-row.compaction,
+    .store-row.compaction { border-left-color: var(--blue); background: var(--blue-soft); }
+
+    .tree-tag {
+      padding: 1px 5px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      font-size: 8px;
+      text-decoration: none;
+    }
+
+    .stores {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.25fr;
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+
+    .store {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .store h3 {
+      margin: 0;
+      padding: 8px 9px;
+      border-bottom: 1px solid var(--line);
+      font-size: 10px;
+    }
+
+    .store h3 small { color: var(--muted); font-weight: 400; }
+    .store-list { min-height: 108px; padding: 7px; }
+
+    .store-row {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 6px;
+      padding: 5px 6px;
+      border-bottom: 1px dashed var(--line);
+      font-size: 9px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .store-row:last-child { border-bottom: 0; }
+    .store-row strong { color: var(--green); }
+    .store-row.added { animation: flash-in .6s ease both; background: var(--green-soft); }
+    .store-row.focus { outline: 1px solid var(--green); outline-offset: -1px; }
+    .disk .store-row { grid-template-columns: 20px 1fr; }
+    .disk .store-row strong { color: var(--muted); }
+
+    .projection-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .projection-grid section {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px;
+    }
+
+    .projection-grid h3,
+    .model-input h3 {
+      margin: 0 0 9px;
+      font-size: 10px;
+    }
+
+    .cursor-register {
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .cursor-register code { color: var(--orange); font-weight: 800; }
+
+    .path {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      min-height: 31px;
+    }
+
+    .path-node {
+      position: relative;
+      padding: 6px 8px;
+      border: 1px solid var(--green);
+      border-radius: 5px;
+      background: var(--green-soft);
+      color: var(--ink);
+      font-size: 9px;
+      animation: flash-in .32s ease both;
+    }
+
+    .path-node:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      left: calc(100% + 2px);
+      color: var(--muted);
+    }
+
+    .placeholder { color: var(--muted); font-size: 9px; }
+
+    .projection-rule {
+      display: grid;
+      gap: 5px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .projection-rule span { color: var(--green); }
+
+    .model-input {
+      margin: 0 12px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--bg);
+      overflow: hidden;
+      transition: border-color .2s, background .2s;
+    }
+
+    .model-input.ready {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .model-input-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .model-input-head h3 { margin: 0; }
+    .model-input-head span { color: var(--muted); font-size: 9px; }
+    .model-input pre {
+      max-height: 220px;
+      margin: 0;
+      padding: 10px;
+      overflow: auto;
+      font-size: 9px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    @keyframes flash-in {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bump {
+      0%, 100% { transform: scale(1); }
+      45% { transform: scale(1.015); }
+    }
+
+    @media (max-width: 1100px) {
+      .workbench { grid-template-columns: 1fr; }
+      .code-panel { position: static; }
+      .code { columns: 2; column-gap: 0; }
+      .line { break-inside: avoid; }
+    }
+
+    @media (max-width: 768px) {
+      .page { width: min(100% - 20px, 680px); padding-top: 20px; }
+      .hero { grid-template-columns: 1fr; }
+      .composer { grid-template-columns: 1fr 1fr 1fr; }
+      .composer label, .composer input { grid-column: 1 / -1; }
+      .code { columns: 1; }
+      .stores, .projection-grid { grid-template-columns: 1fr; }
+      .transform-row { grid-template-columns: 1fr; }
+      .operator::after { content: " ↓"; }
+      .leaf-register { grid-template-columns: auto auto; }
+      .leaf-register small { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 375px) {
+      .composer { grid-template-columns: 1fr; }
+      .composer label, .composer input { grid-column: auto; }
+      .composer button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">SESSION INTERNALS</p>
+        <h1 id="hero-title">一条 msg 如何变成 Model Input</h1>
+        <p class="subtitle" id="hero-subtitle">逐行观察树节点创建、内存索引更新、JSONL 追加，以及当前分支投影。</p>
+      </div>
+      <div class="truth">
+        <strong id="truth-title">关键事实</strong>
+        <span id="truth-line-1"><code>leaf_id</code> 不单独生成。</span>
+        <span id="truth-line-2">先生成 <code>entry.id</code>，再执行 <code>leaf_id = entry.id</code>。</span>
+      </div>
+    </header>
+
+    <nav class="scenario-switch" aria-label="选择演示过程">
+      <button type="button" data-scenario="message" aria-pressed="true">1. 消息入树与投影</button>
+      <button type="button" data-scenario="branch" aria-pressed="false">2. 分支与 leaf 切换</button>
+      <button type="button" data-scenario="compaction" aria-pressed="false">3. 压缩节点与投影</button>
+    </nav>
+
+    <form class="composer" id="composer">
+      <label for="question" id="question-label">用户消息 msg</label>
+      <input id="question" autocomplete="off" value="一次提问如何经过 Session 进入模型？">
+      <button type="submit" id="auto">自动播放</button>
+      <button type="button" id="next" class="secondary">下一步</button>
+      <button type="button" id="reset" class="secondary">重置</button>
+    </form>
+
+    <section class="workbench">
+      <article class="code-panel panel">
+        <div class="panel-title">
+          <h2>执行代码</h2>
+          <span id="phase">等待输入</span>
+        </div>
+        <pre class="code" id="code-view"><code></code></pre>
+        <div class="explain" aria-live="polite">
+          <span class="step-no" id="step-no">0</span>
+          <div>
+            <strong id="step-title">初始状态</strong>
+            <p id="step-detail">Session 已有两条历史 entry，当前 leaf_id 指向 e_02。</p>
+          </div>
+        </div>
+      </article>
+
+      <section class="data-area" aria-label="Session 数据结构变化">
+        <article class="panel incoming-panel">
+          <div class="panel-title">
+            <h2 id="input-panel-title">输入与新节点</h2>
+            <span id="input-panel-badge">msg ≠ entry</span>
+          </div>
+          <div class="transform-row">
+            <div class="data-box" id="msg-box">
+              <label id="box-left-label">msg</label>
+              <pre id="msg-json"></pre>
+            </div>
+            <div class="operator" id="operator-label">包装</div>
+            <div class="data-box" id="entry-box">
+              <label id="box-right-label">entry</label>
+              <pre id="entry-json">尚未创建</pre>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel storage-panel">
+          <div class="panel-title">
+            <h2>SessionManager 内存与磁盘</h2>
+            <span>物理存储结构</span>
+          </div>
+
+          <div class="leaf-register" id="leaf-register">
+            <span>leaf_id</span>
+            <code id="leaf-value">e_02</code>
+            <small id="leaf-note">指向当前分支末端</small>
+          </div>
+
+          <section class="tree-shell" id="tree-shell">
+            <h3>物理 Entry 树 <small>parent_id 关系；节点始终保留</small></h3>
+            <div id="tree-view" class="tree-view"></div>
+          </section>
+
+          <div class="stores">
+            <section class="store">
+              <h3>entries[] <small>完整追加顺序</small></h3>
+              <div id="entries-store" class="store-list"></div>
+            </section>
+            <section class="store">
+              <h3>by_id{} <small>回溯索引</small></h3>
+              <div id="index-store" class="store-list"></div>
+            </section>
+            <section class="store disk">
+              <h3>session.jsonl <small>append-only</small></h3>
+              <div id="disk-store" class="store-list"></div>
+            </section>
+          </div>
+        </article>
+
+        <article class="panel projection-panel">
+          <div class="panel-title">
+            <h2>build_session_context</h2>
+            <span>逻辑投影结构</span>
+          </div>
+
+          <div class="projection-grid">
+            <section>
+              <h3 id="backtrack-title">1. parent_id 回溯</h3>
+              <div class="cursor-register">
+                cursor = <code id="cursor-value">—</code>
+              </div>
+              <div class="path" id="backtrack-path">
+                <span class="placeholder">等待 leaf → root</span>
+              </div>
+            </section>
+
+            <section>
+              <h3 id="forward-title">2. reverse + map</h3>
+              <div class="path" id="forward-path">
+                <span class="placeholder">等待 root → leaf</span>
+              </div>
+              <div class="projection-rule" id="projection-rule">
+                <del>id / parent_id / timestamp / type</del>
+                <span>保留 message.role + message.content</span>
+              </div>
+            </section>
+          </div>
+
+          <section class="model-input" id="model-input">
+            <div class="model-input-head">
+              <h3 id="model-title">3. agent.state.messages</h3>
+              <span id="model-badge">尚未生成</span>
+            </div>
+            <pre id="messages-json">[]</pre>
+          </section>
+        </article>
+      </section>
+    </section>
+  </main>
+  <script>
+    const $ = selector => document.querySelector(selector);
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wait = ms => sleep(reducedMotion ? 20 : ms);
+
+    const messageEntries = () => [
+      messageEntry('e_01', null, 'user', '上一轮问题', '09:00:01'),
+      messageEntry('e_02', 'e_01', 'assistant', '上一轮回答', '09:00:02')
+    ];
+
+    const branchEntries = () => [
+      messageEntry('e_01', null, 'user', '目标：设计 Session 动画', '09:00:01'),
+      messageEntry('e_02', 'e_01', 'assistant', '先展示消息入树流程', '09:00:02'),
+      messageEntry('e_03', 'e_02', 'user', '沿用线性时间线实现', '09:00:03'),
+      messageEntry('e_04', 'e_03', 'assistant', '已生成线性方案', '09:00:04')
+    ];
+
+    const compactionEntries = () => [
+      messageEntry('e_01', null, 'user', '我们要分析 Session 的完整实现', '09:00:01'),
+      messageEntry('e_02', 'e_01', 'assistant', '先确认目标、约束和源码范围', '09:00:02'),
+      messageEntry('e_03', 'e_02', 'user', '重点保留 leaf、分支和投影细节', '09:00:03'),
+      messageEntry('e_04', 'e_03', 'assistant', '已定位 buildSessionContext', '09:00:04')
+    ];
+
+    function messageEntry(id, parent_id, role, content, timestamp) {
+      return { id, parent_id, timestamp, type: 'message', message: { role, content } };
+    }
+
+    const scenarios = {
+      message: {
+        inputLabel: '用户消息 msg',
+        inputDefault: '一次提问如何经过 Session 进入模型？',
+        heroTitle: '一条 msg 如何变成 Model Input',
+        heroSubtitle: '逐行观察树节点创建、内存索引更新、JSONL 追加，以及当前分支投影。',
+        truth: ['leaf_id 不单独生成。', '先生成 entry.id，再执行 leaf_id = entry.id。'],
+        panel: ['输入与新节点', 'msg ≠ entry'],
+        boxLabels: ['msg', '包装', 'entry'],
+        projection: ['1. parent_id 回溯', '2. reverse + map', '删除 Entry 元数据', '保留 message.role + message.content'],
+        code: [
+          ['l1', 'entry = SessionEntry('], ['l2', '  id=create_id(),'],
+          ['l3', '  parent_id=self.leaf_id,'], ['l4', '  type="message", message=msg'],
+          ['l5', ')'], ['l6', 'self.entries.append(entry)'],
+          ['l7', 'self.by_id[entry.id] = entry'], ['l8', 'self.leaf_id = entry.id', true],
+          ['l9', 'append_jsonl(entry)'], ['l10', ''],
+          ['l11', 'cursor = self.leaf_id'], ['l12', 'while cursor is not None:'],
+          ['l13', '  node = self.by_id[cursor]'], ['l14', '  path.append(node)'],
+          ['l15', '  cursor = node.parent_id'], ['l16', ''],
+          ['l17', 'path.reverse()'], ['l18', 'messages = [e.message for e in path]'],
+          ['l19', 'agent.state.messages = messages', true]
+        ]
+      },
+      branch: {
+        inputLabel: '新分支的用户消息',
+        inputDefault: '改成树状分支动画，突出 leaf 切换',
+        heroTitle: '移动 leaf_id，切换模型可见路径',
+        heroSubtitle: 'branch() 只移动游标；下一次 append 从历史节点长出新分支，旧分支仍在树和 JSONL 中。',
+        truth: ['branch() 只修改 leaf_id。', '不在当前投影中，不等于节点被删除。'],
+        panel: ['branch() 与新分支节点', 'move leaf → append sibling'],
+        boxLabels: ['branch 请求', '从历史节点继续', '新分支 entry'],
+        projection: ['1. 当前 leaf 回溯', '2. 当前分支投影', '排除不在 leaf→root 链上的节点', '旧分支仍保留在 entries / by_id / JSONL'],
+        code: [
+          ['b1', 'def branch(branch_from_id):'],
+          ['b2', '  if branch_from_id not in self.by_id: raise Error'],
+          ['b3', '  self.leaf_id = branch_from_id', true], ['b4', ''],
+          ['b5', 'entry = SessionEntry('], ['b6', '  id=create_id(),'],
+          ['b7', '  parent_id=self.leaf_id,'], ['b8', '  type="message", message=msg'],
+          ['b9', ')'], ['b10', 'self.entries.append(entry)'],
+          ['b11', 'self.by_id[entry.id] = entry'],
+          ['b12', 'self.leaf_id = entry.id', true], ['b13', 'append_jsonl(entry)'],
+          ['b14', ''], ['b15', 'path = backtrack(self.leaf_id, self.by_id)'],
+          ['b16', 'messages = reverse_and_map(path)'],
+          ['b17', 'agent.state.messages = messages', true]
+        ]
+      },
+      compaction: {
+        inputLabel: '模型生成的 summary（演示值）',
+        inputDefault: '目标与关键决策已确认；下一步实现分支和压缩动画。',
+        heroTitle: '追加 compaction 节点，而不是删除消息',
+        heroSubtitle: '压缩结果作为普通 Entry 追加到树；buildSessionContext 用摘要替换旧区间。',
+        truth: ['旧消息继续留在 append-only 树中。', '变化只发生在 buildSessionContext 的投影视图。'],
+        panel: ['压缩触发、切点与节点', 'summary ≠ delete'],
+        boxLabels: ['压缩参数', '生成并追加', 'compaction entry'],
+        projection: ['1. 物理路径与压缩点', '2. 摘要 + 保留区间', '摘要替换 first_kept_entry_id 之前的旧消息', '旧 Entry 不删除；compaction 自身不直接作为普通消息'],
+        code: [
+          ['c1', 'should_compact = context_tokens >'],
+          ['c2', '  context_window - reserve_tokens'],
+          ['c3', 'first_kept_id = find_cut_point(keep_recent_tokens)'],
+          ['c4', 'summary = generate_summary(old_messages)'],
+          ['c5', 'entry = SessionEntry('],
+          ['c6', '  id=create_id(), type="compaction",'],
+          ['c7', '  parent_id=self.leaf_id,'],
+          ['c8', '  summary=summary, first_kept_entry_id=first_kept_id'],
+          ['c9', ')'], ['c10', 'self._append_entry(entry)  # append-only', true],
+          ['c11', 'append_message(m5); append_message(m6)'], ['c12', ''],
+          ['c13', 'path = backtrack(self.leaf_id)'],
+          ['c14', 'compaction = latest_compaction(path)'],
+          ['c15', 'messages = [summary_message(compaction.summary)]'],
+          ['c16', 'messages += path[first_kept:compaction]'],
+          ['c17', 'messages += path[compaction + 1:]'],
+          ['c18', 'agent.state.messages = messages', true]
+        ]
+      }
+    };
+
+    let activeScenario = 'message';
+    let entries = [];
+    let by_id = new Map();
+    let diskRows = [];
+    let leaf_id = null;
+    let draftEntry = null;
+    let backtrackIds = [];
+    let currentPathIds = [];
+    let currentModelMessages = [];
+    let visualStateById = new Map();
+    let steps = [];
+    let stepIndex = 0;
+    let running = false;
+    let compressionData = {};
+
+    function buildMessageSteps() {
+      return [
+        step(['l1', 'l4', 'l5'], '接收 Message', 'msg 进入 SessionManager',
+          'msg 只有 role/content，还不是可存储的树节点。', () => pulse('#msg-box')),
+        step(['l2'], '创建 Entry', '生成的是 entry.id',
+          'create_id() 返回 e_03；不存在 generate_leaf_id() 这一步。', () => {
+            draftEntry.id = 'e_03'; renderEntry(); pulse('#entry-box');
+          }),
+        step(['l3'], '连接父节点', '读取旧 leaf_id 作为 parent_id',
+          '此刻 leaf_id 仍是 e_02，因此新节点 parent_id=e_02。', () => {
+            draftEntry.parent_id = leaf_id; renderEntry(); pulse('#leaf-register');
+          }),
+        step(['l6'], '更新 entries[]', '追加完整历史列表',
+          'entries 保存物理追加顺序，也可以容纳其他分支节点。', () => {
+            entries.push(structuredClone(draftEntry)); renderAll({ addedEntry: draftEntry.id });
+          }),
+        step(['l7'], '更新 by_id{}', '建立 ID 索引',
+          'by_id[e_03] 指向新 entry，parent_id 回溯无需扫描 entries。', () => {
+            by_id.set(draftEntry.id, entries.at(-1)); renderAll({ addedIndex: draftEntry.id });
+          }),
+        step(['l8'], '移动 Leaf 指针', 'leaf_id = entry.id',
+          'leaf_id 从 e_02 更新为 e_03；leaf_id 是游标，不是另一份节点。', () => {
+            const oldLeaf = leaf_id; leaf_id = draftEntry.id;
+            showLeafTransition(oldLeaf, leaf_id, '新 entry 成为当前分支末端'); renderAll();
+          }),
+        step(['l9'], '追加写盘', 'JSONL append-only 持久化',
+          '完整 entry 写成新的一行；旧行和旧节点都不改写。', () => {
+            diskRows.push(structuredClone(draftEntry)); renderAll({ addedDisk: draftEntry.id });
+          }),
+        step(['l11'], '开始构建 Context', 'cursor 从当前 leaf_id 开始',
+          '投影只跟随当前 leaf 对应的 parent_id 链。', () => startBacktrack()),
+        backtrackStep(['l12', 'l13', 'l14', 'l15'], 'e_03', 'e_02', '第一次回溯：读取新用户节点'),
+        backtrackStep(['l12', 'l13', 'l14', 'l15'], 'e_02', 'e_01', '第二次回溯：读取上一轮助手节点'),
+        backtrackStep(['l12', 'l13', 'l14', 'l15'], 'e_01', 'null', '第三次回溯：到达根节点'),
+        step(['l17'], '恢复对话顺序', 'path.reverse()',
+          '回溯得到 leaf→root；发送模型前反转为 root→leaf。', () => showForwardPath()),
+        step(['l18'], 'Entry 投影 Message', '去掉 Session 元数据',
+          'id、parent_id、timestamp、type 留在 Session；模型只接收 message。', () => {
+            currentModelMessages = [...backtrackIds].reverse().map(id => by_id.get(id).message);
+            renderModel('messages');
+          }),
+        step(['l19'], '发送模型', 'agent.state.messages = messages',
+          '最终模型输入是当前分支的 Message[]，不是 entries[] 或 by_id{}。', () => readyModel())
+      ];
+    }
+
+    function buildBranchSteps() {
+      return [
+        step(['b1'], '请求切分支', 'branch_from_id = e_02',
+          '当前 leaf_id=e_04；准备回到历史节点 e_02 继续。', () => pulse('#msg-box')),
+        step(['b2'], '校验目标节点', 'by_id 中存在 e_02',
+          'branch 目标必须是树中已有 Entry；校验只查 ID 索引。', () => highlightStoreId('e_02')),
+        step(['b3'], '移动 Leaf 指针', 'leaf_id: e_04 → e_02',
+          '只改游标，不删除 e_03/e_04；此刻模型可见路径立刻缩短为 e_01→e_02。', () => {
+            const oldLeaf = leaf_id; leaf_id = 'e_02';
+            currentPathIds = ancestorIds(leaf_id).reverse();
+            currentModelMessages = messagesForIds(currentPathIds);
+            visualStateById = new Map([['e_03', 'excluded'], ['e_04', 'excluded']]);
+            showLeafTransition(oldLeaf, leaf_id, '旧分支保留，但不进入当前投影');
+            renderAll(); renderPathsFromCurrent(); renderModel('current branch');
+          }),
+        step(['b5', 'b6', 'b7', 'b8', 'b9'], '创建分支节点', '新 Entry 从 e_02 长出',
+          'create_id()=e_05，parent_id 读取移动后的 leaf_id，因此 e_03 与 e_05 成为兄弟节点。', () => {
+            draftEntry.id = 'e_05'; draftEntry.parent_id = leaf_id; renderEntry(); pulse('#entry-box');
+          }),
+        step(['b10'], '更新 entries[]', '追加 e_05，不截断旧分支',
+          'entries 现在同时包含 e_03→e_04 与 e_05 两条分支。', () => {
+            entries.push(structuredClone(draftEntry)); renderAll({ addedEntry: 'e_05' });
+          }),
+        step(['b11'], '更新 by_id{}', '索引新分支节点',
+          'by_id[e_05] 建立后，两条分支都可通过 parent_id 回溯。', () => {
+            by_id.set('e_05', entries.at(-1)); renderAll({ addedIndex: 'e_05' });
+          }),
+        step(['b12'], '移动 Leaf 指针', 'leaf_id: e_02 → e_05',
+          '当前分支末端变为 e_05；e_04 仍是另一条分支的末端。', () => {
+            const oldLeaf = leaf_id; leaf_id = 'e_05';
+            showLeafTransition(oldLeaf, leaf_id, '当前分支：e_01 → e_02 → e_05'); renderAll();
+          }),
+        step(['b13'], '追加写盘', 'JSONL 只追加 e_05',
+          '磁盘同时保留旧分支行和新分支行，不做覆盖或截断。', () => {
+            diskRows.push(structuredClone(draftEntry)); renderAll({ addedDisk: 'e_05' });
+          }),
+        step(['b15'], '重新构建 Context', '从新 leaf_id=e_05 回溯',
+          'buildSessionContext 不扫描所有 entries，只沿 e_05 的父链。', () => startBacktrack()),
+        backtrackStep(['b15'], 'e_05', 'e_02', '读取新分支用户节点'),
+        backtrackStep(['b15'], 'e_02', 'e_01', '读取共同祖先助手节点'),
+        backtrackStep(['b15'], 'e_01', 'null', '读取根节点；旧分支 e_03/e_04 未经过'),
+        step(['b16'], '当前分支投影', 'reverse_and_map(path)',
+          '投影结果为 e_01→e_02→e_05；e_03/e_04 仍在存储层，但不在 messages。', () => {
+            showForwardPath(); currentModelMessages = messagesForIds([...backtrackIds].reverse());
+            renderModel('3 messages · old branch excluded');
+          }),
+        step(['b17'], '发送模型', 'agent.state.messages = current branch',
+          '切分支改变的是模型视图，不是底层树。', () => readyModel())
+      ];
+    }
+
+    function buildCompactionSteps() {
+      return [
+        step(['c1', 'c2'], '判断是否压缩', 'should_compact = true',
+          '114000 > 128000 - 16384；reserve_tokens 决定何时触发，不决定保留多少原文。', () => {
+            compressionData.should_compact = true; renderLeftData(); pulse('#msg-box');
+          }),
+        step(['c3'], '选择切点', 'first_kept_entry_id = e_03',
+          'keep_recent_tokens 决定保留近处原文；e_01/e_02 将由摘要替代，e_03/e_04 保留原文。', () => {
+            compressionData.first_kept_entry_id = 'e_03'; draftEntry.first_kept_entry_id = 'e_03'; renderEntry();
+            visualStateById = new Map([['e_01', 'summary-source'], ['e_02', 'summary-source'], ['e_03', 'kept'], ['e_04', 'kept']]);
+            renderAll(); renderLeftData();
+          }),
+        step(['c4'], '生成摘要', 'generate_summary(old_messages)',
+          '模型把 e_01/e_02 概括成结构化 checkpoint；演示中使用输入框里的 summary。', () => {
+            draftEntry.summary = $('#question').value.trim(); renderEntry(); pulse('#entry-box');
+          }),
+        step(['c5', 'c6', 'c7', 'c8', 'c9'], '创建压缩节点', '生成 compaction Entry',
+          'compaction 也是树节点：id=c_05、parent_id=e_04，并记录 summary 与 first_kept_entry_id。', () => {
+            draftEntry.id = 'c_05'; draftEntry.parent_id = leaf_id; renderEntry();
+          }),
+        step(['c10'], '追加压缩节点', '_append_entry(c_05)',
+          'entries、by_id、JSONL 都只追加一项，随后 leaf_id=c_05；旧消息一个都没删。', () => {
+            appendPhysicalEntry(draftEntry); const oldLeaf = leaf_id; leaf_id = 'c_05';
+            visualStateById.set('c_05', 'compaction');
+            showLeafTransition(oldLeaf, leaf_id, 'compaction 成为当前 leaf'); renderAll({ addedAll: 'c_05' });
+          }),
+        step(['c11'], '压缩后继续对话', '新消息继续挂在 compaction 后',
+          '追加 e_06、e_07 后，物理路径仍包含 e_01…e_04、c_05 和新消息。', () => {
+            const e06 = messageEntry('e_06', 'c_05', 'user', '请继续补充分支与压缩动画', '09:00:06');
+            const e07 = messageEntry('e_07', 'e_06', 'assistant', '开始实现两个新过程', '09:00:07');
+            appendPhysicalEntry(e06); appendPhysicalEntry(e07); leaf_id = 'e_07';
+            showLeafTransition('c_05', leaf_id, '新消息继续从 compaction 节点向后生长'); renderAll({ addedAll: 'e_07' });
+          }),
+        step(['c13'], '回溯物理路径', 'leaf → root 包含全部旧节点',
+          '回溯得到 e_07→e_06→c_05→e_04→e_03→e_02→e_01，证明旧 Entry 仍在树上。', () => {
+            backtrackIds = ancestorIds(leaf_id); currentPathIds = [...backtrackIds].reverse();
+            $('#cursor-value').textContent = 'null'; renderPath('#backtrack-path', backtrackIds); renderPath('#forward-path', currentPathIds);
+            renderAll();
+          }),
+        step(['c14'], '定位压缩点', '使用当前路径上最新的 compaction',
+          'buildSessionContext 找到 c_05；分支上的其他 compaction 不会影响当前路径。', () => highlightStoreId('c_05')),
+        step(['c15'], '投影第 1 段', '先放 summary message',
+          '摘要消息替代 first_kept_entry_id 之前的 e_01/e_02。', () => {
+            currentModelMessages = [summaryMessage(draftEntry.summary)]; renderModel('1 summary message');
+          }),
+        step(['c16'], '投影第 2 段', '加入保留原文 e_03、e_04',
+          '从 first_kept_entry_id 到 compaction 之前的消息保持原样。', () => {
+            currentModelMessages.push(by_id.get('e_03').message, by_id.get('e_04').message);
+            renderModel('summary + 2 kept messages');
+          }),
+        step(['c17'], '投影第 3 段', '加入 compaction 之后的 e_06、e_07',
+          '压缩节点之后的新消息全部进入上下文；compaction Entry 自身不是普通聊天消息。', () => {
+            currentModelMessages.push(by_id.get('e_06').message, by_id.get('e_07').message);
+            renderModel('summary + kept + recent');
+          }),
+        step(['c18'], '发送模型', 'agent.state.messages = compressed view',
+          '最终视图是 [摘要]→e_03→e_04→e_06→e_07；e_01/e_02 仍在存储层。', () => readyModel())
+      ];
+    }
+
+    function step(lines, phase, title, detail, run) { return { lines, phase, title, detail, run }; }
+
+    function backtrackStep(lines, id, parent_id, title) {
+      return step(lines, 'parent_id 回溯', title,
+        `by_id[${id}] → path.push(${id}) → cursor=${parent_id}。`, () => {
+          backtrackIds.push(id); $('#cursor-value').textContent = parent_id;
+          renderPath('#backtrack-path', backtrackIds); highlightStoreId(id);
+        });
+    }
+
+    function reset() {
+      const config = scenarios[activeScenario];
+      visualStateById = new Map(); backtrackIds = []; currentPathIds = []; currentModelMessages = [];
+      compressionData = { context_tokens: 114000, context_window: 128000, reserve_tokens: 16384, keep_recent_tokens: 20000 };
+
+      if (activeScenario === 'message') {
+        entries = messageEntries(); leaf_id = 'e_02';
+        draftEntry = { id: '待生成', parent_id: '待读取', timestamp: '09:00:03', type: 'message', message: { role: 'user', content: $('#question').value.trim() } };
+        steps = buildMessageSteps();
+      } else if (activeScenario === 'branch') {
+        entries = branchEntries(); leaf_id = 'e_04';
+        draftEntry = { id: '待生成', parent_id: '待读取', timestamp: '09:00:05', type: 'message', message: { role: 'user', content: $('#question').value.trim() } };
+        currentPathIds = ['e_01', 'e_02', 'e_03', 'e_04']; currentModelMessages = messagesForEntries(entries);
+        steps = buildBranchSteps();
+      } else {
+        entries = compactionEntries(); leaf_id = 'e_04';
+        draftEntry = { id: '待生成', parent_id: '待读取', timestamp: '09:00:05', type: 'compaction', summary: '待生成', first_kept_entry_id: '待计算' };
+        currentPathIds = ['e_01', 'e_02', 'e_03', 'e_04']; currentModelMessages = messagesForEntries(entries);
+        steps = buildCompactionSteps();
+      }
+
+      by_id = new Map(entries.map(entry => [entry.id, entry]));
+      diskRows = structuredClone(entries); stepIndex = 0; running = false;
+      renderScenarioChrome(config); renderCode(config.code); clearCodeState();
+      $('#phase').textContent = '等待输入'; $('#step-no').textContent = '0';
+      $('#step-title').textContent = activeScenario === 'message' ? '初始状态' : activeScenario === 'branch' ? '旧分支为当前路径' : '压缩前的完整路径';
+      $('#step-detail').textContent = activeScenario === 'message'
+        ? 'Session 已有两条历史 entry，当前 leaf_id 指向 e_02。'
+        : activeScenario === 'branch'
+          ? '当前 leaf_id=e_04，模型可见路径为 e_01→e_02→e_03→e_04。'
+          : '当前 leaf_id=e_04，压缩前四条消息都直接进入模型上下文。';
+      $('#leaf-value').textContent = leaf_id; $('#leaf-note').textContent = '指向当前分支末端';
+      $('#cursor-value').textContent = '—'; renderLeftData(); renderEntry(); renderAll();
+
+      if (activeScenario === 'message') {
+        clearPath('#backtrack-path', '等待 leaf → root'); clearPath('#forward-path', '等待 root → leaf');
+        currentModelMessages = []; renderModel('尚未生成', false);
+      } else {
+        renderPathsFromCurrent(); renderModel(activeScenario === 'branch' ? '当前旧分支 · 4 messages' : '压缩前 · 4 messages');
+      }
+      setDisabled(false);
+    }
+
+    function renderScenarioChrome(config) {
+      $('#question-label').textContent = config.inputLabel;
+      $('#hero-title').textContent = config.heroTitle; $('#hero-subtitle').textContent = config.heroSubtitle;
+      $('#truth-line-1').textContent = config.truth[0]; $('#truth-line-2').textContent = config.truth[1];
+      $('#input-panel-title').textContent = config.panel[0]; $('#input-panel-badge').textContent = config.panel[1];
+      $('#box-left-label').textContent = config.boxLabels[0]; $('#operator-label').textContent = config.boxLabels[1]; $('#box-right-label').textContent = config.boxLabels[2];
+      $('#backtrack-title').textContent = config.projection[0]; $('#forward-title').textContent = config.projection[1];
+      $('#projection-rule').innerHTML = '';
+      const oldRule = document.createElement('del'); oldRule.textContent = config.projection[2];
+      const newRule = document.createElement('span'); newRule.textContent = config.projection[3];
+      $('#projection-rule').append(oldRule, newRule);
+      document.querySelectorAll('[data-scenario]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.scenario === activeScenario)));
+    }
+
+    function renderCode(lines) {
+      const code = $('#code-view code'); code.replaceChildren(...lines.map(([id, text, critical], index) => {
+        const line = document.createElement('span'); line.id = id; line.className = `line${critical ? ' critical' : ''}${text ? '' : ' blank'}`;
+        const number = document.createElement('b'); number.textContent = String(index + 1).padStart(2, '0');
+        line.append(number, document.createTextNode(text)); return line;
+      }));
+    }
+
+    function clearCodeState() {
+      document.querySelectorAll('.line.active, .line.done').forEach(line => line.classList.remove('active', 'done'));
+    }
+
+    function renderLeftData() {
+      if (activeScenario === 'message') {
+        $('#msg-json').textContent = JSON.stringify(draftEntry.message, null, 2);
+      } else if (activeScenario === 'branch') {
+        $('#msg-json').textContent = JSON.stringify({ branch_from_id: 'e_02', old_leaf_id: 'e_04', next_message: $('#question').value }, null, 2);
+      } else {
+        $('#msg-json').textContent = JSON.stringify(compressionData, null, 2);
+      }
+    }
+
+    function renderEntry() { $('#entry-json').textContent = JSON.stringify(draftEntry, null, 2); }
+
+    function renderAll(flags = {}) { renderStores(flags); renderTree(); }
+
+    function renderStores(flags = {}) {
+      $('#entries-store').replaceChildren(...entries.map((entry, index) =>
+        storeRow(String(index), entrySummary(entry), entry.id, flags.addedEntry === entry.id || flags.addedAll === entry.id)
+      ));
+      $('#index-store').replaceChildren(...[...by_id.entries()].map(([id, entry]) =>
+        storeRow(id, `→ entry(parent=${entry.parent_id ?? 'null'})`, id, flags.addedIndex === id || flags.addedAll === id)
+      ));
+      $('#disk-store').replaceChildren(...diskRows.map((entry, index) =>
+        storeRow(String(index + 1), JSON.stringify(entry), entry.id, flags.addedDisk === entry.id || flags.addedAll === entry.id)
+      ));
+    }
+
+    function entrySummary(entry) {
+      const kind = entry.type === 'compaction' ? 'compaction' : entry.message.role;
+      return `${entry.id} parent=${entry.parent_id ?? 'null'} type=${kind}`;
+    }
+
+    function storeRow(key, value, id, added = false) {
+      const row = document.createElement('div'); row.className = 'store-row'; row.dataset.storeId = id;
+      if (added) row.classList.add('added');
+      const state = visualStateById.get(id); if (state) row.classList.add(state);
+      const strong = document.createElement('strong'); strong.textContent = key;
+      const span = document.createElement('span'); span.textContent = value;
+      row.append(strong, span); return row;
+    }
+
+    function renderTree() {
+      const container = $('#tree-view'); container.replaceChildren();
+      const children = new Map();
+      for (const entry of entries) {
+        const key = entry.parent_id ?? '__root__';
+        if (!children.has(key)) children.set(key, []);
+        children.get(key).push(entry);
+      }
+      const walk = (entry, prefix, isLast) => {
+        const row = document.createElement('div'); row.className = 'tree-row';
+        const state = visualStateById.get(entry.id); if (state) row.classList.add(state);
+        if (entry.id === leaf_id) row.classList.add('leaf');
+        const branch = document.createElement('span'); branch.textContent = `${prefix}${isLast ? '└─ ' : '├─ '}${nodeLabel(entry)}`;
+        row.append(branch);
+        const tags = [];
+        if (entry.id === leaf_id) tags.push('leaf');
+        if (state === 'excluded') tags.push('不在当前投影');
+        if (state === 'summary-source') tags.push('由摘要替代');
+        if (state === 'kept') tags.push('保留原文');
+        if (entry.type === 'compaction') tags.push('compaction');
+        tags.forEach(text => { const tag = document.createElement('span'); tag.className = 'tree-tag'; tag.textContent = text; row.append(tag); });
+        container.append(row);
+        const descendants = children.get(entry.id) || [];
+        descendants.forEach((child, index) => walk(child, prefix + (isLast ? '   ' : '│  '), index === descendants.length - 1));
+      };
+      const roots = children.get('__root__') || [];
+      roots.forEach((root, index) => walk(root, '', index === roots.length - 1));
+    }
+
+    function nodeLabel(entry) {
+      const kind = entry.type === 'compaction' ? 'compaction' : entry.message.role;
+      return `${entry.id} [${kind}] parent=${entry.parent_id ?? 'null'}`;
+    }
+
+    function renderPath(selector, ids) {
+      const container = $(selector); container.replaceChildren(...ids.map(id => {
+        const node = document.createElement('span'); node.className = 'path-node';
+        const entry = by_id.get(id); node.textContent = `${id} (${entry?.type === 'compaction' ? 'compaction' : entry?.message.role})`;
+        return node;
+      }));
+    }
+
+    function clearPath(selector, text = '') {
+      const placeholder = document.createElement('span'); placeholder.className = 'placeholder'; placeholder.textContent = text;
+      $(selector).replaceChildren(placeholder);
+    }
+
+    function renderPathsFromCurrent() {
+      const reverse = currentPathIds.length ? [...currentPathIds].reverse() : ancestorIds(leaf_id);
+      renderPath('#backtrack-path', reverse); renderPath('#forward-path', [...reverse].reverse());
+      $('#cursor-value').textContent = leaf_id;
+    }
+
+    function startBacktrack() {
+      backtrackIds = []; $('#cursor-value').textContent = leaf_id; clearPath('#backtrack-path'); clearPath('#forward-path', '等待 reverse');
+    }
+
+    function showForwardPath() {
+      currentPathIds = [...backtrackIds].reverse(); renderPath('#forward-path', currentPathIds); $('#cursor-value').textContent = 'null';
+    }
+
+    function ancestorIds(id) {
+      const result = []; let cursor = id;
+      while (cursor != null) { result.push(cursor); cursor = by_id.get(cursor)?.parent_id ?? null; }
+      return result;
+    }
+
+    function messagesForIds(ids) { return ids.map(id => by_id.get(id)).filter(entry => entry?.type === 'message').map(entry => entry.message); }
+    function messagesForEntries(list) { return list.filter(entry => entry.type === 'message').map(entry => entry.message); }
+    function summaryMessage(summary) { return { role: 'user', content: `[上下文摘要]\n${summary}` }; }
+
+    function renderModel(badge, ready = true) {
+      $('#messages-json').textContent = JSON.stringify(currentModelMessages, null, 2);
+      $('#model-badge').textContent = badge;
+      $('#model-input').classList.toggle('ready', ready);
+    }
+
+    function readyModel() { $('#model-badge').textContent = 'MODEL INPUT READY'; $('#model-input').classList.add('ready'); pulse('#model-input'); }
+
+    function appendPhysicalEntry(entry) {
+      const stored = structuredClone(entry); entries.push(stored); by_id.set(stored.id, stored); diskRows.push(structuredClone(stored));
+    }
+
+    function showLeafTransition(oldLeaf, newLeaf, note) {
+      $('#leaf-value').textContent = `${oldLeaf} → ${newLeaf}`; $('#leaf-note').textContent = note; pulse('#leaf-register');
+    }
+
+    function highlightStoreId(id) {
+      document.querySelectorAll('[data-store-id]').forEach(row => row.classList.toggle('focus', row.dataset.storeId === id));
+    }
+
+    function pulse(selector) {
+      const el = $(selector); el.classList.remove('active', 'bump'); void el.offsetWidth;
+      el.classList.add(el.id === 'leaf-register' ? 'bump' : 'active');
+      setTimeout(() => el.classList.remove('active'), reducedMotion ? 20 : 600);
+    }
+
+    function setDisabled(value) {
+      $('#auto').disabled = value; $('#next').disabled = value; $('#reset').disabled = value; $('#question').disabled = value;
+      document.querySelectorAll('[data-scenario]').forEach(button => button.disabled = value);
+    }
+
+    async function executeNext() {
+      if (stepIndex >= steps.length) return false;
+      document.querySelectorAll('.line.active').forEach(line => { line.classList.remove('active'); line.classList.add('done'); });
+      const current = steps[stepIndex]; current.lines.forEach(id => document.getElementById(id)?.classList.add('active'));
+      $('#phase').textContent = current.phase; $('#step-no').textContent = String(stepIndex + 1);
+      $('#step-title').textContent = current.title; $('#step-detail').textContent = current.detail;
+      current.run(); stepIndex += 1; return true;
+    }
+
+    async function autoPlay() {
+      if (running) return; reset(); running = true; setDisabled(true);
+      while (await executeNext()) await wait(850);
+      running = false; setDisabled(false);
+    }
+
+    function activateScenario(name) {
+      if (!scenarios[name] || running) return;
+      activeScenario = name; $('#question').value = scenarios[name].inputDefault; reset();
+    }
+
+    $('#composer').addEventListener('submit', event => { event.preventDefault(); autoPlay(); });
+    $('#next').addEventListener('click', executeNext);
+    $('#reset').addEventListener('click', reset);
+    $('#question').addEventListener('input', () => {
+      if (stepIndex !== 0) return;
+      if (activeScenario === 'message' || activeScenario === 'branch') draftEntry.message.content = $('#question').value;
+      renderLeftData(); renderEntry();
+    });
+    document.querySelectorAll('[data-scenario]').forEach(button => button.addEventListener('click', () => activateScenario(button.dataset.scenario)));
+
+    $('#question').value = scenarios.message.inputDefault;
+    reset();
+  </script>
+</body>
+</html>

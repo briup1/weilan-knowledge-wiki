@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-08-03
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, mcp-permission-middleware]
+updated: 2026-08-05
+sources: [hermes-agent-tool-system, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension]
 tags: [agent-architecture, tool-system, mcp, tool-registry, rbac, abac, adapter]
 ---
 
@@ -48,6 +48,23 @@ tags: [agent-architecture, tool-system, mcp, tool-registry, rbac, abac, adapter]
 | 动态工具 | MCP 动态刷新 + `_generation` 计数器 + TTL | MCP 懒加载，MCPToolWrapper 也继承 `Tool` | 6 层策略管道控制 | 注册中心运行时组装 |
 | 沙箱/权限 | 环境后端 ABC | `restrict_to_workspace` 注入 allowed_dir | Docker 沙箱 + `SandboxFsBridge` | `PermissionNext` 规则引擎 |
 | 独特设计 | 工具集分组 + `check_fn` TTL 缓存 | 先 cast 再 validate 的"类型防火墙" | 多层策略管道 + 循环检测 | DSL 定义 + zod 一体 |
+
+## 工具可用性的三阶段管道
+
+Pi 的实现补充了工具系统中三个容易混淆的决策点：
+
+```text
+Definition Registry
+  → 准入：allowedToolNames
+  → 暴露：Active Tools → agent.state.tools → Provider tools
+  → 执行授权：beforeToolCall
+```
+
+- **准入**决定工具能否进入候选定义集合。
+- **暴露**决定模型本次请求能看到哪些工具。
+- **执行授权**决定模型已经请求后是否允许真正运行。
+
+内置工具、Extension 工具和 SDK `customTools` 应汇入同一 Registry；System Prompt 的工具描述不是调用能力来源，Provider 的结构化 `tools` 字段才是。工具执行统一经过 [[tool-call-lifecycle]]，插件化供给与 Hook 参见 [[agent-extension-system]]。
 
 ## 工具类型学（五类工具）
 
@@ -96,4 +113,4 @@ class BaseSearchAdapter:
 
 ## 当前证据
 
-当前分析主要来自 [[hermes-agent]] 的 `ToolRegistry` 实现：自注册、AST 扫描兜底、`_generation` 计数器 + TTL 缓存、并发安全。其他框架待补充。
+当前证据来自四个 Agent 框架调研，以及 Pi 对 ToolDefinition Registry、active tools、Extension、`customTools` 与 `beforeToolCall` 的完整链路分析。

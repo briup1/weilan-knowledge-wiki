@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-07-26
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
+updated: 2026-08-05
+sources: [hermes-agent-state-management, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-session-system]
 tags: [agent-architecture, state-management, session-db, persistence]
 ---
 
@@ -48,6 +48,19 @@ tags: [agent-architecture, state-management, session-db, persistence]
 | 全文检索 | FTS5 支持 unicode61/trigram，兼顾英文和 CJK |
 | 原子性消息替换 | `/retry`、`/undo`、`/compress` 在单事务内完成 |
 
+## Entry Tree 状态模型
+
+[[pi-session-system]] 展示了数据库双轨之外的事件日志方案：
+
+```text
+fileEntries: 顺序事件日志
+byId:        id → Entry 内存索引
+leafId:      当前分支游标
+parentId:    持久化的父引用
+```
+
+[[session-persistence]] 定义会话事实的落盘、恢复与 Schema 演进边界；其中 [[session-entry-tree]] 保存完整事实，[[session-context-projection]] 负责构造当前模型视图，[[append-only-session-persistence]] 则用 JSONL 提供增量写入和崩溃恢复。该模型说明“持久化状态”与“当前可见消息”可以拥有不同数据结构和生命周期。
+
 ## 四框架实现对比
 
 | 维度 | Hermes | nanobot | OpenClaw | OpenCode |
@@ -62,9 +75,10 @@ tags: [agent-architecture, state-management, session-db, persistence]
 ## 与相关概念的关系
 
 - 运行时状态在 [[orchestration-loop]] 内被频繁读写。
+- [[session-persistence]] 负责会话事实的落盘、恢复、并发边界与 Schema 演进。
 - 持久化状态为 [[context-management]] 的压缩和会话切换提供数据基础。
 - 状态数据库可支撑 [[agent-memory-system]] 的长期记忆。
 
 ## 当前证据
 
-当前分析主要来自 [[hermes-agent]] 的 `SessionDB` 实现。其他框架待补充。
+当前证据来自 [[hermes-agent-state-management]]、[[nanobot-framework-analysis]]、[[openclaw-framework-analysis]]、[[opencode-framework-analysis]] 与 [[pi-session-system]]。
