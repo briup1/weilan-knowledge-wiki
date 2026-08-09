@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-07-26
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
+updated: 2026-08-05
+sources: [hermes-agent-output-parsing, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-provider-unified-event-protocol, pi-agent-runtime-event-flow]
 tags: [agent-architecture, output-parsing, tool-calls, reasoning-content, transport]
 ---
 
@@ -57,6 +57,12 @@ tags: [agent-architecture, output-parsing, tool-calls, reasoning-content, transp
 | 消息序列修复 | 三重防护修复 orphan tool | error 响应不进入历史 | 流式状态重置 + 代码块保护 | 工具修复 + Doom Loop 检测 |
 | 独特设计 | 多 provider reasoning 五层回传 | Think 剥离在 loop 层统一处理 | 代码块保护防止误删标签 | Doom Loop 运行时检测 |
 
+## Provider 协议归一化边界
+
+Pi 将厂商身份 `provider` 与 wire format `api` 分离，并把不同流式响应统一为 `start`、文本/思考/工具调用 delta、`done`、`error`。归一化层同时输出增量 delta 与累积 partial，使 UI 和 Agent loop 不必各自重写拼接器。
+
+工具参数可能跨多个 chunk 到达，必须在解析层累积；但是否继续编排循环，应检查最终 AssistantMessage 的真实 ToolCall，而不是只信 `stopReason`。完整模式见 [[provider-protocol-normalization]]。
+
 ## 与相关概念的关系
 
 - 输出解析的上游是 [[orchestration-loop]] 中的 LLM 调用。
@@ -65,4 +71,4 @@ tags: [agent-architecture, output-parsing, tool-calls, reasoning-content, transp
 
 ## 当前证据
 
-当前分析主要来自 [[hermes-agent]] 的 `agent/transports/` 和 `think_scrubber` 实现。其他框架待补充。
+当前证据来自四个 Agent 框架调研，以及 [[pi-provider-unified-event-protocol]] 对 Provider/API 分离、增量累积和统一事件协议的源码分析。

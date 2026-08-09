@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-07-26
-sources: [hermes-agent, openclaw-framework-analysis, opencode-framework-analysis]
+updated: 2026-08-05
+sources: [hermes-agent-orchestration-loop, openclaw-framework-analysis, opencode-framework-analysis, pi-agent-runtime-event-flow, pi-agent-loop-and-turn, pi-provider-unified-event-protocol, pi-tool-call-lifecycle]
 tags: [observability, trace, span, agent, llm, monitoring, debugging, evaluation]
 ---
 
@@ -74,9 +74,23 @@ Trace: user_turn_123
 | **OpenClaw** | 生产级事件驱动 | `Run`/`Attempt`/`Stream` 天然可映射为 Span；draft stream 支持节流和 in-flight 监控 |
 | **OpenCode** | 流式事件直接可观测 | AI SDK 的 `fullStream` + `text-delta` 事件可自然转化为 Trace；流式 UI 进度可见 |
 
+## Runtime 事件到 Trace 的映射
+
+Pi 的类型化事件可以稳定映射到 Trace 层级：
+
+```text
+Business/User Turn → 顶层 Trace
+Runtime/Model Turn → LLM/Turn Span
+message_*          → 模型流式 Event
+ToolCall           → Tool Span
+agent_start/end    → Trace 生命周期
+```
+
+需要注意 Pi 的 `turn_start/turn_end` 是 Runtime Turn，不是完整用户问答。若直接按“一个 Turn 一个 Trace”解释而不标注粒度，会把同一用户请求拆成多个顶层 Trace。推荐使用一个 Business Turn 顶层 Trace，内部包含多个 Runtime Turn 和 Tool Span。
+
 ## 设计建议
 
-1. **一个 Turn 一个 Trace**：这样能把用户请求、成本、延迟完整关联起来。
+1. **一个 Business Turn 一个顶层 Trace**：Runtime Turn、LLM 调用和工具调用作为其子 Span，避免 Turn 粒度歧义。
 2. **LLM 调用必须是一个独立 Span**：因为模型调用通常占 80%+ 延迟和费用。
 3. **工具调用也要成 Span**：方便定位「是哪个工具慢了/错了」。
 4. **保留原始输入输出**：用于调试、评估和后续微调训练数据生成。
@@ -85,7 +99,7 @@ Trace: user_turn_123
 
 ## 相关概念
 
-- [[agent-turn]] —— 一个 Turn 通常对应一个顶层 Trace
+- [[agent-turn]] —— 一个 Business Turn 通常对应顶层 Trace，Runtime Turn 对应内部 Span
 - [[orchestration-loop]] —— Trace 的 Span 结构映射循环内的每次迭代
 - [[error-handling]] —— Trace 是定位错误现场的关键
 - [[state-management]] —— Trace 记录状态转换，状态持久化保留最终状态

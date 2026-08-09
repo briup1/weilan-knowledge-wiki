@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-07-26
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
+updated: 2026-08-05
+sources: [hermes-agent-context-management, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-session-system]
 tags: [agent-architecture, context-management, context-compression, prompt-cache]
 ---
 
@@ -23,7 +23,7 @@ tags: [agent-architecture, context-management, context-compression, prompt-cache
 
 | 策略 | 说明 |
 |---|---|
-| Preflight 压缩 | 在发送请求前主动估算 token，超过阈值先压缩 |
+| [[context-compaction|Preflight 压缩]] | 在发送请求前主动估算 token，超过阈值先压缩 |
 | 响应后压缩 | 根据后端返回的真实 prompt_tokens 触发压缩 |
 | 错误恢复压缩 | 收到 context-length 4xx 后把压缩作为恢复动作 |
 | 保护首尾 | 头部 N 条和尾部 M 条消息保留，中间压缩 |
@@ -55,6 +55,23 @@ Tool Schemas（动态 / 与 messages 解耦）
 
 生产级系统通常同时采用「主动 + 被动」双轨压缩，并以保护 system prompt 缓存为优先。
 
+## 上下文压缩决策模型
+
+[[context-compaction]] 将压缩拆为五个独立决策：压缩时机、压缩目标、`findCutPoint`、压缩方法和更新压缩。该拆分避免把“触发阈值”“保留范围”和“摘要格式”混成一个参数。
+
+## Append-only 压缩检查点
+
+[[pi-session-system]] 补充了一种“存储不压缩、视图才压缩”的实现：旧消息与分支继续保留在 Entry Tree 和 JSONL 中，压缩只追加一个带 `summary` 与 `firstKeptEntryId` 的节点。[[session-context-projection]] 遇到该节点时，输出“摘要 + 近期保留原文 + 压缩后消息”。
+
+```text
+完整历史 ──追加 compaction──▶ 仍是完整历史
+                                  │
+                                  ▼ 投影
+模型上下文 ◀── [checkpoint] + recent messages
+```
+
+这使 [[context-compaction-checkpoint]] 同时具备可追溯性和可迭代更新能力，也明确区分“触发压缩的预留预算”与“保留近期原文的预算”。
+
 ## 四框架实现对比
 
 | 维度 | Hermes | nanobot | OpenClaw | OpenCode |
@@ -68,10 +85,11 @@ Tool Schemas（动态 / 与 messages 解耦）
 
 ## 与相关概念的关系
 
+- [[context-compaction]] 定义压缩的五个核心决策维度。
 - 上下文管理在 [[orchestration-loop]] 的每轮迭代前执行。
 - 压缩需要 [[prompt-building-for-agents]] 中稳定的 system prompt 配合。
 - 压缩后的消息序列需要 [[output-parsing]] 的配对修复支持。
 
 ## 当前证据
 
-当前分析主要来自 [[hermes-agent]] 的 `context_compressor` 实现。其他框架待补充。
+当前证据来自 [[hermes-agent-context-management]]、[[nanobot-framework-analysis]]、[[openclaw-framework-analysis]]、[[opencode-framework-analysis]] 与 [[pi-session-system]]。Pi 进一步提供了压缩节点参与 Session 投影的完整证据。
