@@ -1,5 +1,35 @@
 # Knowledge Forest 日志
 
+## [2026-08-09] ingest + synthesis | 入库 mem0 Agent Wikis 并创建 AI Coding 上下文基础设施分层
+
+**操作**: 将用户提供的 X 文章正式入库，围绕 Agent Wiki、代码知识图、Agent 记忆三个主题新建 entity/concept/synthesis 页面，并更新索引。
+
+**新增 source 页面**:
+- `wiki/sources/mem0-in-context-17.md` —— mem0.ai In Context #17: Agent Wikis 综述
+
+**新增 entity 页面**:
+- `wiki/entities/deepwiki.md` —— Cognition 公开代码库 wiki 服务
+- `wiki/entities/openwiki.md` —— LangChain 开源代码/个人 wiki CLI
+- `wiki/entities/codegraph.md` —— 面向 AI coding agent 的本地代码知识图
+- `wiki/entities/mem0.md` —— 面向 LLM/Agent 的开源记忆层
+
+**新增 concept 页面**:
+- `wiki/concepts/agent-wiki.md` —— Agent Wiki 范式定义、三层结构、三操作、与 RAG 对比
+
+**新增 synthesis 页面**:
+- `wiki/synthesis/ai-coding-context-stack.md` —— AI Coding 四层上下文基础设施：代码结构层、代码语义层、用户记忆层、人类策展层
+
+**原始文件归档**:
+- `.firecrawl/x-status-2079585032587694582.md` → `raw/archive/mem0-in-context-17-agent-wikis.md`
+
+**索引更新**:
+- `index.md` 新增 4 个 entity、1 个 concept、1 个 source、1 个 synthesis 条目
+
+**规范遵循**:
+- 所有新页面 wiki-link 指向已存在的页面，无死链
+- source 页面底部提供“原始文件”链接
+- synthesis 使用 Mermaid 图展示四层模型与工具配合工作流
+
 ## [2026-08-03] concept | 新增 ReAct 概念页面
 
 **操作**: 创建 `wiki/concepts/react-pattern.md`，并更新相关页面建立链接关系。

@@ -9,13 +9,17 @@
 [[boris-cherny]] —— Claude Code 之父，分享 13 个高效使用技巧
 [[celery]] —— Python 分布式任务队列，支持异步任务和定时任务
 [[claude-code]] —— Anthropic 的终端 AI 编程助手
+[[codegraph]] —— 面向 AI coding agent 的本地代码知识图工具
 [[cursor]] —— AI 驱动的代码编辑器，VS Code 分支
+[[deepwiki]] —— Cognition 的公开代码库 wiki 服务
 [[docker]] —— 容器化平台，支持镜像、容器、Compose 编排
 [[fastapi]] —— 现代、高性能的 Python Web 框架
 [[fastapi-users]] —— FastAPI 的用户认证库，支持 OAuth/JWT
 [[hermes-agent]] —— NousResearch 开源的 Python AI Agent 框架，强调生产级错误恢复与可扩展工具体系
+[[mem0]] —— 面向 LLM 和 AI Agent 的开源记忆层
 [[moneyprinterturbo]] —— AI 一键生成高清短视频
 [[obsidian]] —— 本地优先的知识管理工具，支持双向链接
+[[openwiki]] —— LangChain 开源的代码库与个人 wiki CLI
 [[pi-coding-agent]] —— 开源 LLM Agent Harness，覆盖 Runtime、Provider、Tool、Extension 与 Session
 [[redis]] —— 内存数据结构存储，用作缓存和消息队列
 [[remotion]] —— React 编程式视频创作库
@@ -24,6 +28,7 @@
 ## Concepts
 
 [[agent-memory-system]] —— Agent 记忆系统：user/feedback/project/reference 四类结构化记忆
+[[agent-wiki]] —— Agent Wiki 范式：在摄入时编译来源文档为 markdown wiki，持续维护
 [[ai-video-generation]] —— AI 视频生成：文本/图片到视频的自动化工作流
 [[async-tasks]] —— 异步任务：Celery 架构与适用场景
 [[claude-code-skills]] —— Claude Code Skills：通过 SKILL.md 扩展 AI 助手能力
@@ -114,6 +119,7 @@
 [[hyper-extract]] —— Hyper-Extract：一条命令将杂乱文档转为知识图谱
 [[hyperframes]] —— Hyperframes：HTML 渲染视频的 Agent 工具
 [[last30days-skill]] —— last30days-cn：搜索中国互联网 8 大平台近期内容
+[[mem0-in-context-17]] —— mem0.ai In Context #17：Agent Wikis 综述
 [[moneyprinterturbo]] —— MoneyPrinterTurbo：AI 一键生成高清短视频
 [[obsidian-knowledge-base]] —— 个人如何用 Obsidian 搭建本地知识库
 [[open-source-short-drama-projects]] —— 35+ 开源视频短剧项目合集
@@ -135,6 +141,7 @@
 
 ## Synthesis
 
+[[ai-coding-context-stack]] —— AI Coding 上下文基础设施分层：代码结构、代码语义、用户记忆、人类策展四层模型
 [[ai-memory-vs-human-km]] —— AI 记忆系统与 Obsidian 知识管理的趋同与分野
 [[ai-video-media-landscape]] —— AI 视频/媒体创作领域全景：生成→编辑→控制→分发的能力分层与工作流组合
 [[claude-code-agent-ecosystem-landscape]] —— Claude Code/AI Agent 辅助开发生态全景：从终端助手到工程团队的演进
