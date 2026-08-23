@@ -8,15 +8,13 @@ wheels/
 
 # Virtual environments
 .venv
-
 # Obsidian local state and plugins
 .obsidian/plugins/
 .obsidian/workspace.json
 .obsidian/community-plugins.json
-
 data/
-
 # Local agent runtime state
 .pi-glla/
 .pi/
 .DS_Store
+.firecrawl/
