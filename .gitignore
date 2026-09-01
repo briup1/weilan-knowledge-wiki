@@ -13,3 +13,9 @@ wheels/
 .obsidian/plugins/
 .obsidian/workspace.json
 .obsidian/community-plugins.json
+
+data/
+
+# Local agent runtime state
+.pi-glla/
+.DS_Store
