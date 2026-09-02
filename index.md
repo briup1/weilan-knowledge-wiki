@@ -152,6 +152,7 @@
 [[knowledge-base-audit-and-flywheel]] —— 知识库现状诊断与知识飞轮设计：从资料库到复利系统的闭环
 [[agent-framework-12-dimensions-comparison]] —— 四大开源 Agent 框架 12 维度对比：Hermes / nanobot / OpenClaw / OpenCode
 [[agent-concept-map]] —— Agent 系统四级概念地图：模块 → 能力 → 方法 → 技术
+[[agent-eval-platform-landscape]] —— Agent Eval 通用平台全景：核心模块、分阶段建设路线及 AgentCompass/Phoenix/Langfuse 覆盖对比
 [[agent-session-storage-and-context-views]] —— Agent 会话事实存储、Session 视图与模型上下文的三层架构
 [[pi-agent-runtime-architecture]] —— Pi 01–07 Runtime、Provider、Tool、Extension 与 Session 的端到端架构
 

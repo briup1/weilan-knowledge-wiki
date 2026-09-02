@@ -446,3 +446,25 @@
 - 更新 [[agent-tool-system]]、[[agent-extension-system]]、[[tool-call-lifecycle]] 与 [[error-handling]]，补齐动态加载、原子刷新、异步分叉和迟到结果等边界。
 - 层级修正：MCP 从二级能力下沉为“外部工具互操作”的具体协议；`execution_mode`、`event_id`、OAuth 等实现字段下沉到四级节点。
 - 设计结论：同步或异步由工具契约声明、Runtime 最终裁决，Agent 不临场猜；多个任务相继完成时，各自写入汇合状态，由最后一个满足 all/race/quorum/dependency 条件的事件恢复父任务。
+
+## [2026-09-02] query | 企业级 Agent Eval 通用平台调研成果简述
+
+- 基于 `raw/assets/agent-eval-2026/` 的 20 篇一手资料与综合报告，提炼平台定位、技术趋势、核心能力、评估闭环和分阶段建设路线。
+- 核心判断：以框架中立 Trace 为证据底座，以业务评测资产和混合评估器为核心，通过 CI/CD 门禁与生产 BadCase 回流形成全生命周期质量闭环。
+
+## [2026-09-02] query | Agent Eval 开源项目与商业产品参考清单
+
+- 调研内重点参考：AgentCompass、AWS AgentCore Evaluations、Microsoft Foundry、Google Gemini Enterprise Agent Platform、华为云 AgentArts。
+- 补充候选：Arize Phoenix、Langfuse、LangSmith、W&B Weave；建议分别研究开源 Trace/Eval 底座、评测资产模型、离线/在线闭环和企业治理体验。
+- 推荐组合：参考 AgentCompass 的执行解耦、Phoenix/Langfuse 的开源可观测与实验能力、AWS/Microsoft/华为的全生命周期产品流程、Google 的企业治理模型。
+
+## [2026-09-02] query | Agent Eval 通用平台模块结构图
+
+- 将平台划分为接入、评测资产、执行调度、轨迹证据、评估器、分析决策、生产监控以及数据治理八个核心模块。
+- 核心主链路：统一接入 → 可复现执行 → Trace 采集 → 混合评估 → 发布门禁/生产告警 → BadCase 回流。
+
+## [2026-09-02] synthesis | Agent Eval 通用平台全景与开源方案对比
+
+- 新增 [[agent-eval-platform-landscape]]，将平台拆为 8 个业务模块与 1 个数据治理基础模块，并标记评测资产、可复现执行、Trace 证据和混合评估器四个核心模块。
+- 给出小企业从统一契约、离线回归、CI/CD 门禁、生产在线评估到治理规模化的分阶段路线及量化验收标准。
+- 对比 AgentCompass、Arize Phoenix、Langfuse 的模块覆盖：三者均不能单独覆盖完整平台；默认建议 Langfuse/Phoenix 二选一作为 Trace 与实验底座，参考 AgentCompass 建设轻量 Runner。
