@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-08-08
-sources: [hermes-agent-tool-system, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension, ai-agent-book-async-agent-experiment]
+updated: 2026-09-04
+sources: [hermes-agent-tool-system, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension, ai-agent-book-async-agent-experiment, enterprise-agent-tool-registry]
 tags: [agent-architecture, tool-system, mcp, tool-registry, tool-contract, async-tool, rbac, abac, adapter]
 ---
 
@@ -174,6 +174,18 @@ lookup → repair → validate → authorize
 - [[mcp]] 是外部工具互操作的一种具体协议，不等于整个工具系统。
 - 工具系统在 [[orchestration-loop]] 中被反复调度，结果经 [[output-parsing]] 归一化后回灌上下文。
 - 权限钩子与动态工具可见性可参考 [[mcp-permission-middleware]]。
+
+## 企业平台 Tool Registry 治理维度（来源补充）
+
+框架视角管「工具怎么被注册和调用」，企业平台视角还要管「工具如何被治理」：
+
+- **注册与调用分离**：注册走管控面（L1），Run 运行时只做解析与 `invoke`（L2），不在主循环里逐次注册。
+- **版本主键 `(name, version)`**：多版本并存，生产 Agent pin 版本、实验用 latest、灰度按租户路由；对模型只暴露逻辑名，版本由配置/Runtime 解析，避免模型在版本间随机选导致口径漂移。
+- **模型输出 ≠ 已校验参数**：JSON Schema 管形状、Policy 管权限、handler 管业务；即使开启 `strict`，`invoke` 前仍须强制校验。
+- **生命周期状态化**：候选→可用→限制使用→冻结→退役，带 `owner`/`risk_level`；破坏性变更升版本、旧版本保留兼容窗口，影子验证降低写操作升级风险。
+- **结果证据分级**：`authoritative`/`candidate`/`status`，避免 Agent 把候选当结论、把执行中状态当完成。
+
+详见来源 [[enterprise-agent-tool-registry]]（第23章）。
 
 ## 当前证据
 

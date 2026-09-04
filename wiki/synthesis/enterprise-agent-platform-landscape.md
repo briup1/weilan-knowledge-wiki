@@ -2,7 +2,7 @@
 type: synthesis
 created: 2026-09-04
 updated: 2026-09-04
-sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map]
+sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp]
 tags:
   - enterprise-agent-platform
   - platform-architecture
@@ -13,7 +13,7 @@ tags:
 # 企业级 Agent 平台工程全景图
 
 > 基于《企业级 Agent 平台工程》原文章节编译，随章节摄取逐步扩展。来源：datagallery-lab enterprise_agent_platform（固定提交 e5d97a6，2026-07-03，Apache-2.0）。
-> 当前覆盖：平台边界（第2章）、参考架构与阅读路径（第4章）。Runtime/Tool Registry/MCP/Planner/Workflow/Memory/多 Agent/协议章节（第22-29章）待续。
+> 当前覆盖：平台边界（第2章）、参考架构与阅读路径（第4章）、执行骨架落地（第22-24章：Runtime/Tool Registry/MCP）。Planner/Workflow/Memory/多 Agent/协议章节（第25-29章）待续。
 
 ## 平台定位：从试点到统一治理线
 
@@ -62,6 +62,12 @@ Agent 能力层    任务状态/工具调用/规划/长任务/多Agent/协议   
 
 能力簇与已摄取概念的对应：Runtime → [[agent-runtime-event-stream]] / [[state-management]]；Registry → [[agent-tool-system]]（工具供给与契约）；Policy → [[agent-security]]；Memory → [[agent-memory-system]] / [[context-management]]；RAG/Knowledge → [[rag]]；Observability → [[agent-trace]]；Eval → [[agent-eval-platform-landscape]] / [[validation-loop]]。
 
+### 执行骨架落地（第22-24章）
+
+- **Runtime 执行契约**（[[enterprise-agent-runtime]]）：Run/Step/Tool Call 三对象分层 + Run 六态（`pending/planning/executing/waiting_human/succeeded/failed`）作为平台契约，终态只能由 Runtime 判定；SSE `action/result` 成对、检查点/恢复/幂等、三档超时、取消=失败+原因码。统一形态见 [[agent-run-lifecycle]]。
+- **Tool Registry 治理**（[[enterprise-agent-tool-registry]]）：Function Calling 只产生意图，Registry 以 `(name, version)` 主键统一注册/校验/版本治理，生产 pin 版本；MCP/HTTP 工具全部收敛为 ToolSpec，模型输出永远不能替代 invoke 前校验。
+- **MCP 接入边界**（[[enterprise-agent-mcp]]）：MCP 是 L3 协议、Registry 是 L2 中枢，路径恒为「发现→注册→invoke」；四硬约束（不替代 Registry/主循环不直连/Resources 不替代 RAG/Server 侧审计），Tools/Resources/Prompts 三类能力分流，影子灰度与三版本追溯。
+
 ## DataAgent 主线
 
 DataAgent 被选为贯穿场景，因为它几乎穿过每一架构层：模型（规划/生成 SQL/解释）、数据（语义层/口径/湖仓）、知识（元数据/历史分析/业务术语）、Agent（Runtime/Planner/人工介入）、治理（权限/trace/评估/审计）、前端（图表/引用/报告）。一次请求的七个检查点：任务创建 → 上下文加载 → 路径规划 → 工具执行 → 结果解释 → 治理记录 → 结果交付。误把 DataAgent 当「NL2SQL + 图表」，平台建设第一天就会跑偏。
@@ -79,7 +85,6 @@ Q4  灰度/降级/SLO/供应商接入/平台目录            → 复盘模板 +
 
 ## 后续扩展计划
 
-- 第22-24章：Runtime / Tool Registry / MCP → 细化执行骨架
 - 第25-27章：Planner / Agentic Workflow / Memory → 细化智能放大器
 - 第28-29章：多 Agent 协作 / Agent 协议与标准
 - 第38-42/50-51章（另一半资料）：可观测与评测 / 安全治理

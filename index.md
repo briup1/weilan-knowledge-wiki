@@ -73,6 +73,7 @@
 [[sub-agent-orchestration]] —— 子 Agent 编排：受限临时实例的任务外包
 [[validation-loop]] —— 验证循环：LLM 决策到实际执行的多层把关
 [[agent-platform-boundary]] —— Agent 平台边界：应用/框架/平台三层与四问判据、五类共性问题、治理配套机制
+[[agent-run-lifecycle]] —— Agent Run 生命周期：Run/Step/Tool Call 对象分层、六态状态机、检查点恢复与幂等
 
 ## Sources
 
@@ -141,6 +142,9 @@
 [[vimax-agentic-video]] —— ViMax：Agentic 视频生成（导演+编剧+制片人）
 [[enterprise-agent-platform-boundary]] —— 企业级 Agent 平台边界：平台化触发信号、五类共性问题、准入与治理委员会
 [[enterprise-agent-platform-architecture-map]] —— 全书地图：四层参考架构、八能力簇三分法与 DataAgent 主线
+[[enterprise-agent-runtime]] —— Agent Runtime：Run 六态、SSE 事件流、检查点/恢复与三档超时
+[[enterprise-agent-tool-registry]] —— Tool Registry：Function Calling 只产生意图、(name,version) 版本治理与强制校验
+[[enterprise-agent-mcp]] —— MCP 企业接入：L3 协议 vs L2 Registry、四硬约束与影子灰度
 
 ## Synthesis
 

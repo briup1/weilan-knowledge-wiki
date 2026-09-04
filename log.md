@@ -499,3 +499,11 @@
 - 新增 Synthesis：[[enterprise-agent-platform-landscape]]，四层参考架构 + 八能力簇三分法（执行骨架/智能放大/反馈系统）+ DataAgent 主线 + 一年路线；并映射到已有概念页。
 - 归档 2 篇原文至 raw/archive/enterprise-agent-platform/docs/part01-overview/ch/。
 - 后续批次：ch22-24 Runtime/Tool/MCP、ch25-27 Planner/Workflow/Memory、ch28-29 多Agent/协议。
+
+## [2026-09-04] ingest | 企业级 Agent 平台工程（批2/4）：Runtime / Tool Registry / MCP
+
+- 新增 Source：[[enterprise-agent-runtime]]（第22章）、[[enterprise-agent-tool-registry]]（第23章）、[[enterprise-agent-mcp]]（第24章）。
+- 新增 Concept：[[agent-run-lifecycle]]——Run/Step/Tool Call 对象分层、Run 六态状态机、检查点/恢复/幂等、SSE action/result 成对。
+- 更新 Concept：[[agent-tool-system]] 补充企业 Tool Registry 治理维度（注册/调用分离、(name,version) 主键、生命周期状态化、影子验证、结果证据分级）；[[mcp]] 补充企业接入四硬约束与三类能力分流。
+- 更新 Synthesis：[[enterprise-agent-platform-landscape]] 填充执行骨架落地细节，调整后续扩展计划。
+- 归档 3 篇原文至 raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/。

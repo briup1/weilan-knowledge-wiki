@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-08-03
-sources: [understand-anything-mcp, panniantong-agent, mcp-permission-middleware]
+updated: 2026-09-04
+sources: [understand-anything-mcp, panniantong-agent, mcp-permission-middleware, enterprise-agent-mcp]
 tags: [mcp, model-context-protocol, tool-calling, agent, interoperability, oauth, authorization]
 ---
 
@@ -100,6 +100,17 @@ MCP 采用类似 LSP（Language Server Protocol）的客户端-服务器模式�
 | **Scope 过度授权** | 一次性请求全部 scope，stolen token 影响面大 |
 
 参考实现与 demo 见 [[mcp-permission-middleware]]。
+
+## 企业平台接入边界：L3 协议 vs L2 Registry
+
+MCP 解决跨进程工具的**发现与调用**，企业平台还要解决谁能调用、调用哪版、结果进哪些日志、失败如何回放。企业接入四硬约束（第24章）：
+
+1. **MCP 不替代 Tool Registry**——Registry 管平台内统一命名/版本/校验，MCP 管进程与服务边界上的协议；MCP 工具先注册为 ToolSpec，再由 Runtime 经 Registry `invoke`，不直连。
+2. **Run 主循环不直连 MCP Server**——注册为 handler，连接池与熔断在 Client 层复用，否则审计与版本治理断裂。
+3. **Resources 不替代 RAG**——RAG 负责「搜」，MCP Resource 负责「读某一已知文档版本」，配权限与 URI 治理。
+4. **Server 侧审计必须留**——协议不带 IAM；Server 记录调用方身份、`tenant_id`、参数/结果摘要、`run_id`，与平台 Trace 双向对上。
+
+能力三类分工：Tools（执行，进 Registry）、Resources（只读 URI 对象）、Prompts（模板进 Prompt 仓库）。新 Server 进生产按「快照→静态校验→影子调用→放量」灰度，并记录 `server_version`/`tool_spec_version`/`registry_version` 三版本供追溯。详见 [[enterprise-agent-mcp]] 与 [[enterprise-agent-platform-landscape]]。
 
 ## 相关来源
 
