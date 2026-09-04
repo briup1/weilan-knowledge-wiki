@@ -491,3 +491,11 @@
 - 推荐将通用接入拆成三份契约：A2A 风格的 Agent Manifest/调用协议、OpenTelemetry/OpenInference 轨迹协议，以及可选的环境重置与业务终态验证协议；按黑盒、灰盒、白盒三级渐进接入，避免强迫所有 Agent 改造内部实现。
 - 自动用例生成采用“Agent 资料包 → 能力/风险矩阵 → 候选用例 → 机器校验去重 → 人工审批 → 版本化 Dataset”，自动生成负责提案，人类负责确认业务真值和高风险规则。
 - 回归与灰度采用同一数据集、同一环境对基线版与候选版配对运行，结合绝对门槛、相对退化门槛和关键场景零退化规则；新功能及生产 BadCase 审核后持续加入回归集。
+
+## [2026-09-04] ingest | 企业级 Agent 平台工程（批1/4）：平台边界与参考架构
+
+- 新增 Source：[[enterprise-agent-platform-boundary]]（第2章）、[[enterprise-agent-platform-architecture-map]]（第4章）。
+- 新增 Concept：[[agent-platform-boundary]]，沉淀应用/框架/平台三层、五类共性问题、四问判据与反向边界、准入/委员会/目录/退出机制。
+- 新增 Synthesis：[[enterprise-agent-platform-landscape]]，四层参考架构 + 八能力簇三分法（执行骨架/智能放大/反馈系统）+ DataAgent 主线 + 一年路线；并映射到已有概念页。
+- 归档 2 篇原文至 raw/archive/enterprise-agent-platform/docs/part01-overview/ch/。
+- 后续批次：ch22-24 Runtime/Tool/MCP、ch25-27 Planner/Workflow/Memory、ch28-29 多Agent/协议。

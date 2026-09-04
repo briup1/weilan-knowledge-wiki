@@ -72,6 +72,7 @@
 [[tool-call-lifecycle]] —— ToolCall 从模型意图到校验、授权、同步结果或异步任务恢复
 [[sub-agent-orchestration]] —— 子 Agent 编排：受限临时实例的任务外包
 [[validation-loop]] —— 验证循环：LLM 决策到实际执行的多层把关
+[[agent-platform-boundary]] —— Agent 平台边界：应用/框架/平台三层与四问判据、五类共性问题、治理配套机制
 
 ## Sources
 
@@ -138,6 +139,8 @@
 [[treesearch-retrieval]] —— TreeSearch：让文档检索回归本质
 [[understand-anything-mcp]] —— Understand-Anything：代码库转交互式知识图谱
 [[vimax-agentic-video]] —— ViMax：Agentic 视频生成（导演+编剧+制片人）
+[[enterprise-agent-platform-boundary]] —— 企业级 Agent 平台边界：平台化触发信号、五类共性问题、准入与治理委员会
+[[enterprise-agent-platform-architecture-map]] —— 全书地图：四层参考架构、八能力簇三分法与 DataAgent 主线
 
 ## Synthesis
 
@@ -155,6 +158,7 @@
 [[agent-eval-platform-landscape]] —— Agent Eval 通用平台全景：核心模块、分阶段建设路线及 AgentCompass/Phoenix/Langfuse 覆盖对比
 [[agent-session-storage-and-context-views]] —— Agent 会话事实存储、Session 视图与模型上下文的三层架构
 [[pi-agent-runtime-architecture]] —— Pi 01–07 Runtime、Provider、Tool、Extension 与 Session 的端到端架构
+[[enterprise-agent-platform-landscape]] —— 企业级 Agent 平台工程全景：四层架构、八能力簇（执行骨架/智能放大/反馈）与 DataAgent 主线
 
 ## Drafts
 
