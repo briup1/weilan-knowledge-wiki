@@ -514,3 +514,10 @@
 - 新增 Concept：[[agent-planner]]——只提议不执行、三种编排选择、工具视图裁剪与回放评测；[[agentic-workflow-enhancements]]——Reflexion/Self-Refine/ToT 的默认关闭、预算、停止与策略级回滚。
 - 更新 Synthesis：[[enterprise-agent-platform-landscape]] 补充智能放大器中的 Planner 与局部增强。
 - 归档 2 篇原文至 raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/。
+
+## [2026-09-04] ingest | 企业级 Agent 平台工程（批3B/4）：Memory
+
+- 新增 Source：[[enterprise-agent-memory]]（第27章）。
+- 更新 Concept：[[agent-memory-system]] 补充 Working/Episodic/Profile/Org Context 四层、检查点、大对象引用、晋升/删除与 RAG 边界。
+- 更新 Synthesis：[[enterprise-agent-platform-landscape]] 补齐智能放大器中的 Memory 治理。
+- 归档原文至 raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/。

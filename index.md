@@ -149,6 +149,7 @@
 [[enterprise-agent-mcp]] —— MCP 企业接入：L3 协议 vs L2 Registry、四硬约束与影子灰度
 [[enterprise-agent-planner]] —— Planner 编排：只提议不执行、ReAct/Plan-and-Execute/状态图的适用边界
 [[enterprise-agent-agentic-workflow]] —— Agentic Workflow：Reflexion/Self-Refine/ToT 的局部增强与生产约束
+[[enterprise-agent-memory]] —— Memory 系统：Working/Episodic/Profile/Org Context 四层、检查点与删除治理
 
 ## Synthesis
 

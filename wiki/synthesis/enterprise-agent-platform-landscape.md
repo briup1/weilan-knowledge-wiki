@@ -2,7 +2,7 @@
 type: synthesis
 created: 2026-09-04
 updated: 2026-09-04
-sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp, enterprise-agent-planner, enterprise-agent-agentic-workflow]
+sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp, enterprise-agent-planner, enterprise-agent-agentic-workflow, enterprise-agent-memory]
 tags:
   - enterprise-agent-platform
   - platform-architecture
@@ -13,7 +13,7 @@ tags:
 # 企业级 Agent 平台工程全景图
 
 > 基于《企业级 Agent 平台工程》原文章节编译，随章节摄取逐步扩展。来源：datagallery-lab enterprise_agent_platform（固定提交 e5d97a6，2026-07-03，Apache-2.0）。
-> 当前覆盖：平台边界（第2章）、参考架构与阅读路径（第4章）、执行骨架（第22-24章）、Planner 与局部增强（第25-26章）。Memory/多 Agent/协议章节（第27-29章）待续。
+> 当前覆盖：平台边界（第2章）、参考架构与阅读路径（第4章）、执行骨架（第22-24章）、Planner/局部增强/Memory（第25-27章）。多 Agent 与协议章节（第28-29章）待续。
 
 ## 平台定位：从试点到统一治理线
 
@@ -72,6 +72,7 @@ Agent 能力层    任务状态/工具调用/规划/长任务/多Agent/协议   
 
 - **Planner 稳定接口**（[[enterprise-agent-planner]]）：[[agent-planner]] 只读取受控上下文与 Registry 同源工具视图，输出 FINISH/ASK/TOOL_CALL 提议；Runtime 掌握执行与终态。ReAct 用于探索，Plan-and-Execute 用于计划审批，状态图只承载需要复用/回放的复杂路径。
 - **Agentic Workflow 局部增强**（[[enterprise-agent-agentic-workflow]]）：[[agentic-workflow-enhancements]] 将 Reflexion、Self-Refine、ToT 作为 Planner 内默认关闭的可选能力；三计数器分离、事实槽位锁定、未选分支不执行，并按「离线→影子→小流量」验证收益后启用。
+- **Memory 四层治理**（[[enterprise-agent-memory]]）：[[agent-memory-system]] 按 Working/Episodic/Profile/Org Context 拆生命周期与责任；Working 进入检查点，长期记忆先具备确认、删除、隔离和版本能力，RAG 与 Memory 不共用权限/索引语义。
 
 ## DataAgent 主线
 
@@ -90,6 +91,5 @@ Q4  灰度/降级/SLO/供应商接入/平台目录            → 复盘模板 +
 
 ## 后续扩展计划
 
-- 第27章：Memory → 补齐智能放大器中的上下文连续性
 - 第28-29章：多 Agent 协作 / Agent 协议与标准
 - 第38-42/50-51章（另一半资料）：可观测与评测 / 安全治理

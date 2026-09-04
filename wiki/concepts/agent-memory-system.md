@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-07-26
-sources: [claude-code-memory-system, hermes-agent-memory-system, hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
+updated: 2026-09-04
+sources: [claude-code-memory-system, hermes-agent-memory-system, hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, enterprise-agent-memory]
 tags: [agent-memory, memory-system, claude-code, context-management, ai-agent]
 ---
 
@@ -130,6 +130,23 @@ OpenClaw 选择 **Markdown 文件为唯一事实来源，SQLite 仅作索引**�
 ### OpenCode
 
 OpenCode 采用 **SQLite + Drizzle ORM 的三层表结构**（Session → Message → Part），更适合 IDE 场景中对历史消息的高效查询和级联删除。压缩策略分为 Prune、Compaction、Overflow 三级，并用专门的 compaction agent 生成结构化摘要。
+
+## 企业平台四层模型与治理
+
+企业 Runtime 需要按生命周期和责任方拆开记忆，不能把所有内容混进一个向量库：
+
+| 类型 | 作用域 | 内容 | 治理重点 |
+|---|---|---|---|
+| Working | Run/会话 | 当前输入、决策、Tool 结果与错误 | 进入检查点；大对象只留引用 |
+| Episodic | 跨 Run | 历史任务片段、成功路径、人工修正 | 来源/时间/场景/版本与租户隔离 |
+| Profile | 用户跨会话 | 报告格式、语言等稳定偏好 | 候选→敏感检查→用户确认→版本化写入 |
+| Org Context | 组织级 | 区域、指标、权限、审批与术语 | 只来自主数据/语义层/受控配置，带版本与有效期 |
+
+读取遵循「Org 正式口径→Working 连续性→按需 Episodic→相关 Profile」，个人偏好不能覆盖当前任务、权限或企业指标。Working Snapshot 是 [[agent-run-lifecycle]] 恢复的一部分；大型工具结果放对象存储，只保存 schema/sample/hash/`result_ref`。
+
+长期写入是治理动作：模型只能提议，平台决定晋升。删除要同步主存储、索引、缓存和摘要；审计记录可受限保留，但不得继续参与检索。评测同时覆盖「该记住」「不该记住」「已撤回/过期必须忘记」，并用受控 Memory 快照隔离生产历史。
+
+Memory 与 [[rag]] 分工：RAG 管文档知识、citation 与文档权限；Memory 管任务连续性、用户偏好和组织使用上下文。私人对话不得进入共享 RAG 索引。详见 [[enterprise-agent-memory]]。
 
 ## 相关来源
 
