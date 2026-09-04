@@ -507,3 +507,10 @@
 - 更新 Concept：[[agent-tool-system]] 补充企业 Tool Registry 治理维度（注册/调用分离、(name,version) 主键、生命周期状态化、影子验证、结果证据分级）；[[mcp]] 补充企业接入四硬约束与三类能力分流。
 - 更新 Synthesis：[[enterprise-agent-platform-landscape]] 填充执行骨架落地细节，调整后续扩展计划。
 - 归档 3 篇原文至 raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/。
+
+## [2026-09-04] ingest | 企业级 Agent 平台工程（批3A/4）：Planner / Agentic Workflow
+
+- 新增 Source：[[enterprise-agent-planner]]（第25章）、[[enterprise-agent-agentic-workflow]]（第26章）。
+- 新增 Concept：[[agent-planner]]——只提议不执行、三种编排选择、工具视图裁剪与回放评测；[[agentic-workflow-enhancements]]——Reflexion/Self-Refine/ToT 的默认关闭、预算、停止与策略级回滚。
+- 更新 Synthesis：[[enterprise-agent-platform-landscape]] 补充智能放大器中的 Planner 与局部增强。
+- 归档 2 篇原文至 raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/。

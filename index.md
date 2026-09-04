@@ -74,6 +74,8 @@
 [[validation-loop]] —— 验证循环：LLM 决策到实际执行的多层把关
 [[agent-platform-boundary]] —— Agent 平台边界：应用/框架/平台三层与四问判据、五类共性问题、治理配套机制
 [[agent-run-lifecycle]] —— Agent Run 生命周期：Run/Step/Tool Call 对象分层、六态状态机、检查点恢复与幂等
+[[agent-planner]] —— Agent Planner：只提议不执行的稳定接口、ReAct/Plan-and-Execute/状态图选择与回放治理
+[[agentic-workflow-enhancements]] —— Agentic Workflow 增强：Reflexion/Self-Refine/ToT 的默认关闭、预算与停止边界
 
 ## Sources
 
@@ -145,6 +147,8 @@
 [[enterprise-agent-runtime]] —— Agent Runtime：Run 六态、SSE 事件流、检查点/恢复与三档超时
 [[enterprise-agent-tool-registry]] —— Tool Registry：Function Calling 只产生意图、(name,version) 版本治理与强制校验
 [[enterprise-agent-mcp]] —— MCP 企业接入：L3 协议 vs L2 Registry、四硬约束与影子灰度
+[[enterprise-agent-planner]] —— Planner 编排：只提议不执行、ReAct/Plan-and-Execute/状态图的适用边界
+[[enterprise-agent-agentic-workflow]] —— Agentic Workflow：Reflexion/Self-Refine/ToT 的局部增强与生产约束
 
 ## Synthesis
 

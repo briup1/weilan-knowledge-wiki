@@ -2,7 +2,7 @@
 type: synthesis
 created: 2026-09-04
 updated: 2026-09-04
-sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp]
+sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp, enterprise-agent-planner, enterprise-agent-agentic-workflow]
 tags:
   - enterprise-agent-platform
   - platform-architecture
@@ -13,7 +13,7 @@ tags:
 # 企业级 Agent 平台工程全景图
 
 > 基于《企业级 Agent 平台工程》原文章节编译，随章节摄取逐步扩展。来源：datagallery-lab enterprise_agent_platform（固定提交 e5d97a6，2026-07-03，Apache-2.0）。
-> 当前覆盖：平台边界（第2章）、参考架构与阅读路径（第4章）、执行骨架落地（第22-24章：Runtime/Tool Registry/MCP）。Planner/Workflow/Memory/多 Agent/协议章节（第25-29章）待续。
+> 当前覆盖：平台边界（第2章）、参考架构与阅读路径（第4章）、执行骨架（第22-24章）、Planner 与局部增强（第25-26章）。Memory/多 Agent/协议章节（第27-29章）待续。
 
 ## 平台定位：从试点到统一治理线
 
@@ -68,6 +68,11 @@ Agent 能力层    任务状态/工具调用/规划/长任务/多Agent/协议   
 - **Tool Registry 治理**（[[enterprise-agent-tool-registry]]）：Function Calling 只产生意图，Registry 以 `(name, version)` 主键统一注册/校验/版本治理，生产 pin 版本；MCP/HTTP 工具全部收敛为 ToolSpec，模型输出永远不能替代 invoke 前校验。
 - **MCP 接入边界**（[[enterprise-agent-mcp]]）：MCP 是 L3 协议、Registry 是 L2 中枢，路径恒为「发现→注册→invoke」；四硬约束（不替代 Registry/主循环不直连/Resources 不替代 RAG/Server 侧审计），Tools/Resources/Prompts 三类能力分流，影子灰度与三版本追溯。
 
+### 智能放大器落地（第25-26章）
+
+- **Planner 稳定接口**（[[enterprise-agent-planner]]）：[[agent-planner]] 只读取受控上下文与 Registry 同源工具视图，输出 FINISH/ASK/TOOL_CALL 提议；Runtime 掌握执行与终态。ReAct 用于探索，Plan-and-Execute 用于计划审批，状态图只承载需要复用/回放的复杂路径。
+- **Agentic Workflow 局部增强**（[[enterprise-agent-agentic-workflow]]）：[[agentic-workflow-enhancements]] 将 Reflexion、Self-Refine、ToT 作为 Planner 内默认关闭的可选能力；三计数器分离、事实槽位锁定、未选分支不执行，并按「离线→影子→小流量」验证收益后启用。
+
 ## DataAgent 主线
 
 DataAgent 被选为贯穿场景，因为它几乎穿过每一架构层：模型（规划/生成 SQL/解释）、数据（语义层/口径/湖仓）、知识（元数据/历史分析/业务术语）、Agent（Runtime/Planner/人工介入）、治理（权限/trace/评估/审计）、前端（图表/引用/报告）。一次请求的七个检查点：任务创建 → 上下文加载 → 路径规划 → 工具执行 → 结果解释 → 治理记录 → 结果交付。误把 DataAgent 当「NL2SQL + 图表」，平台建设第一天就会跑偏。
@@ -85,6 +90,6 @@ Q4  灰度/降级/SLO/供应商接入/平台目录            → 复盘模板 +
 
 ## 后续扩展计划
 
-- 第25-27章：Planner / Agentic Workflow / Memory → 细化智能放大器
+- 第27章：Memory → 补齐智能放大器中的上下文连续性
 - 第28-29章：多 Agent 协作 / Agent 协议与标准
 - 第38-42/50-51章（另一半资料）：可观测与评测 / 安全治理
