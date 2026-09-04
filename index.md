@@ -76,6 +76,7 @@
 [[agent-run-lifecycle]] —— Agent Run 生命周期：Run/Step/Tool Call 对象分层、六态状态机、检查点恢复与幂等
 [[agent-planner]] —— Agent Planner：只提议不执行的稳定接口、ReAct/Plan-and-Execute/状态图选择与回放治理
 [[agentic-workflow-enhancements]] —— Agentic Workflow 增强：Reflexion/Self-Refine/ToT 的默认关闭、预算与停止边界
+[[agent-protocol-interoperability]] —— Agent 协议互操作：MCP/A2A/Agent Card/ACP 的对象分工、适配收敛与版本证据
 
 ## Sources
 
@@ -150,6 +151,8 @@
 [[enterprise-agent-planner]] —— Planner 编排：只提议不执行、ReAct/Plan-and-Execute/状态图的适用边界
 [[enterprise-agent-agentic-workflow]] —— Agentic Workflow：Reflexion/Self-Refine/ToT 的局部增强与生产约束
 [[enterprise-agent-memory]] —— Memory 系统：Working/Episodic/Profile/Org Context 四层、检查点与删除治理
+[[enterprise-agent-multi-agent]] —— 多 Agent 协作：同 Run Handoff、Agent Catalog、冲突仲裁与可收缩架构
+[[enterprise-agent-protocols]] —— Agent 协议：MCP/A2A/Agent Card/ACP 的职责版图与 Registry 收敛
 
 ## Synthesis
 

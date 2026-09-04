@@ -1,8 +1,8 @@
 ---
 type: concept
 created: 2026-04-20
-updated: 2026-07-26
-sources: [claude-code-gstack, hermes-agent-setup, openmaic, hermes-agent-sub-agent-orchestration, hermes-agent]
+updated: 2026-09-04
+sources: [claude-code-gstack, hermes-agent-setup, openmaic, hermes-agent-sub-agent-orchestration, hermes-agent, enterprise-agent-multi-agent]
 tags: [multi-agent, collaboration, team-mode, agent-orchestration, ai-programming]
 ---
 
@@ -109,6 +109,19 @@ Hermes 的关键设计：
 - **能力切断**：`DELEGATE_BLOCKED_TOOLS` 切断 `memory`、`send_message`、`clarify`、`execute_code` 等副作用工具。
 - **深度限制**：`depth >= max_spawn` 直接返回错误，防止无限递归。
 - **角色降级**：`orchestrator` 不满足条件时静默退化为 `leaf`。
+
+## 企业平台中的同 Run 协作
+
+生产多 Agent 的目标是拆开职责、权限与交付物，同时保留一个 [[agent-run-lifecycle|Run]]；不是多个模型自由群聊。单 Agent 能用清晰工具链完成时不要拆，只有跨角色、鉴权域、责任团队、产物或真实并行需求时才值得。
+
+- **Router ≠ Planner**：Router 选择 Agent，[[agent-planner]] 选择当前 Agent 的工具。
+- **Handoff = 结构化 Tool Call**：同一 `run_id` 下传 `from/to/handoff_id/payload/reason/return_policy`；检查点保存 `active_agent_id` 与 `handoff_stack`。大结果只传 EvidenceRef/schema/sample/hash。
+- **Catalog 先过滤再路由**：AgentSpec 声明能力、输入输出 schema、工具白名单、SLA、租户、版本和 owner；低置信度返回澄清/拒绝。
+- **权限不相加**：Handoff 时重新计算接收方可见信息和动作，查数权限+外发权限不能组合成敏感数据外发。
+- **共享状态类型化**：事实（带证据）/推断（关键动作前再校验）/草稿（不可当确认结果），artifact 单写者；事实冲突回权威源或人工，不让模型平均。
+- **可收缩**：从 Router+执行 Agent 两个角色起步；若路由长期固定、Handoff 成本/失败高于单 Agent，就合并回普通工具链。
+
+Handoff 错误、幂等、环路、版本组合与验收清单详见 [[enterprise-agent-multi-agent]]；外部委托再经过 [[agent-protocol-interoperability]]。
 
 ## 相关来源
 

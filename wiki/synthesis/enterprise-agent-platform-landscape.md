@@ -2,7 +2,7 @@
 type: synthesis
 created: 2026-09-04
 updated: 2026-09-04
-sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp, enterprise-agent-planner, enterprise-agent-agentic-workflow, enterprise-agent-memory]
+sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp, enterprise-agent-planner, enterprise-agent-agentic-workflow, enterprise-agent-memory, enterprise-agent-multi-agent, enterprise-agent-protocols]
 tags:
   - enterprise-agent-platform
   - platform-architecture
@@ -13,7 +13,7 @@ tags:
 # 企业级 Agent 平台工程全景图
 
 > 基于《企业级 Agent 平台工程》原文章节编译，随章节摄取逐步扩展。来源：datagallery-lab enterprise_agent_platform（固定提交 e5d97a6，2026-07-03，Apache-2.0）。
-> 当前覆盖：平台边界（第2章）、参考架构与阅读路径（第4章）、执行骨架（第22-24章）、Planner/局部增强/Memory（第25-27章）。多 Agent 与协议章节（第28-29章）待续。
+> 当前覆盖本轮选定的 10/19 章：平台边界（第2章）、参考架构（第4章）与第22-29章核心能力（Runtime、Registry、MCP、Planner、Workflow、Memory、多 Agent、协议）。
 
 ## 平台定位：从试点到统一治理线
 
@@ -74,6 +74,11 @@ Agent 能力层    任务状态/工具调用/规划/长任务/多Agent/协议   
 - **Agentic Workflow 局部增强**（[[enterprise-agent-agentic-workflow]]）：[[agentic-workflow-enhancements]] 将 Reflexion、Self-Refine、ToT 作为 Planner 内默认关闭的可选能力；三计数器分离、事实槽位锁定、未选分支不执行，并按「离线→影子→小流量」验证收益后启用。
 - **Memory 四层治理**（[[enterprise-agent-memory]]）：[[agent-memory-system]] 按 Working/Episodic/Profile/Org Context 拆生命周期与责任；Working 进入检查点，长期记忆先具备确认、删除、隔离和版本能力，RAG 与 Memory 不共用权限/索引语义。
 
+### 跨角色与跨边界协作（第28-29章）
+
+- **同 Run 多 Agent**（[[enterprise-agent-multi-agent]]）：[[multi-agent-collaboration]] 仅在职责/权限/产物确需拆分时启用；Router 选 Agent、Planner 选工具，Handoff 作为结构化 Tool Call，Catalog/工具白名单/类型化共享状态/权威源冲突处理共同保证可审计与可收缩。
+- **L3 协议互操作**（[[enterprise-agent-protocols]]）：[[agent-protocol-interoperability]] 按对象选择 MCP/A2A/Agent Card/ACP，外部声明经 adapter 映射为 ToolSpec/AgentSpec/Event 后再走 Registry/Policy/Runtime/Trace；保存原始声明与版本快照，协议可变而平台内核稳定。
+
 ## DataAgent 主线
 
 DataAgent 被选为贯穿场景，因为它几乎穿过每一架构层：模型（规划/生成 SQL/解释）、数据（语义层/口径/湖仓）、知识（元数据/历史分析/业务术语）、Agent（Runtime/Planner/人工介入）、治理（权限/trace/评估/审计）、前端（图表/引用/报告）。一次请求的七个检查点：任务创建 → 上下文加载 → 路径规划 → 工具执行 → 结果解释 → 治理记录 → 结果交付。误把 DataAgent 当「NL2SQL + 图表」，平台建设第一天就会跑偏。
@@ -91,5 +96,4 @@ Q4  灰度/降级/SLO/供应商接入/平台目录            → 复盘模板 +
 
 ## 后续扩展计划
 
-- 第28-29章：多 Agent 协作 / Agent 协议与标准
-- 第38-42/50-51章（另一半资料）：可观测与评测 / 安全治理
+本轮已完成清单前 10/19 章。其余 9 章留在 `raw/assets/`，后续优先补：第30-31章 HITL/安全、第38-42章可观测与评测、第50-51章安全治理。

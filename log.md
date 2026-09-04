@@ -521,3 +521,11 @@
 - 更新 Concept：[[agent-memory-system]] 补充 Working/Episodic/Profile/Org Context 四层、检查点、大对象引用、晋升/删除与 RAG 边界。
 - 更新 Synthesis：[[enterprise-agent-platform-landscape]] 补齐智能放大器中的 Memory 治理。
 - 归档原文至 raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/。
+
+## [2026-09-04] ingest | 企业级 Agent 平台工程（批4/4）：多 Agent / 协议标准
+
+- 新增 Source：[[enterprise-agent-multi-agent]]（第28章）、[[enterprise-agent-protocols]]（第29章）。
+- 新增 Concept：[[agent-protocol-interoperability]]——MCP/A2A/Agent Card/ACP 的对象分工、适配收敛、版本证据与退化边界。
+- 更新 Concept：[[multi-agent-collaboration]] 补充同 Run Handoff、Router/Planner 分工、Catalog、权限重算、类型化共享状态与可收缩判据。
+- 更新 Synthesis：[[enterprise-agent-platform-landscape]] 完成本轮 10/19 章全景，补充跨角色与跨边界协作。
+- 归档 2 篇原文至 raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/；其余 9 章保留待摄取。
