@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>需求 0001：企业内部 Agent 测试平台 MVP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F7F6F3;--surface:#FFF;--text:#2F3437;--muted:#787774;--faint:#A8A49C;--line:#EAE7E0;--accent:#9F2F2D;--accent-soft:#FDEBEC;--ok:#346538;--ok-soft:#EDF3EC;--warn:#956400;--warn-soft:#FBF3DB;--info:#1F6C9F;--info-soft:#E1F3FE;--code:#26221E;--code-text:#EDE8E0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--text);font:15px/1.7 'Plus Jakarta Sans','PingFang SC','Microsoft YaHei',sans-serif}button{font:inherit}.layout{display:grid;grid-template-columns:290px minmax(0,860px);gap:64px;max-width:1260px;margin:0 auto;padding:44px 28px 80px}aside{position:sticky;top:28px;align-self:start;max-height:calc(100vh - 56px);overflow:auto;padding-right:8px}.eyebrow,.crumb,.meta,.nav-item span{font-family:'JetBrains Mono',ui-monospace,monospace}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:600}h1,h2{font-family:'Instrument Serif','Songti SC','SimSun',serif;letter-spacing:-.02em}h1{font-size:38px;line-height:1.1;margin:12px 0 16px;font-weight:400}.meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px}.chip{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}.chip.status{color:var(--warn);background:var(--warn-soft);border-color:transparent}.intro{font-size:13px;color:var(--muted);padding:14px 0 20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:18px}.intro blockquote{margin:0;border:0;padding:0}.intro p{margin:0}nav{display:grid;gap:3px}.nav-item{border:0;background:transparent;color:var(--muted);text-align:left;padding:9px 10px;border-left:2px solid transparent;cursor:pointer;display:grid;grid-template-columns:28px 1fr;gap:6px;border-radius:0 6px 6px 0;font-size:13px}.nav-item span{font-size:10px;color:var(--faint);padding-top:3px}.nav-item:hover{background:#fff}.nav-item.active{background:var(--accent-soft);border-left-color:var(--accent);color:var(--accent);font-weight:600}main{min-width:0}.panel{display:none;animation:fade-up .5s cubic-bezier(.16,1,.3,1)}.panel.active{display:block}@keyframes fade-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}.crumb{font-size:11px;letter-spacing:.14em;color:var(--faint);display:flex;align-items:center;gap:8px}.crumb i{width:6px;height:6px;background:var(--accent);border-radius:50%}h2{font-size:42px;line-height:1.15;margin:14px 0 34px;font-weight:400}h3{font-size:17px;margin:30px 0 12px}p{margin:9px 0}blockquote{margin:16px 0;padding:12px 16px;border-left:2px solid var(--info);background:var(--info-soft);color:#315665}ul,ol{padding-left:23px}li{margin:5px 0}table{width:100%;border-collapse:collapse;margin:16px 0 26px;background:var(--surface);font-size:13px}th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top;text-align:left}th{font:600 10px/1.4 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;background:#FBFAF7}code{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.9em}p code,li code,td code{background:#EFECE6;padding:2px 5px;border-radius:4px}pre{background:var(--code);color:var(--code-text);padding:18px;border-radius:6px;overflow:auto;line-height:1.55}pre code{background:transparent;padding:0}.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:48px;padding-top:22px;border-top:1px solid var(--line)}.pager-btn{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:13px 15px;text-align:left;cursor:pointer;color:var(--text)}.pager-btn.next{text-align:right}.pager-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}.pager-btn:disabled{opacity:.45;cursor:default}.pager-btn small{display:block;color:var(--faint);font:10px 'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px}.pager-btn strong{font-size:12px}strong{font-weight:700}
+@media(max-width:860px){.layout{display:block;padding:24px 18px 56px}aside{position:static;max-height:none;padding:0;margin-bottom:38px}nav{grid-template-columns:1fr 1fr}h1{font-size:34px}h2{font-size:35px}.pager{grid-template-columns:1fr}}
+@media(max-width:520px){nav{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+  <div class="eyebrow">REQUIREMENT DOCUMENT</div>
+  <h1>需求 0001：企业内部 Agent 测试平台 MVP</h1>
+  <div class="meta"><span class="chip">0001</span><span class="chip status">draft</span><span class="chip">2026-09-04</span></div>
+  <div class="intro"><blockquote>
+<p>本文是当前讨论阶段的唯一事实来源。只记录需求、边界和已形成的共识，不记录未经批准的实现方案。关键方案将在需求边界明确后另行设计；在需求与方案均获批准前，不开始开发。项目术语统一见 <a href="../../../CONTEXT.md"><code>CONTEXT.md</code></a>。</p>
+</blockquote></div>
+  <nav><button class="nav-item active" data-index="0"><span>01</span>1. 文档治理</button><button class="nav-item" data-index="1"><span>02</span>2. 需求重定义</button><button class="nav-item" data-index="2"><span>03</span>3. 已确认共识</button><button class="nav-item" data-index="3"><span>04</span>4. 暂定假设</button><button class="nav-item" data-index="4"><span>05</span>5. 用户故事</button><button class="nav-item" data-index="5"><span>06</span>6. 待澄清维度</button><button class="nav-item" data-index="6"><span>07</span>7. 当前未决问题</button><button class="nav-item" data-index="7"><span>08</span>8. MVP 范围与非目标</button><button class="nav-item" data-index="8"><span>09</span>9. 已否决方向</button><button class="nav-item" data-index="9"><span>10</span>10. 决策记录</button><button class="nav-item" data-index="10"><span>11</span>11. 验证方案（待完善）</button><button class="nav-item" data-index="11"><span>12</span>12. 既有资产调查</button><button class="nav-item" data-index="12"><span>13</span>13. 变更记录</button></nav>
+</aside>
+<main><section class="panel active" data-index="0"><div class="crumb"><i></i> SEC 01 / 13</div><h2>1. 文档治理</h2><div class="section-body"><h3>1.1 记录规则</h3>
+<ul>
+<li>每轮讨论后更新本文，不依赖聊天记录保存共识。</li>
+<li>用户明确认可的结论标为“已确认”。</li>
+<li>尚未确认但为推进讨论而提出的判断标为“暂定假设”。</li>
+<li>无明确答案或存在分歧的事项进入“未决问题”。</li>
+<li>明确不采用的方向进入“已否决方向”，避免后续反复讨论。</li>
+<li>影响范围大、难以逆转或存在明显取舍的结论进入“决策记录”。</li>
+<li>对已确认结论的修改必须保留在“变更记录”中。</li>
+</ul>
+<h3>1.2 状态定义</h3>
+<pre><code class="language-text">draft（持续澄清）
+  ↓ 所有必要维度有明确结论
+reviewing（整体复核）
+  ↓ 需求方明确批准
+approved（需求冻结）
+  ↓ 另行完成并批准方案设计
+designing → implementing
+</code></pre>
+<p>当前状态：<code>draft</code>。禁止进入开发。</p>
+<h3>1.3 讨论完成条件</h3>
+<p>以下条件全部满足后，才能结束讨论阶段：</p>
+<ul>
+<li>必要维度全部为“已确认”或“明确延期”，不存在未标记假设。</li>
+<li>MVP 必做、非目标以及与外部系统的责任边界清晰。</li>
+<li>关键术语含义一致。</li>
+<li>高影响风险有明确处置结论。</li>
+<li>未决问题清零，或有经需求方批准的延期理由和责任归属。</li>
+<li>需求方完成整体复核并明确批准。</li>
+</ul>
+<h3>1.4 讨论章程（已确认）</h3>
+<h4>原则</h4>
+<ol>
+<li><strong>宏观优先</strong>：先确认平台边界、模块划分、模块职责、主流程和 MVP 取舍，再讨论字段、算法、指标阈值及运行参数。</li>
+<li><strong>一次只讨论一个层级</strong>：当前处于模块级讨论，不混入接口 Schema、运行次数、评分阈值、误报率等实现或验收细节。</li>
+<li><strong>先职责、后方案</strong>：先回答模块解决什么问题、拥有什么责任，再比较 Langfuse、DeepEval 等实现选择。</li>
+<li><strong>先边界、后能力清单</strong>：先划清平台与 Agent、Langfuse、CI/CD、发布平台等外部系统的职责，再决定平台内部能力。</li>
+<li><strong>MVP 与长期目标分开</strong>：每个模块都要标明 MVP 必做、明确延期和长期方向，不能用长期完整性扩大首期范围。</li>
+<li><strong>每轮落盘</strong>：每轮只把用户明确认可的结论标为“已确认”；其余分别进入假设、未决问题或已否决方向。</li>
+<li><strong>细节不丢失但暂时冻结</strong>：提前出现的细节问题进入“细节问题池”，待宏观阶段结束后按模块逐项讨论。</li>
+</ol>
+<h4>讨论顺序</h4>
+<pre><code class="language-text">平台定位与外部边界
+  ↓
+宏观模块划分
+  ↓
+模块职责与模块间主流程
+  ↓
+MVP 取舍与分阶段路线
+  ↓ 宏观方案经需求方确认
+逐模块讨论契约、数据、规则与指标细节
+  ↓
+整体复核与需求批准
+</code></pre>
+<h4>单个模块的固定讨论模板</h4>
+<p>每个一级模块只回答以下五类宏观问题：</p>
+<ol>
+<li><strong>目标</strong>：该模块解决什么核心问题？</li>
+<li><strong>职责</strong>：该模块必须负责什么，不负责什么？</li>
+<li><strong>协作边界</strong>：它从谁接收什么、向谁交付什么；哪些责任属于外部系统？</li>
+<li><strong>MVP 取舍</strong>：首期必须具备什么，哪些能力明确延期？</li>
+<li><strong>风险与依赖</strong>：有哪些会影响模块存在方式或平台边界的关键约束？</li>
+</ol>
+<h4>宏观阶段退出条件</h4>
+<p>以下条件全部满足后，才进入细节讨论：</p>
+<ul>
+<li>一级模块地图获得需求方批准。</li>
+<li>每个模块的目标、职责和非职责明确。</li>
+<li>平台与主要外部系统的责任边界明确。</li>
+<li>模块间主流程和关键交付物明确。</li>
+<li>每个模块的 MVP 必做与延期项明确。</li>
+<li>分阶段路线获得需求方批准。</li>
+<li>剩余细节问题已按所属模块归档，不再反向改变宏观边界；若会改变边界，则继续留在宏观阶段处理。</li>
+</ul></div><div class="pager"><button class="pager-btn prev" disabled><small>上一节</small><strong>已经是第一节</strong></button><button class="pager-btn next" ><small>下一节</small><strong>2. 需求重定义</strong></button></div></section><section class="panel" data-index="1"><div class="crumb"><i></i> SEC 02 / 13</div><h2>2. 需求重定义</h2><div class="section-body"><h3>原始诉求</h3>
+<p>建设企业内部 MVP 版 Agent 测试程序，重点解决三类问题：不同 Agent 的便捷接入、基于 Agent 场景和角色自动生成测试用例，以及 Agent 变更后的回归与灰度验证。</p>
+<h3>最终目标</h3>
+<p>建立一个可持续积累测试资产、发现 Agent 能力退化并为变更提供质量证据的企业内部平台，使 Agent 团队能够在发布前后判断“新版本是否仍然可靠”。</p>
+<h3>当前异议</h3>
+<p>“对接所有 Agent”暂不能直接作为 MVP 验收口径。它更适合作为长期架构约束；MVP 应通过代表性 Agent 验证接入边界是否可扩展。需要进一步确认“所有 Agent”的实际范围和差异类型。</p>
+<p>“灰度测试”可能涉及发布流量调度、线上质量评估和回滚三个不同职责。测试平台是否直接控制流量尚未明确，需与企业现有发布系统划界。</p>
+<h3>重定义后的需求</h3>
+<p>平台应以框架中立的方式接入目标范围内的 Agent，形成经过人工治理的版本化测试资产，在 Agent 发生变更时执行可比较、可追溯的回归验证，并为发布门禁或灰度决策提供质量证据。</p>
+<h3>当前产品定位（已确认）</h3>
+<p>MVP 首先服务 Agent 开发者，优先解决 Agent 发生变更后无法可靠发现能力退化的问题。首批以对话问答 Agent 和工具执行 Agent 为代表性对象；第一阶段先证明“可靠发现退化”，自动生成用例和通用接入是支撑该目标的手段，而不是独立追求功能数量。</p>
+<p>Agent 开发者对正式回归场景和最终质量结论承担主要责任。平台不是替代已有自动测试脚本，而是补齐跨版本退化识别和重复运行结论稳定性。首批优先防止两类高风险失败：关键要求遗漏、工具调用错误。</p>
+<h3>宏观模块地图（已确认作为讨论底稿）</h3>
+<pre><code class="language-text">Agent 测试平台
+├─ 1. Agent 接入与观测
+│  ├─ Agent 调用
+│  └─ 内部 Trace / Event 采集
+├─ 2. 测试资产管理
+│  ├─ 场景与预期
+│  ├─ 自动生成
+│  └─ 人工审核与版本
+├─ 3. 测试执行
+│  ├─ 单例调试
+│  ├─ 离线回归
+│  └─ Shadow / Canary 评测
+├─ 4. 评测引擎
+│  ├─ 最终回答评测
+│  ├─ 工具与过程评测
+│  └─ 稳定性与版本对比
+├─ 5. 结果与决策
+│  ├─ 报告和问题定位
+│  ├─ 发布建议
+│  └─ CI / 发布系统衔接
+└─ 6. 平台治理
+   ├─ 权限与安全
+   ├─ 成本与审计
+   └─ 配置及外部系统集成
+</code></pre>
+<p>该地图当前用于组织讨论，表示六个待确认的职责域，不代表六个部署服务、六个代码模块或最终页面结构。后续可以在不丢失职责的前提下合并、更名或调整层级。</p>
+<h3>模块级共识</h3>
+<h4>1. Agent 接入与观测（已确认）</h4>
+<p><strong>目标</strong>：屏蔽不同 Agent 的调用与观测差异，为测试执行提供可识别版本、可关联 Trace 的统一执行证据。</p>
+<p><strong>职责</strong>：</p>
+<ul>
+<li>识别被测 Agent 及其版本。</li>
+<li>发起或承接一次 Agent 交互。</li>
+<li>关联最终回答、工具调用和内部 Trace。</li>
+<li>检查评测所需证据是否齐全，并向测试执行与评测引擎提供统一证据视图。</li>
+<li>声明每个 Agent 当前支持的评测能力。</li>
+</ul>
+<p><strong>明确非职责</strong>：</p>
+<ul>
+<li>不实现 Agent 自身业务逻辑和编排。</li>
+<li>不决定执行哪些测试场景，也不判断测试是否通过。</li>
+<li>不负责发布、流量切换或回滚。</li>
+<li>不建设第二套通用 Trace 采集、存储、检索和观测后台。</li>
+</ul>
+<p><strong>分级接入</strong>：</p>
+<pre><code class="language-text">基础接入：可调用 + 可识别版本
+  └─ 支持端到端黑盒评测
+
+增强接入：基础接入 + 内部 Trace / Event
+  └─ 支持组件级评测和精确问题定位
+</code></pre>
+<p><strong>与 Langfuse 的边界</strong>：</p>
+<pre><code class="language-text">Agent → Langfuse
+  └─ 采集、存储和检索原始 Trace / Span / 模型与工具事件
+
+Agent 测试平台
+  ├─ 关联 Test Run 与 Langfuse Trace
+  ├─ 校验评测证据完整性
+  ├─ 提取统一评测证据视图
+  └─ 不复制原始 Trace 数据面
+</code></pre>
+<p><strong>MVP 取舍</strong>：</p>
+<ul>
+<li>MVP 确定使用 Langfuse 负责 Trace 数据面。</li>
+<li>同时支持基础接入和增强接入；缺少内部事件的 Agent 只能获得端到端黑盒评测能力。</li>
+<li>不要求所有 Agent 使用相同业务框架，但增强接入必须能把内部事件送入 Langfuse。</li>
+<li>其他 Trace Provider、多 Trace 后端并存和 Trace 平台自建明确延期。</li>
+</ul>
+<h4>2. 测试资产管理（已确认）</h4>
+<p><strong>目标</strong>：将 Agent 能力描述、业务要求、历史缺陷和真实 Trace 转化为可审核、可版本化、可重复执行的测试资产。</p>
+<p><strong>职责</strong>：</p>
+<ul>
+<li>管理测试场景、预期回答、预期工具过程及适用范围。</li>
+<li>根据 Agent 职责、业务资料、历史失败和 Langfuse Trace 生成候选用例。</li>
+<li>支持人工创建、修改、审核、正式发布和停用测试资产。</li>
+<li>管理资产版本、变更来源及与需求、缺陷、Trace、Agent 能力的关联。</li>
+<li>将正式场景组织为可执行的 Benchmark Set。</li>
+</ul>
+<p><strong>明确非职责</strong>：</p>
+<ul>
+<li>不采集或保存原始 Trace。</li>
+<li>不调用 Agent 执行测试，也不计算评分或判断退化。</li>
+<li>不替代业务方定义正确的业务规则。</li>
+<li>不决定 Agent 是否可以发布。</li>
+</ul>
+<p><strong>资产治理闭环</strong>：</p>
+<pre><code class="language-text">Agent 信息 / 业务要求 / 历史缺陷 / Langfuse Trace
+                         ↓
+                      候选资产
+                         ↓ 人工审核
+                    正式回归资产
+                         ↓ 业务变化或失效
+                      停用资产
+</code></pre>
+<p><strong>治理原则</strong>：</p>
+<ul>
+<li>自动生成只负责降低用例建设成本，未经人工确认的候选资产不得进入正式回归集。</li>
+<li>Agent 开发者对正式测试资产负责；高风险业务场景可以邀请业务专家协作审核。</li>
+<li>Langfuse Trace 可以作为资产生成和追溯来源；平台只保存关联，不复制原始 Trace。</li>
+</ul>
+<p><strong>MVP 取舍</strong>：</p>
+<ul>
+<li>迁移并演进 <code>eyun_assist_bot</code> 的旧 Benchmark Schema。</li>
+<li>支持人工创建和编辑、候选用例自动生成、人工审核转正式、基本版本管理、Benchmark Set 组织及来源与变更记录。</li>
+<li>未经人工审核自动入库、多级复杂审批流、企业级测试资产市场、根据线上效果自动修改 Golden Dataset，以及自动判断业务规则本身是否正确，均明确延期。</li>
+</ul>
+<h4>3. 测试执行（讨论中）</h4>
+<p><strong>已确认触发边界</strong>：</p>
+<pre><code class="language-text">MVP：仅人工触发测试执行
+后续：CI/CD 触发、线上观测触发
+</code></pre>
+<p>MVP 不接收 CI/CD 或线上观测自动触发；人工触发通过页面、命令还是 API 实现，属于后续细节问题。测试执行模块的其他职责、非职责、执行方式和环境边界仍待模块级确认。</p></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>1. 文档治理</strong></button><button class="pager-btn next" ><small>下一节</small><strong>3. 已确认共识</strong></button></div></section><section class="panel" data-index="2"><div class="crumb"><i></i> SEC 03 / 13</div><h2>3. 已确认共识</h2><div class="section-body"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>共识</th>
+<th>来源/日期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C-001</td>
+<td>产品面向企业内部使用，首期为 MVP。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-002</td>
+<td>平台不是为单个 Agent 定制，长期需要具备接入不同 Agent 的能力。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-003</td>
+<td>平台需要探索如何根据 Agent 的场景和角色自动生成候选测试用例。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-004</td>
+<td>Agent 修改后应回归已经沉淀的历史场景，以识别能力退化。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-005</td>
+<td>Agent 新增能力时应增加对应场景，并验证其稳定性。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-006</td>
+<td>项目先经历一段持续讨论；只有认知充分、边界清晰且方案明确后才开始开发。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-007</td>
+<td>讨论形成的共识必须持续写入文档；必要维度未考虑清楚前不能结束讨论。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-008</td>
+<td>MVP 的日常主要使用者是 Agent 开发者。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-009</td>
+<td>当前代价最大的首要问题是 Agent 变更后无法发现能力退化。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-010</td>
+<td>MVP 首批覆盖对话问答 Agent 和工具执行 Agent。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-011</td>
+<td>MVP 第一阶段首先证明能够可靠发现退化。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-012</td>
+<td>Agent 开发者对正式回归场景和最终质量结论承担主要责任。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-013</td>
+<td>当前已有 Agent 自动测试脚本，不是完全依赖人工或从零建设测试流程。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-014</td>
+<td>MVP 是否可靠的核心证据是：同一 Agent 版本重复测试时，质量结论保持稳定。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-015</td>
+<td>首批 Agent 优先防止关键要求遗漏和工具调用错误。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-016</td>
+<td><code>eyun_assist_bot</code> 历史分支中的 Agent 评测逻辑属于本项目必须盘点和考虑的既有资产。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-017</td>
+<td><code>eyun_assist_bot</code> 是 MVP 第一个迁移和验收 Agent。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-018</td>
+<td>评估必须区分工具执行过程和用户可见回答结果：工具调用及参数优先确定性判断，开放回答采用语义评估。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-019</td>
+<td>新平台的测试资产模型从旧 Benchmark Schema 演进，保留已验证概念并补齐平台缺口，不完全重做或原样照搬。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-020</td>
+<td>历史代码中的硬编码测试凭证按已暴露凭证处理，立即由 eyun 项目责任方确认失效或完成轮换。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-021</td>
+<td>平台期望采集 Agent 内部执行事件，而不是只支持最终输入输出的黑盒测试。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-022</td>
+<td>平台需要覆盖三种评测工作方式：端到端整体评估、组件级内部环节评估、单个用例与单个指标的临时调试。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-023</td>
+<td>旧多模型黑盒评测不进入 MVP 主范围，只作为时延、Token、成本和 HTTP/SSE 接入经验参考。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-024</td>
+<td>稳定性同时在单条用例和 Benchmark Set 整体两个层级判定。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-025</td>
+<td>MVP 第一阶段的退化结论先作为可追溯发布建议；结论稳定可信后再升级为强制 CI 门禁。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-026</td>
+<td>先以 Agent 接入与观测、测试资产管理、测试执行、评测引擎、结果与决策、平台治理六个一级模块作为宏观讨论底稿。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-027</td>
+<td>需求讨论必须遵循宏观优先：先收敛模块、职责、外部边界、主流程和 MVP 路线，再讨论运行次数、指标阈值、字段及技术实现。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-028</td>
+<td>Agent 接入与观测采用基础接入与增强接入两级能力；没有内部事件的 Agent 只能进行端到端黑盒评测。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-029</td>
+<td>MVP 确定由 Langfuse 承担原始 Trace 数据面的采集、存储和检索，测试平台不重复建设通用 Trace 平台。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-030</td>
+<td>测试平台负责关联 Test Run 与 Langfuse Trace、校验证据完整性并生成统一评测证据视图。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-031</td>
+<td>测试资产采用“候选生成—人工审核—正式回归—停用”的治理闭环。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-032</td>
+<td>自动生成的候选用例未经人工确认不得进入正式回归集。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-033</td>
+<td>Agent 开发者对正式测试资产负责；高风险业务场景可由业务专家协作审核。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-034</td>
+<td>Langfuse Trace 可作为资产生成和追溯来源，平台仅保存关联而不复制原始 Trace。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+<tr>
+<td>C-035</td>
+<td>MVP 测试执行仅支持人工触发；CI/CD 触发和线上观测触发明确延期。</td>
+<td>需求方，2026-09-04</td>
+</tr>
+</tbody>
+</table></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>2. 需求重定义</strong></button><button class="pager-btn next" ><small>下一节</small><strong>4. 暂定假设</strong></button></div></section><section class="panel" data-index="3"><div class="crumb"><i></i> SEC 04 / 13</div><h2>4. 暂定假设</h2><div class="section-body"><blockquote>
+<p>本节内容不是共识，后续必须确认、修改或删除。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>假设</th>
+<th>为什么需要确认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A-004</td>
+<td>平台输出灰度决策所需的质量信号，但不直接承担生产流量调度。</td>
+<td>取决于企业现有发布基础设施。</td>
+</tr>
+<tr>
+<td>A-005</td>
+<td>MVP 以已选定的两类代表性 Agent 验证通用性，而非首期适配所有 Agent。</td>
+<td>尚需定义每类选择多少个 Agent，以及通用性的验收方式。</td>
+</tr>
+<tr>
+<td>A-006</td>
+<td>独立测试人员和发布负责人是否参与 MVP，以及具体协作职责仍待确认；业务专家仅在高风险场景中按需协作审核。</td>
+<td>Agent 开发者的主责及业务专家的协作边界已确认，其余角色尚未确认。</td>
+</tr>
+<tr>
+<td>A-010</td>
+<td>DeepEval 仅作为可选评测执行库，不承担 Trace 数据面。</td>
+<td>Langfuse Trace 选型已经确认，但是否需要引入 DeepEval 仍待方案阶段验证。</td>
+</tr>
+<tr>
+<td>A-011</td>
+<td>平台需要定义自己的统一 Evaluation Case，而不是把 DeepEval <code>LLMTestCase</code> 直接作为领域模型。</td>
+<td>可避免平台被单个库锁定，但字段映射和必要性仍待设计验证。</td>
+</tr>
+</tbody>
+</table></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>3. 已确认共识</strong></button><button class="pager-btn next" ><small>下一节</small><strong>5. 用户故事</strong></button></div></section><section class="panel" data-index="4"><div class="crumb"><i></i> SEC 05 / 13</div><h2>5. 用户故事</h2><div class="section-body"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>用户故事</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-001</td>
+<td>As a <strong>Agent 开发者</strong>, I want 在变更后重跑历史场景并与基线比较, so that 我能在发布前发现能力退化。</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>US-002</td>
+<td>As a <strong>Agent 开发者</strong>, I want 根据 Agent 的职责、场景和历史问题生成候选用例并审核, so that 我能降低用例建设成本且保持业务可信度。</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>US-003</td>
+<td>As a <strong>业务专家</strong>, I want 协作审核高风险场景的输入和成功标准, so that 自动评测不会把业务错误判定为通过。</td>
+<td>已确认（按需协作）</td>
+</tr>
+<tr>
+<td>US-004</td>
+<td>As a <strong>发布负责人</strong>, I want 获得清晰、可追溯的质量结论, so that 我能决定放行、阻断或人工豁免。</td>
+<td>待确认角色</td>
+</tr>
+<tr>
+<td>US-005</td>
+<td>As a <strong>平台接入者</strong>, I want 以稳定且框架中立的方式接入 Agent, so that 新 Agent 不需要改造评测平台核心。</td>
+<td>待确认角色</td>
+</tr>
+</tbody>
+</table></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>4. 暂定假设</strong></button><button class="pager-btn next" ><small>下一节</small><strong>6. 待澄清维度</strong></button></div></section><section class="panel" data-index="5"><div class="crumb"><i></i> SEC 06 / 13</div><h2>6. 待澄清维度</h2><div class="section-body"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>当前状态</th>
+<th>必须回答的问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目标用户与核心问题</td>
+<td>已确认</td>
+<td>Agent 开发者是主要使用者和质量责任人；首要问题是变更后无法可靠发现退化。</td>
+</tr>
+<tr>
+<td>产品定位与成功标准</td>
+<td>部分确认</td>
+<td>首要价值、三种评测方式、稳定性双层判定和“先建议后门禁”已确认；具体统计阈值仍待确认。</td>
+</tr>
+<tr>
+<td>MVP 范围与非目标</td>
+<td>待讨论</td>
+<td>首期接入哪些 Agent、做哪些能力、明确不做什么？</td>
+</tr>
+<tr>
+<td>既有资产迁移</td>
+<td>部分调查</td>
+<td>旧 Session 评测和模型评测资产已定位；哪些直接继承、迁移或仅作参考待确认。</td>
+</tr>
+<tr>
+<td>Agent 接入</td>
+<td>宏观已确认</td>
+<td>采用基础/增强分级接入；Langfuse 负责 Trace 数据面，平台负责运行关联和统一评测证据视图；具体契约留待细节阶段。</td>
+</tr>
+<tr>
+<td>测试执行</td>
+<td>部分确认</td>
+<td>MVP 仅人工触发；调度职责、执行方式和运行状态边界仍待模块级确认。</td>
+</tr>
+<tr>
+<td>执行环境</td>
+<td>待讨论</td>
+<td>是否调用真实工具、如何控制数据和业务副作用？</td>
+</tr>
+<tr>
+<td>用例生成</td>
+<td>宏观已确认</td>
+<td>从 Agent 信息、业务资料、历史失败和 Trace 生成候选资产；具体生成规则留待细节阶段。</td>
+</tr>
+<tr>
+<td>人工审核</td>
+<td>宏观已确认</td>
+<td>Agent 开发者主责，高风险场景可由业务专家协作；未经审核不得转正式。</td>
+</tr>
+<tr>
+<td>资产生命周期</td>
+<td>宏观已确认</td>
+<td>采用候选、正式、停用生命周期并保留版本和来源；字段及细则留待细节阶段。</td>
+</tr>
+<tr>
+<td>评估方法</td>
+<td>待讨论</td>
+<td>结果、过程和业务终态分别如何判定？</td>
+</tr>
+<tr>
+<td>回归与门禁</td>
+<td>待讨论</td>
+<td>基线、重复次数、阻断规则和豁免机制是什么？</td>
+</tr>
+<tr>
+<td>Shadow/Canary</td>
+<td>待讨论</td>
+<td>平台负责评估、流量还是回滚？</td>
+</tr>
+<tr>
+<td>数据与版本</td>
+<td>待讨论</td>
+<td>哪些对象和版本必须可追溯？</td>
+</tr>
+<tr>
+<td>安全合规</td>
+<td>待讨论</td>
+<td>敏感数据、权限、审计和保留要求是什么？</td>
+</tr>
+<tr>
+<td>企业系统衔接</td>
+<td>待讨论</td>
+<td>与 CI/CD、发布、监控、身份和告警系统如何划界？</td>
+</tr>
+<tr>
+<td>运营与成本</td>
+<td>待讨论</td>
+<td>谁维护数据集和评分标准，成本预算如何约束？</td>
+</tr>
+<tr>
+<td>风险与路线</td>
+<td>待讨论</td>
+<td>分阶段交付、依赖、回滚和验收方式是什么？</td>
+</tr>
+</tbody>
+</table></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>5. 用户故事</strong></button><button class="pager-btn next" ><small>下一节</small><strong>7. 当前未决问题</strong></button></div></section><section class="panel" data-index="6"><div class="crumb"><i></i> SEC 07 / 13</div><h2>7. 当前未决问题</h2><div class="section-body"><h3>当前阶段：宏观模块与边界</h3>
+<p>按讨论章程，当前只处理以下模块级问题：</p>
+<ol>
+<li>六个一级模块是否需要合并、更名或补充？</li>
+<li>各模块的核心目标、职责和明确非职责是什么？</li>
+<li>各模块之间以及平台与外部系统之间如何衔接？</li>
+<li>每个模块哪些能力进入 MVP，哪些明确延期？</li>
+<li>模块间主流程和分阶段路线如何组织？</li>
+</ol>
+<p>讨论按以下顺序逐项进行：</p>
+<pre><code class="language-text">Agent 接入与观测
+  → 测试资产管理
+  → 测试执行
+  → 评测引擎
+  → 结果与决策
+  → 平台治理
+  → 模块间主流程与 MVP 总体复核
+</code></pre>
+<h3>细节问题池（宏观阶段结束前冻结）</h3>
+<p>以下问题已被识别，但当前不展开：</p>
+<ul>
+<li>重复运行次数、稳定性阈值、误报率和退化检出率。</li>
+<li>E2E 的单轮与 Session 粒度。</li>
+<li>Component Evaluation 首批覆盖哪些 Span。</li>
+<li>人工触发通过页面、命令还是 API 实现。</li>
+<li>One-Off Debug 是否即时调用 Agent。</li>
+<li>Evaluation Case、Trace Event 和版本对象的字段 Schema。</li>
+<li>平台与 Langfuse 的具体 API、身份映射、查询方式和证据字段。</li>
+<li>是否引入 DeepEval 及其评测器适配方式。</li>
+<li>第二个验收 Agent 的具体选择。</li>
+<li>历史凭证轮换的记录载体和完成时限。</li>
+</ul></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>6. 待澄清维度</strong></button><button class="pager-btn next" ><small>下一节</small><strong>8. MVP 范围与非目标</strong></button></div></section><section class="panel" data-index="7"><div class="crumb"><i></i> SEC 08 / 13</div><h2>8. MVP 范围与非目标</h2><div class="section-body"><h3>已确认必做</h3>
+<ul>
+<li>服务 Agent 开发者，以可靠发现 Agent 变更后的能力退化为第一阶段核心价值。</li>
+<li>首批覆盖对话问答 Agent 和工具执行 Agent。</li>
+<li>支持端到端评估、组件级评估和单例调试三种工作方式。</li>
+<li>支持采集 Agent 内部执行事件，以定位回答或工具执行退化。</li>
+<li>支持不同 Agent 的可扩展接入方向。</li>
+<li>能基于 Agent 信息生成候选测试用例。</li>
+<li>能沉淀历史场景并在 Agent 变更后执行回归。</li>
+<li>新功能场景能进入后续稳定性验证范围。</li>
+</ul>
+<h3>尚未确认</h3>
+<ul>
+<li>首期 Agent 数量和类型。</li>
+<li>何时从发布建议升级为强制 CI 门禁；MVP 第一阶段不直接强制门禁。</li>
+<li>CI/CD 触发和线上观测触发在 MVP 后增加。</li>
+<li>线上 Shadow、Canary 流量控制和自动回滚在 MVP 后讨论。</li>
+<li>是否自建 Trace、数据集管理和人工审核界面。</li>
+<li>DeepEval 是否作为评估器库引入；当前只确认三种工作方式，不确认具体库。</li>
+</ul>
+<h3>已确认不做</h3>
+<ul>
+<li>在需求边界和方案未获批准前进行开发。</li>
+<li>MVP 不接收 CI/CD 或线上观测自动触发。</li>
+</ul></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>7. 当前未决问题</strong></button><button class="pager-btn next" ><small>下一节</small><strong>9. 已否决方向</strong></button></div></section><section class="panel" data-index="8"><div class="crumb"><i></i> SEC 09 / 13</div><h2>9. 已否决方向</h2><div class="section-body"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>方向</th>
+<th>原因</th>
+<th>日期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R-001</td>
+<td>未完成讨论即直接开始编码。</td>
+<td>与需求方要求的“先形成充分认知、清晰边界和明确方案”冲突。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>R-002</td>
+<td>在模块职责和平台边界尚未明确时，提前讨论运行次数、阈值和误报率等细节。</td>
+<td>会用局部参数替代产品结构讨论，造成过早收敛和返工。</td>
+<td>2026-09-04</td>
+</tr>
+</tbody>
+</table></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>8. MVP 范围与非目标</strong></button><button class="pager-btn next" ><small>下一节</small><strong>10. 决策记录</strong></button></div></section><section class="panel" data-index="9"><div class="crumb"><i></i> SEC 10 / 13</div><h2>10. 决策记录</h2><div class="section-body"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>决策</th>
+<th>状态</th>
+<th>依据</th>
+<th>日期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D-001</td>
+<td>使用本文作为讨论阶段唯一事实来源，每轮持续更新。</td>
+<td>已确认</td>
+<td>防止共识只存在于聊天记录并随轮次丢失。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-002</td>
+<td>需求未批准前保持 <code>draft</code>，不进入开发。</td>
+<td>已确认</td>
+<td>需求方明确要求。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-003</td>
+<td>只读分析 <code>eyun_assist_bot</code> 历史分支，不切换或修改其工作区，也不在边界未确认前执行真实 Agent。</td>
+<td>执行约束</td>
+<td>保护既有项目状态，并避免调用内部服务产生副作用。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-004</td>
+<td>将 <code>eyun_assist_bot</code> 作为 MVP 第一个迁移和验收 Agent。</td>
+<td>已确认</td>
+<td>它拥有完整历史场景和运行证据，可同时验证迁移兼容性与业务耦合抽象。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-005</td>
+<td>继承过程评估与结果评估分离的原则。</td>
+<td>已确认</td>
+<td>两类错误的判定方式和修复责任不同，旧资产已验证分离后更易定位。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-006</td>
+<td>测试资产模型从旧 Benchmark Schema 演进。</td>
+<td>已确认</td>
+<td>复用已验证的领域概念，同时补版本、审批、生成来源和跨 Agent 能力。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-007</td>
+<td>历史硬编码凭证及已跟踪环境文件中的真实密钥立即由 eyun 项目责任方确认失效或轮换。</td>
+<td>待完成</td>
+<td>凭证已经进入 Git 历史，不能仅从当前代码删除后继续信任。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-008</td>
+<td>旧多模型黑盒评测不进入 MVP 主范围。</td>
+<td>已确认</td>
+<td>第一阶段聚焦 Agent 版本退化；仅复用其 HTTP/SSE、时延、Token 和成本经验。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-009</td>
+<td>稳定性同时判定单条用例和 Benchmark Set 整体结果。</td>
+<td>已确认</td>
+<td>只看整体会掩盖关键场景波动，只看单条又缺少版本全局趋势。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-010</td>
+<td>发布策略采用“先建议、后门禁”。</td>
+<td>已确认</td>
+<td>MVP 先校准误报和稳定性，达到可信条件后再升级为强制 CI 门禁。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-011</td>
+<td>MVP 使用 Langfuse 作为唯一 Trace 数据面；DeepEval 仅保留为可选评测执行库，不承担 Trace。</td>
+<td>Langfuse 已确认；DeepEval 待方案验证</td>
+<td>eyun 已接入 Langfuse；复用现有能力比建设或维护第二套 Trace 成本更低。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-012</td>
+<td>采用“宏观模块 → 职责边界 → 主流程 → MVP 路线 → 模块细节”的讨论章程。</td>
+<td>已确认</td>
+<td>需求方要求先讨论模块级问题，避免在整体结构未明确时陷入局部参数。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-013</td>
+<td>正式测试资产必须经过人工审核，自动生成只能产出候选资产。</td>
+<td>已确认</td>
+<td>防止模型生成错误直接污染回归基准，同时保留自动化降低建设成本的价值。</td>
+<td>2026-09-04</td>
+</tr>
+<tr>
+<td>D-014</td>
+<td>MVP 测试执行只接受人工触发，CI/CD 与线上观测触发延期。</td>
+<td>已确认</td>
+<td>首期聚焦验证评测闭环，避免提前引入企业流水线和线上运行联动。</td>
+<td>2026-09-04</td>
+</tr>
+</tbody>
+</table></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>9. 已否决方向</strong></button><button class="pager-btn next" ><small>下一节</small><strong>11. 验证方案（待完善）</strong></button></div></section><section class="panel" data-index="10"><div class="crumb"><i></i> SEC 11 / 13</div><h2>11. 验证方案（待完善）</h2><div class="section-body"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>初步可观测结果</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>可扩展接入</td>
+<td>新增代表性 Agent 时不需要修改平台评测核心。</td>
+<td>待确认</td>
+</tr>
+<tr>
+<td>用例治理</td>
+<td>未经批准的生成用例不会进入正式回归集。</td>
+<td>原则已确认，权限与流程细节待定</td>
+</tr>
+<tr>
+<td>回归能力</td>
+<td>同一测试资产可比较已批准基线和候选版本。</td>
+<td>待确认</td>
+</tr>
+<tr>
+<td>结论稳定性</td>
+<td>同一 Agent 版本重复测试时，高风险 Official Scenario 的结论和 Benchmark Set 整体指标都保持在经批准的稳定范围内。</td>
+<td>双层口径已确认，量化阈值待定</td>
+</tr>
+<tr>
+<td>高风险识别</td>
+<td>能稳定识别关键要求遗漏和工具调用错误。</td>
+<td>风险类型已确认，验收样本待定</td>
+</tr>
+<tr>
+<td>可追溯性</td>
+<td>失败结果能追溯到 Agent 版本、测试资产和评估依据。</td>
+<td>待确认</td>
+</tr>
+<tr>
+<td>发布决策</td>
+<td>高风险退化可被明确阻断或经授权豁免。</td>
+<td>待确认</td>
+</tr>
+</tbody>
+</table></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>10. 决策记录</strong></button><button class="pager-btn next" ><small>下一节</small><strong>12. 既有资产调查</strong></button></div></section><section class="panel" data-index="11"><div class="crumb"><i></i> SEC 12 / 13</div><h2>12. 既有资产调查</h2><div class="section-body"><p>详细代码证据、资产分类、历史结果与缺口见 <a href="existing-assets-analysis.md"><code>existing-assets-analysis.md</code></a>。DeepEval 与 Langfuse 的官方能力及接入成本比较见 <a href="deepeval-vs-langfuse.md"><code>deepeval-vs-langfuse.md</code></a>。</p>
+<h3>已核实资产</h3>
+<table>
+<thead>
+<tr>
+<th>资产</th>
+<th>位置</th>
+<th>已有能力</th>
+<th>当前限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Session 级评测闭环</td>
+<td><code>origin/feature/agent-multi-session-evaluation-management</code></td>
+<td>多轮真实 Agent 旁路执行、Toolflow/回答双轨评估、多 Run 稳定性、报告和 Web 控制台</td>
+<td>绑定 eyun DeepAgents 与内部环境；无自动用例生成和跨 Agent 接入契约</td>
+</tr>
+<tr>
+<td>后续 Runner/控制台增强</td>
+<td><code>origin/feature/dev</code>，截至提交 <code>4a50d1d</code></td>
+<td>批量场景、多 Benchmark、进度恢复、场景转正式基准</td>
+<td>Benchmark 改为本地资产，Git 中缺少可共享事实源</td>
+</tr>
+<tr>
+<td>多模型黑盒评测</td>
+<td><code>origin/task/model-eval-scripts</code></td>
+<td>28 条单轮用例、HTTP/SSE 调用、多轮次稳定性、时延和可选 Token 统计</td>
+<td>规则高度业务化、只测首轮、并非 Session 回归闭环</td>
+</tr>
+</tbody>
+</table>
+<h3>对当前需求的影响</h3>
+<ul>
+<li>新项目不是从零建设评测闭环，而是把单 Agent、文件级原型抽象为可治理、可扩展的企业内部产品。</li>
+<li>旧资产已验证多次 Run 能揭示工具流程波动和关键要求遗漏，与当前首要目标一致。</li>
+<li>旧 Collector 直接绑定 <code>create_deep_agent()</code>，其 <code>adapter.py</code> 也只是评测格式转换，不能视为已解决通用 Agent 接入。</li>
+<li>旧系统在 Agent 或 Expected 变化后要求 Reset Run，缺少 Baseline Agent 与 Candidate Agent 的跨版本并存比较。</li>
+<li>历史代码包含硬编码测试身份和访问凭证，且已跟踪环境文件中存在多类真实密钥变量；具体值不进入本文，Git 历史中的全部真实凭证均需确认失效或轮换。</li>
+<li>历史资产 Lint 已发现一条场景的 Session Run 与 Stability 汇总不一致，迁移前必须治理，不能直接升为正式 Golden Dataset。</li>
+</ul>
+<h3>继承分类（待确认）</h3>
+<ul>
+<li><strong>已确认继承领域设计</strong>：Scenario、Expected Toolflow、Expected Answer、Real Session、Run、Stability、Benchmark Set；过程与结果分离；<code>official/review/skipped</code>；Asset Lint。具体字段在方案阶段演进，不承诺原样兼容。</li>
+<li><strong>待设计后复用</strong>：旁路采集、轨迹匹配、LLM Judge、批量 Runner、Web 控制台、Dashboard、HTTP/SSE 黑盒脚本。</li>
+<li><strong>仅作历史证据</strong>：业务 Matcher、固定身份和环境、旧运行结果、以特定模型输出为满分参照的评分逻辑。</li>
+</ul></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>11. 验证方案（待完善）</strong></button><button class="pager-btn next" ><small>下一节</small><strong>13. 变更记录</strong></button></div></section><section class="panel" data-index="12"><div class="crumb"><i></i> SEC 13 / 13</div><h2>13. 变更记录</h2><div class="section-body"><table>
+<thead>
+<tr>
+<th>日期</th>
+<th>变更</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-09-04</td>
+<td>创建初版，记录原始诉求、已确认共识、暂定假设、未决维度和治理规则。</td>
+<td>建立跨多轮讨论的持久事实源。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>确认主要用户、首要痛点、首批 Agent 形态和第一阶段首要价值；同步调整假设、用户故事、范围和问题清单。</td>
+<td>第一轮定位讨论形成明确结论。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>确认质量责任人、现有自动脚本基础、可靠性核心证据及首批高风险失败。</td>
+<td>第二轮定位讨论形成明确结论。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>只读定位并分析 <code>eyun_assist_bot</code> 的 Session 评测、后续控制台增强和多模型评测资产；新增证据附件并记录继承建议、安全风险和待决策项。</td>
+<td>需求方补充既有资产信息。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>确认首个迁移 Agent、评估分层原则、资产模型演进方向和历史凭证处置责任。</td>
+<td>既有资产继承决策形成共识。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>新增根目录 <code>CONTEXT.md</code>，固定 Agent、Scenario、Run、Baseline、Stability、Regression 等领域术语。</td>
+<td>防止后续讨论混淆运行稳定性与跨版本退化。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>确认内部事件采集、E2E/Component/Debug 三种评测方式、双层稳定性及“先建议后门禁”；旧模型横评降为参考。</td>
+<td>第四轮讨论收敛平台使用方式和发布边界。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>完成 DeepEval 与 Langfuse 官方能力比较，新增 <code>deepeval-vs-langfuse.md</code>；暂定 Langfuse 负责 Trace、DeepEval 仅作可选 Evaluator。</td>
+<td>回应接入便利性问题，最终技术选择留待方案验证。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>将凭证风险范围扩大为 <code>eyun_assist_bot</code> Git 历史中的全部真实凭证与密钥。</td>
+<td>只读扫描发现风险不局限于旧评测 Collector。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>新增宏观优先讨论章程、六大模块地图、模块讨论模板和宏观阶段退出条件；细节问题统一冻结到问题池。</td>
+<td>需求方纠正讨论粒度，要求先完成模块级共识再讨论参数细节。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>确认 Agent 接入与观测模块的职责、分级接入模式及 Langfuse Trace 数据面边界。</td>
+<td>第一项模块级讨论形成共识。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>确认测试资产管理模块的职责、治理闭环、角色边界及 MVP 取舍。</td>
+<td>第二项模块级讨论形成共识。</td>
+</tr>
+<tr>
+<td>2026-09-04</td>
+<td>将 MVP 测试执行触发范围收窄为仅人工触发；CI/CD 和线上观测触发延期。</td>
+<td>需求方纠正第三模块的首期范围。</td>
+</tr>
+</tbody>
+</table></div><div class="pager"><button class="pager-btn prev" ><small>上一节</small><strong>12. 既有资产调查</strong></button><button class="pager-btn next" disabled><small>下一节</small><strong>已经是最后一节</strong></button></div></section></main>
+</div>
+<script>
+const items=[...document.querySelectorAll('.nav-item')];
+const panels=[...document.querySelectorAll('.panel')];
+let current=0;
+function show(index){
+  if(index<0||index>=panels.length)return;
+  current=index;
+  items.forEach((x,i)=>x.classList.toggle('active',i===index));
+  panels.forEach((x,i)=>x.classList.toggle('active',i===index));
+  items[index].scrollIntoView({block:'nearest'});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+items.forEach((x,i)=>x.addEventListener('click',()=>show(i)));
+document.querySelectorAll('.prev').forEach((x,i)=>x.addEventListener('click',()=>show(i-1)));
+document.querySelectorAll('.next').forEach((x,i)=>x.addEventListener('click',()=>show(i+1)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();show(current+1)}if(e.key==='ArrowUp'){e.preventDefault();show(current-1)}});
+</script>
+</body>
+</html>
