@@ -468,3 +468,26 @@
 - 新增 [[agent-eval-platform-landscape]]，将平台拆为 8 个业务模块与 1 个数据治理基础模块，并标记评测资产、可复现执行、Trace 证据和混合评估器四个核心模块。
 - 给出小企业从统一契约、离线回归、CI/CD 门禁、生产在线评估到治理规模化的分阶段路线及量化验收标准。
 - 对比 AgentCompass、Arize Phoenix、Langfuse 的模块覆盖：三者均不能单独覆盖完整平台；默认建议 Langfuse/Phoenix 二选一作为 Trace 与实验底座，参考 AgentCompass 建设轻量 Runner。
+
+## [2026-09-02] query | 厘清 Langfuse 工具调用评估边界
+
+- 用“证据采集、轨迹评价、Agent 执行、环境控制、业务终态”五层边界区分 Langfuse 与业务 Runner 的职责。
+- 判断标准：仅依赖 Trace、Dataset、Expected Output 和 Metadata 即可判断的质量问题交给 Langfuse；需要查询外部系统、验证真实副作用或恢复测试数据的检查交给业务 Runner，再将结果回写为 Score。
+
+## [2026-09-03] query | AgentCompass 地址与主要功能
+
+- 给出 AgentCompass 官方 GitHub、文档、论文及仓库内本地调研资料位置。
+- 核心能力：Model、Benchmark、Harness、Environment 解耦，统一接入 20+ Benchmark 与 10+ Agent Harness，支持本地/Docker/远程沙箱、并发容错和断点恢复，并记录轨迹、工具调用、用量与延迟供分析。
+- 边界判断：AgentCompass 偏离线评测执行基础设施，不等同于生产监控、在线评估、发布门禁和企业治理平台。
+
+## [2026-09-03] query | AgentCompass 工具轨迹评估与 DeepAgents 接入
+
+- 厘清 AgentCompass 的双层评价：Benchmark/Verifier 负责任务结果正确性，Analyzer 负责轨迹行为、异常与效率诊断；通用 Analyzer 不能天然判断业务工具调用的语义正确性。
+- 除工具轨迹外，Agent 还应评估任务终态、最终回答、鲁棒性、效率成本、安全合规、运行可靠性和用户交互质量。
+- 自研 DeepAgents 应作为自定义 Harness 接入：执行 `create_deep_agent` 产生的图，将 AIMessage、ToolMessage、用量和事件转换为 AgentCompass 的 `RunResult → Trajectory → StepInfo`；企业业务题库与终态评分仍由自定义 Benchmark/Verifier 承担。
+
+## [2026-09-03] query | 企业 Agent 测试 MVP 的通用接入、用例生成与回归门禁
+
+- 推荐将通用接入拆成三份契约：A2A 风格的 Agent Manifest/调用协议、OpenTelemetry/OpenInference 轨迹协议，以及可选的环境重置与业务终态验证协议；按黑盒、灰盒、白盒三级渐进接入，避免强迫所有 Agent 改造内部实现。
+- 自动用例生成采用“Agent 资料包 → 能力/风险矩阵 → 候选用例 → 机器校验去重 → 人工审批 → 版本化 Dataset”，自动生成负责提案，人类负责确认业务真值和高风险规则。
+- 回归与灰度采用同一数据集、同一环境对基线版与候选版配对运行，结合绝对门槛、相对退化门槛和关键场景零退化规则；新功能及生产 BadCase 审核后持续加入回归集。
