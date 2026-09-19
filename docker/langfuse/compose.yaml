@@ -1,0 +1,171 @@
+name: weilan-langfuse
+
+x-service-defaults: &service-defaults
+  platform: linux/arm64
+  restart: unless-stopped
+
+x-langfuse-environment: &langfuse-environment
+  HOSTNAME: "0.0.0.0"
+  NEXTAUTH_URL: http://localhost:3000
+  DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?Run ./init.sh first}@postgres:5432/postgres
+  SALT: ${SALT:?Run ./init.sh first}
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Run ./init.sh first}
+  TELEMETRY_ENABLED: "false"
+  CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
+  CLICKHOUSE_URL: http://clickhouse:8123
+  CLICKHOUSE_USER: langfuse
+  CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:?Run ./init.sh first}
+  CLICKHOUSE_CLUSTER_ENABLED: "false"
+  LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+  LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+  LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: langfuse
+  LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?Run ./init.sh first}
+  LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+  LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+  LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+  LANGFUSE_S3_MEDIA_UPLOAD_REGION: auto
+  LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: langfuse
+  LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?Run ./init.sh first}
+  LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+  LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_MEDIA_UPLOAD_PREFIX: media/
+  LANGFUSE_S3_BATCH_EXPORT_ENABLED: "false"
+  LANGFUSE_S3_BATCH_EXPORT_BUCKET: langfuse
+  LANGFUSE_S3_BATCH_EXPORT_PREFIX: exports/
+  LANGFUSE_S3_BATCH_EXPORT_REGION: auto
+  LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: http://minio:9000
+  LANGFUSE_S3_BATCH_EXPORT_EXTERNAL_ENDPOINT: http://localhost:9090
+  LANGFUSE_S3_BATCH_EXPORT_ACCESS_KEY_ID: langfuse
+  LANGFUSE_S3_BATCH_EXPORT_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?Run ./init.sh first}
+  LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE: "true"
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_AUTH: ${REDIS_AUTH:?Run ./init.sh first}
+  REDIS_TLS_ENABLED: "false"
+
+x-langfuse-dependencies: &langfuse-dependencies
+  postgres:
+    condition: service_healthy
+  clickhouse:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+  minio:
+    condition: service_healthy
+
+services:
+  langfuse-web:
+    <<: *service-defaults
+    image: ${DOCKER_REGISTRY:-docker.m.daocloud.io}/langfuse/langfuse:4.37.0
+    depends_on: *langfuse-dependencies
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      <<: *langfuse-environment
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?Run ./init.sh first}
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://localhost:9090
+      LANGFUSE_S3_MEDIA_UPLOAD_INTERNAL_ENDPOINT: http://minio:9000
+      LANGFUSE_MCP_ALLOWED_HOSTS: langfuse-web
+      LANGFUSE_INIT_ORG_ID: ${LANGFUSE_INIT_ORG_ID:?Run ./init.sh first}
+      LANGFUSE_INIT_ORG_NAME: Weilan local
+      LANGFUSE_INIT_PROJECT_ID: ${LANGFUSE_INIT_PROJECT_ID:?Run ./init.sh first}
+      LANGFUSE_INIT_PROJECT_NAME: Knowledge Forest
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_INIT_PROJECT_PUBLIC_KEY:?Run ./init.sh first}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_INIT_PROJECT_SECRET_KEY:?Run ./init.sh first}
+      LANGFUSE_INIT_USER_EMAIL: weilan@local.test
+      LANGFUSE_INIT_USER_NAME: Weilan
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:?Run ./init.sh first}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/public/health').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1));"]
+      interval: 5s
+      timeout: 5s
+      start_period: 120s
+      retries: 60
+
+  langfuse-worker:
+    <<: *service-defaults
+    image: ${DOCKER_REGISTRY:-docker.m.daocloud.io}/langfuse/langfuse-worker:4.37.0
+    depends_on: *langfuse-dependencies
+    environment:
+      <<: *langfuse-environment
+      LANGFUSE_MCP_BASE_URL: http://langfuse-web:3000
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3030/api/health').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1));"]
+      interval: 5s
+      timeout: 5s
+      start_period: 120s
+      retries: 60
+
+  postgres:
+    <<: *service-defaults
+    image: ${DOCKER_REGISTRY:-docker.m.daocloud.io}/library/postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run ./init.sh first}
+      TZ: UTC
+      PGTZ: UTC
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  clickhouse:
+    <<: *service-defaults
+    image: ${DOCKER_REGISTRY:-docker.m.daocloud.io}/clickhouse/clickhouse-server:25.12
+    user: "101:101"
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: langfuse
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:?Run ./init.sh first}
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    <<: *service-defaults
+    image: ${DOCKER_REGISTRY:-docker.m.daocloud.io}/library/redis:7.4-alpine
+    command: ["redis-server", "--requirepass", "${REDIS_AUTH:?Run ./init.sh first}", "--maxmemory-policy", "noeviction", "--appendonly", "yes"]
+    environment:
+      REDIS_AUTH: ${REDIS_AUTH:?Run ./init.sh first}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a \"$$REDIS_AUTH\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  minio:
+    <<: *service-defaults
+    image: cgr.dev/chainguard/minio:latest
+    entrypoint: sh
+    command: ["-c", "mkdir -p /data/langfuse && exec minio server --address ':9000' --console-address ':9001' /data"]
+    environment:
+      MINIO_ROOT_USER: langfuse
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Run ./init.sh first}
+    ports:
+      - "127.0.0.1:9090:9000"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  postgres_data:
+  clickhouse_data:
+  clickhouse_logs:
+  redis_data:
+  minio_data:
