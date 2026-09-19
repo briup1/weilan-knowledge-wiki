@@ -2,6 +2,7 @@
 type: source
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 raw: raw/archive/ai-agent-book-async-agent/README.md
 tags: [agent, async-runtime, event-driven, interruption, cancellation, python, asyncio]
 ---

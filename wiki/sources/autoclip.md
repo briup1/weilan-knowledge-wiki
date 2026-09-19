@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/zhouxiaokaautoclip AutoClip  AI-powered video clipping and highlight generation · 一款智能高光提取与剪辑的二创工具.md
 tags: [video-clipping, highlight-detection, ai-analysis, youtube, bilibili]
 ---

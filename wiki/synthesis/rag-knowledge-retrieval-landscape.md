@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 sources: [treesearch-retrieval, hyper-extract, gitnexus, understand-anything-mcp, obsidian-knowledge-base]
 tags: [rag, knowledge-retrieval, knowledge-graph, knowledge-management, landscape]
 ---

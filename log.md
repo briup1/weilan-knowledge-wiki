@@ -529,3 +529,36 @@
 - 更新 Concept：[[multi-agent-collaboration]] 补充同 Run Handoff、Router/Planner 分工、Catalog、权限重算、类型化共享状态与可收缩判据。
 - 更新 Synthesis：[[enterprise-agent-platform-landscape]] 完成本轮 10/19 章全景，补充跨角色与跨边界协作。
 - 归档 2 篇原文至 raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/；其余 9 章保留待摄取。
+
+## [2026-09-16] query | Langfuse Agent 测试平台近期进度回顾
+
+- 依据提交 `30dfbaa`、`221e6ef`、`d8b9d31` 及需求 0001 回顾：已完成调研、既有资产盘点与领域术语整理；当前需求仍为 draft，尚未批准进入开发。
+- 已确认 Langfuse 负责 Trace 数据面，以及接入与观测、测试资产管理的模块边界；首个迁移和验收对象为 eyun_assist_bot。DeepEval 是否作为评测器库仍待方案阶段验证。
+- 当前讨论停在测试执行模块，仅确认 MVP 人工触发；下一步继续确认执行职责与环境边界，再推进评测引擎、结果与决策、平台治理及总体复核。
+- 本次为既有进度回顾，无新增综合结论，不另建 query 页面。
+
+## [2026-09-16] query | 更正 Agent 测试项目进度：以 langfuse_runner 为准
+
+- 用户指出开发已迁至同级项目；实际目录为 `../langfuse_runner`，当前不是 Git 工作目录。前条查询仅覆盖本 wiki 历史需求，不能代表该项目当前进度。
+- 阅读该项目需求、验证记录与 2026-09-15 Harness 审查报告，并核对执行编排和 HTTP 入口源码：项目已转为 Langfuse 中心化管理的轻量 Runner，需求和方案已批准，已有业务实现。
+- 2026-09-12 记录确认真实 DEV Dataset → 本地 Agent → Trace / answer_score 最小链路达到阶段交付标准；历史本地测试为 14 passed。本次未重跑测试或调用真实服务。
+- 海运工具链推进至 Freight Server 401；浏览器兼容 HTTP/SSE Connector 和 CLI 已实现，真实海运 HTTP 闭环仍待验证。Webhook 已有本地验签和去重，但未连接执行编排，真实回调、多轮与工具流评分仍待完成。
+- 2026-09-15 完成工程手册静态审查，未变更业务实现；README、设计验证章节和验证总表有未同步的历史状态，应结合后续逐条验证记录判断进度。本次不另建 query 页面。
+
+## [2026-09-17] query | AI + 自媒体知识库的组织建议
+
+- 查阅 index.md、ai-video-media-landscape 及相关来源，确认已有 AI 视频制作与内容营销资料，可作为新领域起点。
+- 建议（待用户确认）：保留单库与五类页面，以领域入口及受控领域标签区分软件开发、自媒体与共享知识；自媒体按定位、选题、生产、分发、运营、变现和复盘等能力组织，而非按工具组织。
+- 建议将可复用知识、创作草稿与实践证据分离；来源主张和个人验证结论明确区分。
+- 相关媒体页面 updated 距今已超过 30 天，本次仅用于组织结构参考，未核验工具现状。未调整目录或既有页面；方案尚未确认，暂不另建 query 页面。
+
+## [2026-09-17] maintenance | 多领域知识库分域、摄取与检索改造
+
+- 已 fetch origin；master 与 origin/master 同为 546df21，无需合并，保留原有 log 修改及未跟踪 docker/；未提交或推送。
+- 采用单库、五类知识存储、domains 元数据与独立领域入口。153 个正式页面只新增归属字段，正文、updated 和全部 191 个 raw 文件保持不变。
+- 新增 software-development、ai-media、shared 入口；页面唯一分组为 120 / 15 / 14，另有 4 个开发与自媒体跨域页。来源与提炼页按各自正文判域。
+- 更新 README、index、AGENTS、CLAUDE、CONTEXT 及两份 llm-ingest Skill/参考文档；规范集中在 docs/knowledge/architecture.md。
+- 新增只读关键词检索与领域审计脚本 scripts/knowledge/kb.py；单域默认不含共享，跨域和 shared 显式选择，无结果不自动扩域。
+- 验证：25 项单元测试通过，正式页面审计 0 errors / 5 类历史警告，单域/共享/跨域检索实测通过，git diff --check 通过。
+- 通用 at-kb 审计已执行并与 HEAD 临时副本对比；差异仅为用户原有 docker/ 文件，未引入新增审计问题。历史副本、来源链与时效问题未伪装清零，见 docs/knowledge/migration-2026-09-17.md。
+- 综合判断：本次是知识库治理架构调整，不是新来源摄取；未新增空概念或虚构知识综合，自媒体运营等能力保留待建设标记。

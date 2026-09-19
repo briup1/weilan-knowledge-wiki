@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 sources: [pi-agent-runtime-event-flow, pi-agent-loop-and-turn, pi-provider-unified-event-protocol, pi-tool-call-lifecycle]
 tags: [agent, runtime, event-stream, observability, streaming]
 ---

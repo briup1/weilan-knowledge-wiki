@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/FastAPI压力测试实战：Locust模拟真实用户并发及优化建议.md
 tags: [fastapi, 压力测试, locust, 性能优化, gunicorn, 高并发]
 ---

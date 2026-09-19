@@ -2,6 +2,7 @@
 type: entity
 created: 2026-08-09
 updated: 2026-08-09
+domains: [shared]
 sources: [mem0-in-context-17]
 tags: [agent-wiki, code-documentation, langchain, open-source, ai-coding]
 ---

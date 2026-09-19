@@ -2,6 +2,7 @@
 type: source
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 raw: raw/archive/research/agent-frameworks/hermes_agent_维度12-初始化与环境.md
 tags: [hermes-agent, initialization-environment, profile, sandbox, configuration]
 ---

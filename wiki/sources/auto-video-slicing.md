@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/B站油管视频自动切片：内容创作者的时间救星，还是又一个「效率焦虑」产物？.md
 tags: [video-slicing, content-creation, autoclip, ai-clipping, short-video]
 ---

@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [fastapi-docker-compose-deploy, fastapi-celery-redis, fastapi-locust-load-test, fastapi-users-concepts]
 tags: [fastapi, python, web-framework, async, api]
 ---

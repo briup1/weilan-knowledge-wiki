@@ -2,6 +2,7 @@
 type: source
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 raw: raw/archive/pi-custom-tools-and-extension.md
 tags: [pi, custom-tools, extension, resource-loader, sdk]
 ---

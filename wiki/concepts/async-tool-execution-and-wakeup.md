@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-08
 updated: 2026-08-08
+domains: [software-development]
 sources: [ai-agent-book-async-agent-experiment, pi-tool-call-lifecycle, pi-agent-runtime-event-flow, hermes-agent-tool-system]
 tags: [agent, async-tool, background-job, event-driven, wakeup, task-coordination, cancellation]
 ---

@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 sources: [claude-code-memory-system, obsidian-knowledge-base]
 tags: [memory-system, knowledge-management, ai-agent, second-brain]
 ---

@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-09-04
+domains: [software-development]
 sources: [claude-code-gstack, hermes-agent-setup, openmaic, hermes-agent-sub-agent-orchestration, hermes-agent, enterprise-agent-multi-agent]
 tags: [multi-agent, collaboration, team-mode, agent-orchestration, ai-programming]
 ---

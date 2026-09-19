@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development, ai-media]
 raw: raw/archive/亲手做出一个视频！用OpenCode玩转Remotion动画.md
 tags: [remotion, ai-video, opencode, code-based-video, animation]
 ---

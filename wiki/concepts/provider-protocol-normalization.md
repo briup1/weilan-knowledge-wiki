@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 sources: [pi-provider-unified-event-protocol, pi-agent-runtime-event-flow, hermes-agent-output-parsing, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
 tags: [agent, provider, protocol, normalization, streaming]
 ---

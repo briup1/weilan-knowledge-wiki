@@ -2,6 +2,7 @@
 type: source
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 raw: raw/archive/research/agent-frameworks/hermes_agent_维度04-上下文管理.md
 tags: [hermes-agent, context-management, context-compression, prompt-cache]
 ---

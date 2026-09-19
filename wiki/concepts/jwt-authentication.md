@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [fastapi-users-concepts, fastapi-users-auth-transport-strategy-1, fastapi-users-auth-transport-strategy-2]
 tags: [jwt, authentication, security, fastapi, oauth2]
 ---

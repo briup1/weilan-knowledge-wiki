@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-09-04
+domains: [software-development]
 sources: [hermes-agent-tool-system, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension, ai-agent-book-async-agent-experiment, enterprise-agent-tool-registry]
 tags: [agent-architecture, tool-system, mcp, tool-registry, tool-contract, async-tool, rbac, abac, adapter]
 ---

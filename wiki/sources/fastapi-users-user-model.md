@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/20250827_FastAPI-Users保姆级教程（二）：文档解析-深入用户模型与数据库集成.md
 tags: [fastapi, fastapi-users, sqlalchemy, beanie, mongodb, 数据库模型]
 ---

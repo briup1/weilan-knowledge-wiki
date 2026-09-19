@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-09-04
+domains: [software-development]
 sources: [claude-code-memory-system, hermes-agent-memory-system, hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, enterprise-agent-memory]
 tags: [agent-memory, memory-system, claude-code, context-management, ai-agent]
 ---

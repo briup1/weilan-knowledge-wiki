@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 sources: [panniantong-agent, auto-video-slicing]
 tags: [video-download, subtitle-extraction, cli, open-source, youtube, bilibili]
 ---

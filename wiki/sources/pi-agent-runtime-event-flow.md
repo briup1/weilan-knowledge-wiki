@@ -2,6 +2,7 @@
 type: source
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 raw: raw/archive/pi-agent-runtime-event-flow.md
 tags: [pi, agent-runtime, event-stream, tool-call, turn]
 ---

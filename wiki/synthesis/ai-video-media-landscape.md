@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-04-20
 updated: 2026-07-26
+domains: [ai-media]
 sources: [moneyprinterturbo, vimax-agentic-video, autoclip, aidc-aipixelle-video, opencode-remotion, auto-video-slicing, flycut-caption, hyperframes, aicomicbuilder, open-source-short-drama-projects]
 tags: [ai-video, media, content-creation, landscape, tool-chain]
 ---

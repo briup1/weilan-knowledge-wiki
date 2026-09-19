@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 sources: [obsidian-knowledge-base, treesearch-retrieval]
 tags: [rag, llm, retrieval, vector-search, knowledge-management]
 ---

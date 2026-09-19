@@ -2,6 +2,7 @@
 type: source
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 raw: raw/archive/research/agent-frameworks/nanobot_维度01-编排循环.md
 tags: [nanobot, agent-framework, python, open-source]
 ---

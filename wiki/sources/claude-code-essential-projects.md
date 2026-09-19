@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/Claude Code 必备的三个开源项目.md
 tags: [claude-code, open-source, claude-howto, oh-my-claudecode, best-practice, ai-programming]
 ---

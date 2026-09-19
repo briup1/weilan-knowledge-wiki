@@ -2,6 +2,7 @@
 type: concept
 created: 2026-09-04
 updated: 2026-09-04
+domains: [software-development]
 sources: [enterprise-agent-agentic-workflow]
 tags: [agent-architecture, reflexion, self-refine, tree-of-thoughts, workflow]
 ---

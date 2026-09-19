@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/THU-MAICOpenMAIC Open Multi-Agent Interactive Classroom — Get an immersive, multi-agent learning experience in just one click.md
 tags: [multi-agent, education, ai-classroom, open-source, langgraph]
 ---

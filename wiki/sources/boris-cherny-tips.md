@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/结合Claude Code之父Boris Cherny分享13个高效使用技巧，配以详细的解读，让你Vibe Code更高效.md
 tags: [claude-code, boris-cherny, vibe-coding, best-practice, tips, claude-md]
 ---

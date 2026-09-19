@@ -2,6 +2,7 @@
 type: source
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 raw: raw/archive/research/agent-frameworks/hermes_agent_维度02-工具系统.md
 tags: [hermes-agent, agent-tool-system, mcp, tool-registry]
 ---

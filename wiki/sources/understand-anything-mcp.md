@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/认识代码MCP：深入分析 Understand-Anything：将代码库转化为交互式知识图谱的开源利器.md
 tags: [understand-anything, code-knowledge-graph, mcp, claude-code-plugin, react-flow, tree-sitter]
 ---

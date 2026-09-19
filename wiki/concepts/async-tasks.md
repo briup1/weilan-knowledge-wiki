@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-08-03
+domains: [software-development]
 sources: [fastapi-celery-redis]
 tags: [celery, async, distributed-tasks, message-queue, fastapi, agent-orchestration]
 ---

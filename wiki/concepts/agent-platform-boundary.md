@@ -2,6 +2,7 @@
 type: concept
 created: 2026-09-04
 updated: 2026-09-04
+domains: [software-development]
 sources: [enterprise-agent-platform-boundary]
 tags: [platform-engineering, governance, enterprise-agent-platform]
 ---

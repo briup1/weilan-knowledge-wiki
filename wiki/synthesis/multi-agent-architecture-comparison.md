@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-04-20
 updated: 2026-07-26
+domains: [software-development]
 sources: [claude-code-gstack, hermes-agent-setup, openmaic, panniantong-agent, hermes-agent-sub-agent-orchestration, hermes-agent]
 tags: [multi-agent, architecture, agent-orchestration, tool-comparison]
 ---

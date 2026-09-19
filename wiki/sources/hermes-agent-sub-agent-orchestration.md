@@ -2,6 +2,7 @@
 type: source
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 raw: raw/archive/research/agent-frameworks/hermes_agent_维度11-子Agent编排.md
 tags: [hermes-agent, sub-agent-orchestration, multi-agent, delegation]
 ---

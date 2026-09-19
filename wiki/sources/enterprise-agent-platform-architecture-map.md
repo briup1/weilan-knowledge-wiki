@@ -2,6 +2,7 @@
 type: source
 created: 2026-09-04
 updated: 2026-09-04
+domains: [software-development]
 raw: raw/archive/enterprise-agent-platform/docs/part01-overview/ch/ch04.md
 tags: [enterprise-agent-platform, reference-architecture, dataagent, roadmap]
 ---

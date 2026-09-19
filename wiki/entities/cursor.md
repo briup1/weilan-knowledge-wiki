@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [claude-code-essential-projects]
 tags: [cursor, ai-editor, vscode, ide, ai-programming]
 ---

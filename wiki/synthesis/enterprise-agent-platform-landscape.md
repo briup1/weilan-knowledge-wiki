@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-09-04
 updated: 2026-09-04
+domains: [software-development]
 sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp, enterprise-agent-planner, enterprise-agent-agentic-workflow, enterprise-agent-memory, enterprise-agent-multi-agent, enterprise-agent-protocols]
 tags:
   - enterprise-agent-platform

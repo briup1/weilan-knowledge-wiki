@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/Agent-Reach AI agent internet search tool.md
 tags: [agent-reach, internet-access, twitter, reddit, youtube, bilibili, xiaohongshu, mcp, cli]
 ---

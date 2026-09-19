@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/GitNexus Zero-Server Code Intelligence Engine.md
 tags: [code-intelligence, knowledge-graph, mcp, code-exploration, graph-rag]
 ---

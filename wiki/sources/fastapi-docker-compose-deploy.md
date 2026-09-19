@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/20250825_FastAPI项目实战：从Dockerfile到Compose，项目容器化部署保姆级教程.md
 tags: [fastapi, docker, docker-compose, 容器化部署, 生产实践]
 ---

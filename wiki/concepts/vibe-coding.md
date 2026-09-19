@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [boris-cherny-tips]
 tags: [vibe-coding, ai-programming, paradigm, developer-experience]
 ---

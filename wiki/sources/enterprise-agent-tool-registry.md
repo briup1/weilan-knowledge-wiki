@@ -2,6 +2,7 @@
 type: source
 created: 2026-09-04
 updated: 2026-09-04
+domains: [software-development]
 raw: raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/ch23-tool-registry-function-calling.md
 tags: [enterprise-agent-platform, tool-registry, function-calling, tool-governance]
 ---

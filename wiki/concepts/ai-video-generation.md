@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 sources: [moneyprinterturbo, vimax-agentic-video, aidc-aipixelle-video, autoclip]
 tags: [ai-video, video-generation, agentic-video, text-to-video, content-creation]
 ---

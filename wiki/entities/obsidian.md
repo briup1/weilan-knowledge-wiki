@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 sources: [obsidian-knowledge-base]
 tags: [knowledge-management, markdown, note-taking, second-brain, local-first]
 ---

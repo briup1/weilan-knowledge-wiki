@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 raw: raw/archive/Hyper-Extract：一条命令把杂乱文档变成知识图谱.md
 tags: [knowledge-graph, cli-tool, llm, document-processing]
 ---

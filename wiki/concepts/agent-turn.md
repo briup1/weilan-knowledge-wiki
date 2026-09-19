@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-08-05
+domains: [software-development]
 sources: [hermes-agent-orchestration-loop, hermes-agent-state-management, hermes-agent-validation-loop, hermes-agent-sub-agent-orchestration, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-agent-runtime-event-flow, pi-agent-loop-and-turn]
 tags: [agent, turn, runtime-turn, business-turn, orchestration-loop, state-management, budget]
 ---

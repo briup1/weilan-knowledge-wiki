@@ -2,6 +2,7 @@
 type: source
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 raw: raw/archive/research/agent-frameworks/hermes_agent_维度10-验证循环.md
 tags: [hermes-agent, validation-loop, tool-guardrails, schema-sanitization, approval]
 ---

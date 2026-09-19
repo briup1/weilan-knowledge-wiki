@@ -1,0 +1,17 @@
+{
+  "software-development": {
+    "title": "软件开发与 Agent 工程",
+    "entry": "domains/software-development.md",
+    "scope": "软件设计、实现、测试、部署，以及 Agent 系统工程"
+  },
+  "ai-media": {
+    "title": "AI + 自媒体",
+    "entry": "domains/ai-media.md",
+    "scope": "定位、研究选题、表达、生产、分发、受众关系、商业化、复盘与风险管理"
+  },
+  "shared": {
+    "title": "共享知识与方法",
+    "entry": "domains/shared.md",
+    "scope": "与具体行业无关的知识管理、研究、检索方法及可复用工具"
+  }
+}

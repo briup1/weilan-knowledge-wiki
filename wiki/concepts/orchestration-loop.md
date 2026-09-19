@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-08-05
+domains: [software-development]
 sources: [hermes-agent-orchestration-loop, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-agent-runtime-event-flow, pi-agent-loop-and-turn, pi-tool-call-lifecycle, ai-agent-book-async-agent-experiment]
 tags: [agent-architecture, orchestration-loop, agent-control-flow]
 ---

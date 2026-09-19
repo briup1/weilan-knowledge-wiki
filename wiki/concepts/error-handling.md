@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-08-08
+domains: [software-development]
 sources: [hermes-agent-error-handling, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-provider-unified-event-protocol, pi-tool-call-lifecycle, ai-agent-book-async-agent-experiment]
 tags: [agent-architecture, error-handling, retry, failover, resilience]
 ---

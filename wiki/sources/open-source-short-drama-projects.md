@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/35+开源视频短剧项目，找到最适合你的工具.md
 tags: [ai-video, open-source, short-drama, video-generation, tools]
 ---

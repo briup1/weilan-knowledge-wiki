@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [fastapi-users-concepts, fastapi-users-user-model, fastapi-users-auth-transport-strategy-1, fastapi-users-auth-transport-strategy-2, fastapi-users-usermanager, fastapi-users-schemas-routers, fastapi-users-project-template]
 tags: [fastapi, fastapi-users, authentication, oauth2, jwt]
 ---

@@ -2,6 +2,7 @@
 type: query
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 sources: [agent-turn, agent-trace, hermes-agent, hermes-agent-state-management, hermes-agent-validation-loop, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
 tags: [agent, turn, trace, observability, faq]
 ---

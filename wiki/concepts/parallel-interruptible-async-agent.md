@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 sources: [ai-agent-book-async-agent-experiment]
 tags: [agent, async-runtime, event-driven, parallelism, interruption, cancellation, asyncio]
 ---

@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 raw: raw/archive/last30days-skill-cn chinese internet research agent.md
 tags: [ai-agent, skill, web-crawler, research, chinese-platforms]
 ---

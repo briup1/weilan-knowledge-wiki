@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [claude-code-gstack, agent-skills-design, fireworks-tech-graph]
 tags: [claude-code-skills, skill-system, agent, workflow, slash-command]
 ---

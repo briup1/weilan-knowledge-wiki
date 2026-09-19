@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 sources: [pi-session-system, hermes-agent-context-management, hermes-agent-state-management, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
 tags: [agent-architecture, session, state-management, context-management, projection]
 ---

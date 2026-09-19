@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/20250904_FastAPI-Users保姆级教程（七）：实战篇——构建包含用户认证的项目模板.md
 tags: [fastapi, fastapi-users, 项目模板, 实战, pydantic-settings, 生产实践]
 ---

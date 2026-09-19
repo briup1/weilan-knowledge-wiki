@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [fastapi-docker-compose-deploy]
 tags: [docker, container, microservices, deployment, devops]
 ---

@@ -9,6 +9,18 @@ description: "This skill should be used when the user wants to add new documents
 
 ---
 
+## 本仓库的多领域入口
+
+在本仓库摄取或维护知识前，先读 `docs/knowledge/architecture.md` 和 `docs/knowledge/domains.json`。它们定义唯一的领域规则；本 Skill 不另维护领域清单。
+
+1. 读取 index 和目标领域入口，基于正文判域。来源和提炼页分别分类；shared 不是默认归类。
+2. 使用 `python3 scripts/knowledge/kb.py search --domain <id> --query <关键词>` 查目标域；按需 `--include-shared`。创建实体或概念前再 `--all` 全库查重，避免按领域复制页面。
+3. 每个正式 wiki 页设置 `domains`；不改已有 raw，不因元数据迁移刷新 updated。新增不确定内容区分来源主张、假设与观察。
+4. 更新 index；能力覆盖或阅读路径变化时更新 `domains/` 入口。新增链接有同名歧义时写路径限定 wikilink。
+5. 归档后运行 `python3 scripts/knowledge/kb.py audit`，修复新增问题并在 log 中记录领域、综合判断与验收结果。
+
+现有 `ingest.py init` 是旧的通用单库初始化器，不生成这套领域配置；本仓库已初始化，不用 init 重建规范。迁移与检索以仓库级 kb.py 为准。
+
 ## 核心定位
 
 **摄取（Ingest）= 将一份新来源编译进 wiki，建立 source → entity → concept → synthesis 的关联，更新索引、追加日志。**
@@ -40,6 +52,8 @@ description: "This skill should be used when the user wants to add new documents
 │   ├── concepts/            # 概念：什么思想/方法（抽象概念、设计模式、方法论、技术范式）
 │   ├── synthesis/           # 综合：领域内知识全景 + 跨领域分析对比
 │   └── queries/             # 问题的答案，归档以备复用
+├── domains/                 # 按领域组织的阅读入口（导航层）
+├── docs/knowledge/          # 架构规范和领域注册表
 ├── index.md                 # 全局目录
 ├── log.md                   # append-only 操作日志
 └── CLAUDE.md                # Schema 配置（约定 + 工作流）
@@ -77,6 +91,7 @@ description: "This skill should be used when the user wants to add new documents
 type: source | entity | concept | synthesis | query
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+domains: [software-development]       # 按正文选择注册领域，shared 独占
 sources: [source-slug-1, source-slug-2]  # 用于 entity/concept/synthesis/query 页面
 raw: raw/archive/<原始文件名>.md           # 仅 source 页面必填，指向原始文件路径
 tags: [tag1, tag2]
@@ -127,12 +142,12 @@ python <skill_scripts_dir>/ingest.py status <kb_root>
 | 提取对象 | 目标路径 | 页面类型 | 说明 |
 |---------|---------|---------|------|
 | 来源摘要 | `wiki/sources/<slug>.md` | source | 摘要 + 核心主张 + 原始文件链接 |
-| 关键概念（3-10 个） | `wiki/concepts/<name>.md` | concept | 定义 + 原理 + 关联链接 |
+| 关键概念（按需） | `wiki/concepts/<name>.md` | concept | 定义 + 原理 + 关联链接 |
 | 关键实体（人/产品/组织） | `wiki/entities/<name>.md` | entity | 描述 + 相关概念 + 来源 |
 | 领域内/跨领域综合 | `wiki/synthesis/<topic>.md` | synthesis | 全景图、对比分析、趋势判断 |
 | 优质问答 | `wiki/queries/<slug>.md` | query | 问题的答案，归档复用 |
 
-**关键**：一份来源通常应影响 **5–15 个 wiki 页面**，而不只是一个摘要页面。
+**关键**：按实际知识增量创建或更新页面，不设数量配额；必须审视实体、概念与综合的影响，不能只做摘要或制造空卡片。
 
 **source 页面**作为桥梁，必须在页面底部提供一个**"原始文件"**小节，使用相对路径的 Markdown 链接指向原始文件：
 
@@ -153,9 +168,9 @@ python <skill_scripts_dir>/ingest.py status <kb_root>
 - **更新现有 synthesis**：当新来源补充、验证或挑战了已有综合结论时。
 - **记录"无新增综合"**：当新来源与现有知识体系暂无显著综合空间时，在 log.md 中简要记录此判断即可。
 
-### 第 6 步：更新 index.md
+### 第 6 步：更新 index.md 与领域入口
 
-在对应分类下追加新页面条目，格式：
+在对应分类下追加新页面条目；阅读路径或能力覆盖变化时同步更新 domains 入口。格式：
 
 ```markdown
 [[page-name]] —— 一行摘要
@@ -205,7 +220,7 @@ python <skill_scripts_dir>/ingest.py log <kb_root> "ingest | <来源标题>"
 
 | 命令 | 功能 |
 |------|------|
-| `init <kb_root>` | 初始化知识库目录结构（raw/、wiki/、CLAUDE.md 等） |
+| `init <kb_root>` | 旧版通用初始化（raw/、wiki/、CLAUDE.md 等，不含领域配置） |
 | `scan <kb_root>` | 列出待处理文件（新增 + 已变更） |
 | `status <kb_root>` | 显示整体状态摘要（文件数、页面数、最近日志） |
 | `log <kb_root> <msg>` | 追加操作日志，若消息含 `ingest \|` 则自动标记文件 |

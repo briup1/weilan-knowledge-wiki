@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-08-05
+domains: [software-development]
 sources: [hermes-agent-state-management, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-session-system]
 tags: [agent-architecture, state-management, session-db, persistence]
 ---

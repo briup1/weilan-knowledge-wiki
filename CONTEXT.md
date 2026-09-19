@@ -1,5 +1,7 @@
 # Agent Evaluation Platform
 
+> 适用范围：`software-development` 领域中的 Agent 评测项目。本文不是全库通用词汇表，不应作为自媒体查询的默认上下文；多领域路由见 `docs/knowledge/architecture.md`。
+
 企业内部 Agent 质量评测领域词汇表。需求、方案和后续实现统一使用以下术语。
 
 ## Language

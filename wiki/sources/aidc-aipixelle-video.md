@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/AIDC-AIPixelle-Video 🚀 AI 全自动短视频引擎  AI Fully Automated Short Video Engine.md
 tags: [ai-video, short-video, automated-video, tts, pixelle-video]
 ---

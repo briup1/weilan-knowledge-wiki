@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-09-04
+domains: [software-development]
 sources: [understand-anything-mcp, panniantong-agent, mcp-permission-middleware, enterprise-agent-mcp]
 tags: [mcp, model-context-protocol, tool-calling, agent, interoperability, oauth, authorization]
 ---

@@ -2,6 +2,7 @@
 type: concept
 created: 2026-09-04
 updated: 2026-09-04
+domains: [software-development]
 sources: [enterprise-agent-protocols]
 tags: [agent-architecture, interoperability, protocol, mcp, a2a]
 ---

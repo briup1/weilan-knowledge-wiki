@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/fireworks-tech-graph：用自然语言生成工业级架构图，Claude Code 绘图神器！.md
 tags: [fireworks-tech-graph, claude-code-skills, architecture-diagram, svg, ai-drawing, mermaid]
 ---

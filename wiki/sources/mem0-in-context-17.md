@@ -2,6 +2,7 @@
 type: source
 created: 2026-08-09
 updated: 2026-08-09
+domains: [shared]
 raw: raw/archive/mem0-in-context-17-agent-wikis.md
 tags: [agent-wiki, ai-coding, mem0, cognition, langchain, gbrain, deepwiki, openwiki]
 ---

@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development, ai-media]
 raw: raw/archive/heygen-comhyperframes Write HTML. Render video. Built for agents.md
 tags: [hyperframes, video-rendering, html-video, agentic, heygen]
 ---

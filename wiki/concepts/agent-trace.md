@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-08-05
+domains: [software-development]
 sources: [hermes-agent-orchestration-loop, openclaw-framework-analysis, opencode-framework-analysis, pi-agent-runtime-event-flow, pi-agent-loop-and-turn, pi-provider-unified-event-protocol, pi-tool-call-lifecycle]
 tags: [observability, trace, span, agent, llm, monitoring, debugging, evaluation]
 ---

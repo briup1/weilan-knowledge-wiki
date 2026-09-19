@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-08-03
+domains: [software-development]
 sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, mcp-permission-middleware]
 tags: [agent-architecture, security, prompt-injection, ssrf, sandbox, mcp, authorization, rbac, abac, cbac]
 ---

@@ -2,6 +2,7 @@
 type: entity
 created: 2026-08-09
 updated: 2026-08-09
+domains: [software-development]
 sources: []
 tags: [agent-memory, mem0, long-term-memory, ai-agent, personalization]
 ---

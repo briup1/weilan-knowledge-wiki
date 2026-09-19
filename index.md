@@ -4,6 +4,14 @@
 
 ---
 
+## 领域入口
+
+- [[domains/software-development|软件开发与 Agent 工程]] —— 系统设计、开发、测试、部署与 Agent 平台
+- [[domains/ai-media|AI + 自媒体]] —— 定位、选题、表达、制作、分发、经营与复盘
+- [[domains/shared|共享知识与方法]] —— 知识管理、研究与检索；查询时按需显式补充
+
+先选择领域，再按问题阅读；下面保留全库类型目录用于查重和完整性检查。领域归属以页面 `domains` 为准，不以所在索引章节推断。
+
 ## Entities
 
 [[boris-cherny]] —— Claude Code 之父，分享 13 个高效使用技巧
@@ -17,7 +25,7 @@
 [[fastapi-users]] —— FastAPI 的用户认证库，支持 OAuth/JWT
 [[hermes-agent]] —— NousResearch 开源的 Python AI Agent 框架，强调生产级错误恢复与可扩展工具体系
 [[mem0]] —— 面向 LLM 和 AI Agent 的开源记忆层
-[[moneyprinterturbo]] —— AI 一键生成高清短视频
+[[wiki/entities/moneyprinterturbo|MoneyPrinterTurbo]] —— AI 一键生成高清短视频
 [[obsidian]] —— 本地优先的知识管理工具，支持双向链接
 [[openwiki]] —— LangChain 开源的代码库与个人 wiki CLI
 [[pi-coding-agent]] —— 开源 LLM Agent Harness，覆盖 Runtime、Provider、Tool、Extension 与 Session
@@ -125,7 +133,7 @@
 [[hyperframes]] —— Hyperframes：HTML 渲染视频的 Agent 工具
 [[last30days-skill]] —— last30days-cn：搜索中国互联网 8 大平台近期内容
 [[mem0-in-context-17]] —— mem0.ai In Context #17：Agent Wikis 综述
-[[moneyprinterturbo]] —— MoneyPrinterTurbo：AI 一键生成高清短视频
+[[wiki/sources/moneyprinterturbo|MoneyPrinterTurbo]] —— MoneyPrinterTurbo：AI 一键生成高清短视频
 [[obsidian-knowledge-base]] —— 个人如何用 Obsidian 搭建本地知识库
 [[open-source-short-drama-projects]] —— 35+ 开源视频短剧项目合集
 [[opencode-remotion]] —— 用 OpenCode 玩转 Remotion 动画视频

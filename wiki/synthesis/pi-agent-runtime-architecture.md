@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 sources: [pi-agent-runtime-event-flow, pi-agent-loop-and-turn, pi-provider-unified-event-protocol, pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension, pi-session-system]
 tags: [pi, agent-runtime, provider, tools, session, architecture]
 ---

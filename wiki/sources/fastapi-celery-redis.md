@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/FastAPI + Celery 实战：异步任务里调用 Redis 和数据库的全解析，及生产级组织方案.md
 tags: [fastapi, celery, redis, 异步任务, sqlalchemy, 生产实践]
 ---

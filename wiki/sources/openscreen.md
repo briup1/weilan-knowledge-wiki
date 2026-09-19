@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/每日GitHub精选：免费开源录屏神器OpenScreen.md
 tags: [screen-recording, open-source, video-editing, electron, product-demo]
 ---

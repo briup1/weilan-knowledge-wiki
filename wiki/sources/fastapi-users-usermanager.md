@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/20250831_FastAPI-Users保姆级教程（五）：深入核心——揭秘UserManager.md
 tags: [fastapi, fastapi-users, usermanager, 用户认证, 事件钩子]
 ---

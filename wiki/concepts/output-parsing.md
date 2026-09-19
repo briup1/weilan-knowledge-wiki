@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-08-05
+domains: [software-development]
 sources: [hermes-agent-output-parsing, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, pi-provider-unified-event-protocol, pi-agent-runtime-event-flow]
 tags: [agent-architecture, output-parsing, tool-calls, reasoning-content, transport]
 ---

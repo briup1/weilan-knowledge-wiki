@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/Claudian + baoyu-skills + ModelScope：打造免费AI绘图工作流.md
 tags: [claudian, baoyu-skills, modelscope, ai-drawing, qwen-image, obsidian]
 ---

@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [fastapi-celery-redis, fastapi-docker-compose-deploy, fastapi-locust-load-test, fastapi-users-auth-transport-strategy-1, fastapi-users-auth-transport-strategy-2, fastapi-users-concepts, fastapi-users-project-template, fastapi-users-schemas-routers, fastapi-users-user-model, fastapi-users-usermanager]
 tags: [fastapi, ecosystem, backend, python, landscape]
 ---

@@ -2,6 +2,7 @@
 type: source
 created: 2026-09-04
 updated: 2026-09-04
+domains: [software-development]
 raw: raw/archive/enterprise-agent-platform/docs/part01-overview/ch/ch02-agent.md
 tags: [enterprise-agent-platform, platform-boundary, governance, platform-engineering]
 ---

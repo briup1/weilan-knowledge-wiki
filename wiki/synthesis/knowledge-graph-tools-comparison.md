@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [hyper-extract, gitnexus, understand-anything-mcp]
 tags: [knowledge-graph, tool-comparison, code-intelligence, nlp]
 ---

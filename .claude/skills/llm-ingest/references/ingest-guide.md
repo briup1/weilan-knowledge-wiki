@@ -4,6 +4,10 @@
 
 ---
 
+## 多领域规则入口
+
+本仓库以 `docs/knowledge/architecture.md` 和 `docs/knowledge/domains.json` 为权威。摄取前判域与全库查重，正式页面填写 domains，按需更新领域入口；写入后执行 `python3 scripts/knowledge/kb.py audit`。查询先定范围，shared 和跨域必须显式选择。具体命令与例外不要在此复制维护。
+
 ## 核心概念
 
 **摄取（Ingest）** 是 LLM Wiki 三大操作之一（Ingest / Query / Lint）。
@@ -73,6 +77,7 @@
 type: source | entity | concept | synthesis | query
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+domains: [software-development]       # 按正文选择注册领域，shared 独占
 sources: [source-slug-1, source-slug-2]  # 用于 entity/concept/synthesis/query 页面
 raw: raw/archive/<原始文件名>.md           # 仅 source 页面必填
 tags: [tag1, tag2]
@@ -83,6 +88,7 @@ tags: [tag1, tag2]
 - `created` / `updated`：创建和最后更新日期
 - `sources`：本页面引用的 source 页面 slug 列表
 - `raw`：仅 source 页面填写，指向 raw/archive/ 中的原始文件
+- `domains`：受控领域归属，负责检索范围；不以 tags 重复记录
 - `tags`：主题标签，便于聚类
 
 ---
@@ -118,7 +124,7 @@ tags: [tag1, tag2]
 - **更新现有 synthesis**：当新来源补充、验证或挑战已有综合结论时
 - **记录"无新增综合"**：如果确实没有新的综合空间，在 log.md 中简要记录
 
-### 步骤 5：更新 index.md
+### 步骤 5：更新 index.md 与受影响的领域入口
 
 按 entities / concepts / sources / synthesis / queries 分类追加新页面条目：
 

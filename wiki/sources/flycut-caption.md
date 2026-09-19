@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development, ai-media]
 raw: raw/archive/x007xyzflycut-caption A complete video subtitle editing React component with AI-powered speech recognition and visual editing capabilities.md
 tags: [subtitle-editing, react-component, whisper, asr, video-editing]
 ---

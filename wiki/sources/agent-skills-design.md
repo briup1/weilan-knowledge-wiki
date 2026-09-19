@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/Agent Skills 实战：把设计文档（Design）写成 Skill.md
 tags: [agent-skills, claude-code, design-doc, skill-system, cursor]
 ---

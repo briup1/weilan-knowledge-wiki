@@ -2,6 +2,7 @@
 type: concept
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 sources: [hyper-extract, gitnexus, obsidian-knowledge-base, understand-anything-mcp]
 tags: [knowledge-graph, graph-rag, entity-relation, code-intelligence, information-extraction]
 ---

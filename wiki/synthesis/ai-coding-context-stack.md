@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-08-09
 updated: 2026-08-09
+domains: [software-development]
 sources: [mem0-in-context-17]
 tags: [ai-coding, agent-wiki, code-knowledge-graph, agent-memory, context-stack, tool-comparison]
 ---

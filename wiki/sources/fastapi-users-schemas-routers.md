@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/20250902_FastAPI-Users保姆级教程（六）：最后的拼图——Schemas与Routers.md
 tags: [fastapi, fastapi-users, pydantic, schemas, routers, 路由]
 ---

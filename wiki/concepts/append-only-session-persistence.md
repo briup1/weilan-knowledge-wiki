@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 sources: [pi-session-system, nanobot-framework-analysis]
 tags: [session, persistence, append-only, jsonl, crash-recovery]
 ---

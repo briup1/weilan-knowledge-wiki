@@ -2,6 +2,7 @@
 type: source
 created: 2026-09-04
 updated: 2026-09-04
+domains: [software-development]
 raw: raw/archive/enterprise-agent-platform/docs/part05-agent-capabilities/ch/ch22-agent-runtime.md
 tags: [enterprise-agent-platform, agent-runtime, state-machine, checkpoint, sse]
 ---

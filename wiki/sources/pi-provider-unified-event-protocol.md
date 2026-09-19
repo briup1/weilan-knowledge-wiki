@@ -2,6 +2,7 @@
 type: source
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 raw: raw/archive/pi-provider-unified-event-protocol.md
 tags: [pi, provider, protocol-normalization, streaming, events]
 ---

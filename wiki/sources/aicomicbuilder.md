@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/AIComicBuilder AI-powered animated comic generator.md
 tags: [ai-comic, animated-comic, storyboard, video-generation, nextjs]
 ---

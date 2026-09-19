@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [fastapi-docker-compose-deploy]
 tags: [docker, container, devops, deployment, microservices]
 ---

@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 sources: [pi-session-system, hermes-agent-context-management, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
 tags: [agent-architecture, context-management, context-compaction, summarization, token-budget]
 ---

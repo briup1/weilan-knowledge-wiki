@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-07-25
 updated: 2026-07-25
+domains: [shared]
 sources: []
 tags: [knowledge-management, llm-wiki, obsidian, knowledge-flywheel, audit]
 ---

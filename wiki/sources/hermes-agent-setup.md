@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/Hermes Agent 教程（1）：本地启动与项目结构.md
 tags: [hermes-agent, nous-research, agent-framework, python, uv, open-source]
 ---

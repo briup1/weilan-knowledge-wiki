@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [claude-code-gstack, hermes-agent-setup, openmaic, panniantong-agent, claude-code-memory-system, boris-cherny-tips, claude-code-essential-projects, agent-skills-design, fireworks-tech-graph, last30days-skill, understand-anything-mcp]
 tags: [claude-code, ai-agent, developer-tools, ecosystem, landscape]
 ---

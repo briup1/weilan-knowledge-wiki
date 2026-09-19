@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development, ai-media]
 sources: [opencode-remotion]
 tags: [video-creation, react, typescript, code-based-video, animation]
 ---

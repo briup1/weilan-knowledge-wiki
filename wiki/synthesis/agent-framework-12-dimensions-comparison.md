@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, hermes-agent-orchestration-loop, hermes-agent-tool-system, hermes-agent-memory-system, hermes-agent-context-management, hermes-agent-prompt-building, hermes-agent-output-parsing, hermes-agent-state-management, hermes-agent-error-handling, hermes-agent-security, hermes-agent-validation-loop, hermes-agent-sub-agent-orchestration, hermes-agent-initialization-environment]
 tags: [agent-framework, architecture, comparison, hermes-agent, nanobot, openclaw, opencode]
 ---

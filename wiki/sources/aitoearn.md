@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/yikartAiToEarn Let's use AI to Earn!.md
 tags: [ai-content, social-media, content-marketing, mcp, multi-platform]
 ---

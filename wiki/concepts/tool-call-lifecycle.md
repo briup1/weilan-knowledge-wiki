@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-05
 updated: 2026-08-08
+domains: [software-development]
 sources: [pi-tool-call-lifecycle, pi-tool-registration-and-extension, pi-custom-tools-and-extension, pi-agent-loop-and-turn, hermes-agent-tool-system, hermes-agent-validation-loop, ai-agent-book-async-agent-experiment]
 tags: [agent, tool-call, lifecycle, validation, error-recovery]
 ---

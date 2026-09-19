@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/前沿重器85  Claude Code源码阅读：万字解析记忆系统.md
 tags: [claude-code, memory-system, source-code-analysis, agent-memory, kairos, auto-dream]
 ---

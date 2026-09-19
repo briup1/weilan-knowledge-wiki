@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 raw: raw/archive/告别向量模型！TreeSearch 让文档检索回归本质.md
 tags: [document-retrieval, bm25, sqlite, rag-alternative, keyword-search]
 ---

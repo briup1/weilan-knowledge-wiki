@@ -6,12 +6,29 @@
 
 一个以 Obsidian 仓库形式运作的 **LLM Wiki**（也称为知识森林）。LLM 逐步构建并维护一个持久的 wiki —— 结构化、相互关联的 markdown 文件，它们位于用户与原始来源之间。wiki 是一种复利式产物：交叉引用、矛盾点和综合结论只需编译一次并持续保持最新，而无需在每次查询时重新推导。
 
+## 多领域工作规则（必读）
+
+本库采用**单库、类型存储、领域导航、显式范围检索**。执行摄取、查询、巡检或改造前，读取 `docs/knowledge/architecture.md`；领域 ID 与范围以 `docs/knowledge/domains.json` 为准。
+
+- 正式 wiki 页面仍是五类，全部增加 `domains` 非空行内列表。当前值：`software-development`、`ai-media`、`shared`。
+- 领域按当前正文判定；允许两个业务领域共用一页。`shared` 必须独占，不能充当未分类桶。tags 不再重复领域归属。
+- `domains/` 是导航层，不是新的知识类型；首页先选领域，再阅读知识。
+- 摄取前先判域、查目标域与 shared，再全库查重。来源与提炼页独立分类，不机械继承；更新全局目录和受影响的领域入口。
+- 查询先声明领域；默认不引入其他领域。shared 按需显式补充，跨域明确列出；无结果不自动扩域。
+- 使用 `python3 scripts/knowledge/kb.py search --domain <id> --query <关键词>` 检索。`--include-shared` 加共享知识，重复 `--domain` 跨域，`--all` 显式全库查重。
+- 新增/改写链接如存在同名页面，使用路径限定 wikilink。知识正文通过 source 回溯 raw，不能把营销主张或单次观察升级为通用结论。
+- `updated` 是知识正文更新时间；只改领域不刷新。超过14天提示，超过30天强提示；动态事实须重新核验。
+- 写入后运行 `python3 scripts/knowledge/kb.py audit`。正式范围是五类目录的直接 Markdown 文件；历史嵌套副本与 notes 只报告，不作为新知识入口。
+- 架构操作规范放 docs，知识放 wiki，作品放 drafts，实践证据作为新来源进入 raw。领域隔离不是访问权限控制。
+
 ## 目录结构
 
 ```
 .
 ├── CLAUDE.md          # 本文件 —— wiki 的架构与约定
-├── index.md           # 所有 wiki 页面的内容型目录
+├── domains/           # 领域入口与能力地图（导航层）
+├── docs/knowledge/    # 多领域规范与注册表
+├── index.md           # 领域导航 + 所有 wiki 页面的内容型目录
 ├── log.md             # 只追加的时间线记录（入库/查询/巡检）
 ├── raw/               # 不可变的原始文档（文章、论文、转录稿）
 │   ├── assets/        # 待入库的新文章 + 本地图片/附件
@@ -46,6 +63,7 @@
 type: source | entity | concept | synthesis | query
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+domains: [software-development]     # 按正文选择已注册领域；shared 独占
 sources: [source-slug-1, source-slug-2]  # 用于 entity/concept/synthesis/query 页面
 raw: raw/archive/<原始文件名>.md       # 仅 source 页面必填，指向原始文件路径
 tags: [tag1, tag2]
@@ -176,7 +194,7 @@ entity/concept/synthesis 页面
 
 当用户向 `raw/` 添加来源并要求处理时触发。
 
-1. 从 `raw/` 中读取来源。
+1. 读取多领域规范、注册表及 index，判定目标领域并查重，再从 `raw/` 中读取来源。
 2. 与用户讨论核心要点。
 3. 创建或更新 `wiki/sources/<slug>.md`，写入摘要与核心主张。
    - frontmatter 中填写 `raw: raw/archive/<原始文件名>.md`。
@@ -189,24 +207,24 @@ entity/concept/synthesis 页面
    - **更新现有 synthesis**：当新来源补充、验证或挑战了已有综合结论时。
    - **记录"无新增综合"**：当新来源与现有知识体系暂无显著综合空间时，在 log.md 中简要记录此判断即可，无需创建页面。
    - **产出量视情况而定**——可以是一页领域全景图，也可以是一句判断，但不能跳过审视过程。
-6. 更新 `index.md`，加入新增或变更的页面。
+6. 更新 `index.md`，加入新增或变更的页面；阅读路径或能力覆盖变化时更新对应 `domains/` 入口。
 7. 向 `log.md` 追加一条记录，格式为：`## [YYYY-MM-DD] ingest | <来源标题>`。
 8. 将处理完毕的源文件从 `raw/assets/` 移动到 `raw/archive/`，使 `raw/assets/` 只保留待处理的新文章。
 
-单个来源通常涉及 5–15 个 wiki 页面。就地更新已有页面，不要创建重复页面。
+按资料的实际知识增量创建或更新页面，不设置数量配额。就地更新已有页面，不要创建重复页面。
 
 ### 查询（Query）
 
 当用户提出问题时触发。
 
-1. 读取 `index.md` 定位相关页面。
+1. 读取 `index.md` 选择领域入口，声明查询范围并使用按域检索；共享知识和跨域知识按需显式加入，不自动全库混搜。
 2. 读取这些页面并使用 `[[page-name]]` 链接引用，综合出带引用的答案。
-3. 如果答案具有复用价值或代表了新的综合结论，将其归档为 `wiki/queries/<slug>.md` 并更新 `index.md`。
+3. 如果答案具有复用价值或代表了新的综合结论，将其归档为 `wiki/queries/<slug>.md`，按实际覆盖设置 domains、注明来源与不确定性，并更新 `index.md`。
 4. 向 `log.md` 追加一条记录：`## [YYYY-MM-DD] query | <问题摘要>`。
 
 ### 巡检（Lint）
 
-当用户要求 wiki 健康检查时触发。
+当用户要求 wiki 健康检查时触发。先运行 `python3 scripts/knowledge/kb.py audit` 检查领域与导航，再执行下列语义巡检；结构检查不能代替主张核验。
 
 1. 扫描没有入站 wiki-link 的孤立页面。
 2. 识别在多个页面中被提及但缺少独立页面的重要概念。

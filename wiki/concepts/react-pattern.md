@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-03
 updated: 2026-08-03
+domains: [software-development]
 sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
 tags: [agent-architecture, reasoning, react, orchestration-loop]
 ---

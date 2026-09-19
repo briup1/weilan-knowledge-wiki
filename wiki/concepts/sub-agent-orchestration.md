@@ -2,6 +2,7 @@
 type: concept
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis]
 tags: [agent-architecture, sub-agent, multi-agent, delegation]
 ---

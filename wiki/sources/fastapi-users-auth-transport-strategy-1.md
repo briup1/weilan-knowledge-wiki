@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/20250828_FastAPI-Users保姆级教程（三）：认证后端揭秘——传输方式(Transport)与策略(Strategy)上.md
 tags: [fastapi, fastapi-users, 认证后端, transport, jwt, cookie, bearer]
 ---

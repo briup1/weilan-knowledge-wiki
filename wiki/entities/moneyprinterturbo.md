@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 sources: [moneyprinterturbo]
 tags: [ai-video, short-video, automated-video, tts, open-source]
 ---

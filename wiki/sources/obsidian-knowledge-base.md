@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [shared]
 raw: raw/archive/万字长文：个人如何用 Obsidian 搭建本地知识库——从入门到构建你的「第二大脑」.md
 tags: [obsidian, knowledge-management, second-brain, personal-wiki, zettelkasten]
 ---

@@ -2,6 +2,7 @@
 type: source
 created: 2026-07-26
 updated: 2026-07-26
+domains: [software-development]
 raw: raw/archive/research/agent-frameworks/hermes_agent_维度06-输出解析.md
 tags: [hermes-agent, output-parsing, reasoning-content, tool-calls, transport]
 ---

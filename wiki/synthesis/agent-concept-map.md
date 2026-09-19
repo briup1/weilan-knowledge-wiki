@@ -2,6 +2,7 @@
 type: synthesis
 created: 2026-08-02
 updated: 2026-08-08
+domains: [software-development]
 mindmap-plugin: markdown
 sources:
   - hermes-agent-orchestration-loop

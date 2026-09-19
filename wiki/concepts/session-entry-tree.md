@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-05
 updated: 2026-08-05
+domains: [software-development]
 sources: [pi-session-system]
 tags: [session, tree, append-only, leaf-pointer, agent-state]
 ---

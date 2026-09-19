@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/OpenMontage.agentsskillselevenlabs at main.md
 tags: [agentic-video, open-source, video-production, remotion, multi-pipeline]
 ---

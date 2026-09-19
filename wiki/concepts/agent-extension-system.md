@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-05
 updated: 2026-08-08
+domains: [software-development]
 sources: [pi-tool-registration-and-extension, pi-custom-tools-and-extension, pi-tool-call-lifecycle]
 tags: [agent, extension, plugin, hooks, tool-registry]
 ---

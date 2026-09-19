@@ -2,6 +2,7 @@
 type: concept
 created: 2026-08-09
 updated: 2026-08-09
+domains: [shared]
 sources: [mem0-in-context-17]
 tags: [agent-wiki, knowledge-management, ai-agent, llm-wiki, rag]
 ---

@@ -2,6 +2,7 @@
 type: entity
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 sources: [claude-code-gstack, claude-code-essential-projects, claude-code-memory-system, boris-cherny-tips]
 tags: [claude-code, ai-programming, terminal, anthropic, agent]
 ---

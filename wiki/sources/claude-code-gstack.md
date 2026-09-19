@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/Claude Code + gstack 实战：如何用多 Agent 协作实现 10 倍提效.md
 tags: [claude-code, gstack, multi-agent, team-mode, ai-programming, garry-tan]
 ---

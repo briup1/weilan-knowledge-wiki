@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [ai-media]
 raw: raw/archive/HKUDSViMax ViMax Agentic Video Generation (Director, Screenwriter, Producer, and Video Generator All-in-One).md
 tags: [agentic-video, ai-video, multi-agent, video-generation, vimax]
 ---

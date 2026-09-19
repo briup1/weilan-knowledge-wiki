@@ -2,6 +2,7 @@
 type: source
 created: 2026-04-20
 updated: 2026-04-20
+domains: [software-development]
 raw: raw/archive/20250826_FastAPI-Users保姆级教程（一）：核心概念与快速上手.md
 tags: [fastapi, fastapi-users, 用户认证, 快速入门, 教程]
 ---
