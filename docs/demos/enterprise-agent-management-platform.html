@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="基于本项目知识库整理的企业级 Agent 管理平台三个核心问题：为什么建设、需求如何接纳和运行、如何分阶段构建。">
+  <title>企业级 Agent 管理平台：三个必须先回答的问题</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f3f1eb;
+      --surface: #fbfaf6;
+      --ink: #17232c;
+      --muted: #64717a;
+      --line: #cbd1d1;
+      --line-strong: #8c999d;
+      --navy: #183b56;
+      --blue: #2d6683;
+      --blue-soft: #e5eef2;
+      --amber: #a75f13;
+      --amber-soft: #f5e9d6;
+      --green: #2e6a52;
+      --green-soft: #e4eee8;
+      --red: #94483c;
+      --red-soft: #f2e5e2;
+      --purple: #625584;
+      --purple-soft: #ebe8f1;
+      --white: #fff;
+      --rail: 248px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(90deg, rgba(24,59,86,.035) 1px, transparent 1px) 0 0 / 32px 32px,
+        linear-gradient(rgba(24,59,86,.035) 1px, transparent 1px) 0 0 / 32px 32px,
+        var(--paper);
+      color: var(--ink);
+      font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.72;
+    }
+
+    a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    a:hover { color: var(--amber); }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid rgba(45,102,131,.3); outline-offset: 3px; }
+
+    .shell { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); min-height: 100vh; }
+    .rail {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      background: var(--navy);
+      color: #edf4f6;
+      border-right: 1px solid #0f2b40;
+      overflow: auto;
+    }
+    .rail-brand { font-weight: 800; line-height: 1.3; font-size: 18px; letter-spacing: -.02em; }
+    .rail-meta { margin: 10px 0 28px; color: #b6cad4; font-size: 12px; }
+    .rail nav { display: grid; gap: 5px; }
+    .rail nav a {
+      display: block;
+      padding: 8px 10px;
+      color: #d9e5e9;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .rail nav a:hover { background: rgba(255,255,255,.07); border-left-color: #df9a4b; color: #fff; }
+    .rail-note { margin-top: 28px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.2); color: #b6cad4; font-size: 11px; }
+    .rail-actions { display: grid; gap: 8px; margin-top: 18px; }
+    .rail-actions a, .rail-actions button {
+      display: block;
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: transparent;
+      color: #edf4f6;
+      text-align: left;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    main { min-width: 0; }
+    .hero {
+      min-height: 78vh;
+      display: grid;
+      align-content: center;
+      padding: 80px clamp(28px, 6vw, 96px) 70px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .hero-kicker { margin: 0 0 24px; color: var(--amber); font-weight: 800; font-size: 13px; }
+    h1 {
+      max-width: 1120px;
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(38px, 6vw, 76px);
+      line-height: 1.06;
+      letter-spacing: -.055em;
+      font-weight: 850;
+    }
+    h1 span { display: block; }
+    .hero-lead { max-width: 850px; margin: 30px 0 38px; color: #44545e; font-size: clamp(18px, 2vw, 24px); line-height: 1.55; }
+    .thesis {
+      max-width: 1020px;
+      display: grid;
+      grid-template-columns: 8px 1fr;
+      border: 1px solid var(--line-strong);
+      background: var(--white);
+    }
+    .thesis::before { content: ""; background: var(--amber); }
+    .thesis p { margin: 0; padding: 22px 26px; font-size: 18px; font-weight: 700; }
+
+    .question-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--line-strong);
+      background: var(--navy);
+      color: #fff;
+    }
+    .question-strip article { min-height: 210px; padding: 30px; border-right: 1px solid rgba(255,255,255,.2); }
+    .question-strip article:last-child { border-right: 0; }
+    .question-strip strong { display: block; margin-bottom: 34px; color: #e4a45e; font-size: 34px; line-height: 1; }
+    .question-strip h2 { margin: 0 0 12px; font-size: 19px; line-height: 1.35; }
+    .question-strip p { margin: 0; color: #c9d9df; font-size: 13px; }
+
+    .content { width: min(1240px, calc(100% - 64px)); margin: 0 auto; padding: 76px 0 120px; }
+    section { scroll-margin-top: 26px; }
+    .section-head { display: grid; grid-template-columns: 150px 1fr; gap: 28px; margin-bottom: 34px; align-items: start; }
+    .section-code { color: var(--amber); font-size: 12px; font-weight: 800; border-top: 3px solid var(--amber); padding-top: 10px; }
+    .section-head h2 { margin: 0; color: var(--navy); font-size: clamp(30px, 4vw, 48px); line-height: 1.16; letter-spacing: -.035em; }
+    .section-head p { max-width: 900px; margin: 14px 0 0; color: var(--muted); font-size: 17px; }
+    .section-block { padding: 54px 0; border-top: 1px solid var(--line-strong); }
+
+    .verdict {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      margin: 26px 0 36px;
+      border: 1px solid var(--line-strong);
+      background: var(--white);
+    }
+    .verdict-label { padding: 24px; background: var(--navy); color: #fff; font-weight: 800; }
+    .verdict-body { padding: 24px 28px; font-size: 18px; font-weight: 700; }
+
+    .coverage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .coverage {
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--blue);
+    }
+    .coverage:nth-child(2) { border-top-color: var(--green); }
+    .coverage:nth-child(3) { border-top-color: var(--purple); }
+    .coverage h3 { margin: 0 0 8px; color: var(--navy); font-size: 18px; }
+    .coverage p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+    .coverage ul { margin: 0; padding-left: 20px; font-size: 13px; }
+    .status { display: inline-block; margin-bottom: 14px; padding: 3px 8px; border: 1px solid currentColor; color: var(--green); font-size: 11px; font-weight: 800; }
+    .status.partial { color: var(--amber); }
+    .freshness { margin-top: 20px; padding: 16px 18px; background: var(--amber-soft); border-left: 5px solid var(--amber); font-size: 13px; }
+
+    .driver-grid { display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--line-strong); background: var(--surface); }
+    .driver { min-height: 230px; padding: 28px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .driver:nth-child(2n) { border-right: 0; }
+    .driver:nth-last-child(-n+2) { border-bottom: 0; }
+    .driver .mark { color: var(--red); font-weight: 900; font-size: 34px; line-height: 1; }
+    .driver h3 { margin: 18px 0 8px; font-size: 22px; color: var(--navy); }
+    .driver p { margin: 0; color: var(--muted); }
+
+    .subhead { margin: 54px 0 18px; color: var(--navy); font-size: 27px; line-height: 1.25; letter-spacing: -.02em; }
+    .intro { max-width: 900px; color: var(--muted); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line-strong); background: var(--white); }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    th, td { padding: 16px 17px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th:last-child, td:last-child { border-right: 0; }
+    tbody tr:last-child td { border-bottom: 0; }
+    th { background: var(--navy); color: #fff; font-size: 12px; letter-spacing: .02em; }
+    td { font-size: 13px; }
+    td:first-child { width: 155px; color: var(--navy); font-weight: 800; }
+    td ul { margin: 0; padding-left: 18px; }
+    .evidence-id { white-space: nowrap; color: var(--purple); font-weight: 800; }
+
+    .user-model {
+      display: grid;
+      grid-template-columns: 1fr 70px 1.15fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 24px;
+    }
+    .model-side, .context-side { border: 1px solid var(--line-strong); background: var(--surface); }
+    .model-side h4, .context-side h4 { margin: 0; padding: 16px 20px; background: var(--navy); color: #fff; }
+    .model-list { display: grid; }
+    .model-item { padding: 18px 20px; border-bottom: 1px solid var(--line); }
+    .model-item:last-child { border-bottom: 0; }
+    .model-item strong { display: block; color: var(--navy); }
+    .model-item span { color: var(--muted); font-size: 13px; }
+    .arrow-col { display: grid; place-items: center; color: var(--amber); font-size: 38px; font-weight: 300; }
+    .context-schema { margin: 0; padding: 20px; overflow: auto; background: #152b39; color: #dce9ee; font: 12px/1.75 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .guardrail-list { margin-top: 18px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .guardrail { padding: 16px; border-left: 4px solid var(--amber); background: var(--amber-soft); font-size: 13px; }
+
+    .process {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(150px, 1fr));
+      overflow-x: auto;
+      border: 1px solid var(--line-strong);
+      background: var(--white);
+    }
+    .step { position: relative; min-width: 160px; padding: 20px 18px 24px; border-right: 1px solid var(--line); }
+    .step:last-child { border-right: 0; }
+    .step b { display: block; color: var(--amber); font-size: 26px; }
+    .step strong { display: block; margin: 12px 0 7px; color: var(--navy); }
+    .step span { display: block; color: var(--muted); font-size: 12px; }
+    .step:not(:last-child)::after { content: "›"; position: absolute; right: -9px; top: 50%; z-index: 2; width: 18px; background: var(--white); color: var(--blue); text-align: center; font-size: 22px; }
+
+    .intake-card { display: grid; grid-template-columns: 1fr 1fr; margin-top: 26px; border: 1px solid var(--line-strong); }
+    .intake-card > div { padding: 24px; background: var(--surface); }
+    .intake-card > div + div { border-left: 1px solid var(--line); background: var(--blue-soft); }
+    .intake-card h3 { margin: 0 0 13px; color: var(--navy); }
+    .checklist { columns: 2; gap: 30px; margin: 0; padding-left: 20px; font-size: 13px; }
+    .decision-list { margin: 0; padding: 0; list-style: none; }
+    .decision-list li { padding: 10px 0; border-bottom: 1px solid rgba(24,59,86,.15); }
+    .decision-list li:last-child { border-bottom: 0; }
+
+    .run-chain { margin-top: 28px; padding: 28px; background: #152b39; color: #eaf1f3; border-left: 8px solid var(--green); }
+    .run-chain h3 { margin: 0 0 20px; color: #fff; }
+    .run-steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    .run-step { padding: 14px; border: 1px solid #49606c; background: #1d3543; font-size: 12px; }
+    .run-step strong { display: block; margin-bottom: 6px; color: #e7b376; }
+
+    .value-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
+    .value { padding: 20px; background: var(--green-soft); border-top: 4px solid var(--green); }
+    .value h4 { margin: 0 0 8px; color: var(--green); }
+    .value p { margin: 0; color: #4e6258; font-size: 13px; }
+
+    .principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 28px; }
+    .principle { padding: 18px; background: var(--amber-soft); border-left: 4px solid var(--amber); }
+    .principle strong { display: block; color: var(--amber); }
+    .principle span { color: #6d5943; font-size: 13px; }
+
+    .roadmap { display: grid; gap: 0; border: 1px solid var(--line-strong); background: var(--white); }
+    .phase { display: grid; grid-template-columns: 170px 1.2fr 1fr 1fr; border-bottom: 1px solid var(--line); }
+    .phase:last-child { border-bottom: 0; }
+    .phase > div { padding: 22px; border-right: 1px solid var(--line); }
+    .phase > div:last-child { border-right: 0; }
+    .phase-name { background: var(--navy); color: #fff; }
+    .phase-name b { display: block; color: #e7b376; font-size: 23px; }
+    .phase h4 { margin: 0 0 8px; color: var(--navy); }
+    .phase p, .phase ul { margin: 0; font-size: 13px; }
+    .phase ul { padding-left: 18px; }
+    .acceptance { background: var(--green-soft); color: #355544; }
+
+    .sources { display: grid; gap: 8px; }
+    .source {
+      display: grid;
+      grid-template-columns: 70px 1.1fr 1.5fr 120px;
+      align-items: start;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .source > div { padding: 14px 16px; }
+    .source-id { color: var(--purple); font-weight: 900; }
+    .source-title { font-weight: 800; }
+    .source-desc { color: var(--muted); font-size: 13px; }
+    .source-state { font-size: 11px; font-weight: 800; color: var(--green); }
+    .source-state.inference { color: var(--amber); }
+
+    .gap-box { margin-top: 28px; padding: 24px; border: 1px solid var(--amber); background: var(--amber-soft); }
+    .gap-box h3 { margin-top: 0; color: var(--amber); }
+    .gap-box ul { margin-bottom: 0; }
+
+    footer { padding: 30px clamp(28px, 6vw, 96px); background: var(--navy); color: #bfd0d8; font-size: 12px; }
+    footer strong { color: #fff; }
+
+    @media (max-width: 1050px) {
+      :root { --rail: 210px; }
+      .question-strip, .coverage-grid { grid-template-columns: 1fr; }
+      .question-strip article { min-height: 0; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.2); }
+      .driver-grid, .intake-card { grid-template-columns: 1fr; }
+      .driver { border-right: 0; }
+      .driver:nth-last-child(2) { border-bottom: 1px solid var(--line); }
+      .intake-card > div + div { border-left: 0; border-top: 1px solid var(--line); }
+      .run-steps, .value-grid { grid-template-columns: repeat(2, 1fr); }
+      .principles { grid-template-columns: repeat(2, 1fr); }
+      .phase { grid-template-columns: 140px 1fr 1fr; }
+      .phase .acceptance { grid-column: 2 / 4; border-top: 1px solid var(--line); }
+      .source { grid-template-columns: 60px 1fr 110px; }
+      .source-desc { grid-column: 2 / 4; border-top: 1px solid var(--line); }
+    }
+
+    @media (max-width: 760px) {
+      body { overflow-x: hidden; }
+      .shell { display: block; }
+      .rail { position: static; height: auto; padding: 20px; }
+      .rail nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .rail-note { display: none; }
+      .hero { min-height: 0; padding: 54px 22px; }
+      h1 { font-size: 40px; }
+      .content { width: min(100% - 32px, 1240px); padding-top: 48px; }
+      .section-head { grid-template-columns: 1fr; gap: 12px; }
+      .section-code { width: max-content; }
+      .verdict { grid-template-columns: 1fr; }
+      .driver-grid, .guardrail-list, .principles, .run-steps, .value-grid { grid-template-columns: 1fr; }
+      .user-model { grid-template-columns: 1fr; }
+      .arrow-col { transform: rotate(90deg); min-height: 50px; }
+      .checklist { columns: 1; }
+      .phase { grid-template-columns: 1fr; }
+      .phase > div { border-right: 0; border-bottom: 1px solid var(--line); }
+      .phase > div:last-child { border-bottom: 0; }
+      .phase .acceptance { grid-column: auto; border-top: 0; }
+      .source { grid-template-columns: 54px 1fr; }
+      .source-state { grid-column: 1; grid-row: 2; }
+      .source-desc { grid-column: 2; border-top: 1px solid var(--line); }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .shell { display: block; }
+      .rail { display: none; }
+      .hero { min-height: 0; padding: 35px 0; }
+      .content { width: 100%; padding: 35px 0; }
+      .section-block { break-before: page; }
+      a { color: inherit; text-decoration: none; }
+      .question-strip { color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail" aria-label="文档导航">
+    <div class="rail-brand">企业级 Agent<br>管理平台</div>
+    <div class="rail-meta">研究说明 / 2026-09-23</div>
+    <nav>
+      <a href="#summary">知识覆盖结论</a>
+      <a href="#why">问题一：为什么建</a>
+      <a href="#reuse">重复建设清单</a>
+      <a href="#user-context">用户信息共用</a>
+      <a href="#intake">问题二：怎么接纳运行</a>
+      <a href="#roadmap">问题三：怎么建设</a>
+      <a href="#evidence">项目知识依据</a>
+    </nav>
+    <div class="rail-actions">
+      <a href="enterprise-it-development-management-platform.drawio">打开配套 Draw.io</a>
+      <button type="button" onclick="window.print()">打印 / 导出 PDF</button>
+    </div>
+    <div class="rail-note">本页只引用本项目已有知识，并明确标记综合推导与证据缺口。HTML 为单文件、无外部依赖。</div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <p class="hero-kicker">企业智能管理平台调研 · 决策版</p>
+      <h1><span>先回答三个问题，</span><span>再讨论平台模块。</span></h1>
+      <p class="hero-lead">企业不是因为“Agent 很热门”而需要平台。只有当多个 Agent 开始共享模型、用户、数据、工具和生产责任时，平台才从技术选项变成组织基础设施。</p>
+      <div class="thesis"><p>总判断：平台统一的不是业务答案，而是 Agent 被接纳、被授权、被运行、被评测、被审计和被退出的共同底线。</p></div>
+    </header>
+
+    <div class="question-strip" aria-label="三个核心问题">
+      <article><strong>1</strong><h2>企业为什么需要 Agent 管理平台？</h2><p>识别重复建设、治理断裂、生产失控和资产无法复用的真实成本。</p></article>
+      <article><strong>2</strong><h2>需求如何被接纳和运行？</h2><p>把业务想法转化为带 Owner、权限、工具、评测和退出条件的平台对象。</p></article>
+      <article><strong>3</strong><h2>平台应该如何构建？</h2><p>先完成一个可治理的生产闭环，再逐步扩展多场景复用和平台化运营。</p></article>
+    </div>
+
+    <div class="content">
+      <section id="summary" class="section-block">
+        <div class="section-head">
+          <div class="section-code">KNOWLEDGE CHECK</div>
+          <div><h2>本项目是否已经有相关知识？</h2><p>有，而且三个问题都有直接材料。现有知识对“平台边界、运行契约和建设顺序”覆盖较强；对“需求接纳产品流程”和“企业用户主数据模型”覆盖不完整，需要在现有结论上做谨慎综合。</p></div>
+        </div>
+        <div class="coverage-grid">
+          <article class="coverage"><span class="status">覆盖较强</span><h3>为什么建设</h3><p>已有明确的平台化触发信号和责任边界。</p><ul><li>重复建设</li><li>治理断裂</li><li>接入摩擦</li><li>平台目录和退出机制</li></ul></article>
+          <article class="coverage"><span class="status">覆盖较强</span><h3>如何接纳和运行</h3><p>已有准入五步、Run 生命周期和工具执行契约。</p><ul><li>风险分级和工具审查</li><li>Run / Step / Tool Call</li><li>审批、检查点、恢复</li><li>Trace 和评测闭环</li></ul></article>
+          <article class="coverage"><span class="status partial">覆盖中等</span><h3>如何建设</h3><p>已有一年路线和评测平台分阶段建设方法。</p><ul><li>Q1–Q4 能力顺序</li><li>先契约、再回归、再门禁</li><li>先单场景、再多业务线</li><li>缺少组织落地与预算模型</li></ul></article>
+        </div>
+        <div class="freshness"><strong>时效说明：</strong>关键页面主要更新于 2026-09-02 至 2026-09-04，截至 2026-09-23 已超过 14 天。平台边界、对象模型和治理原则仍可作为结构性依据；具体产品能力、供应商状态和实现选型应在落地前重新核验。</div>
+      </section>
+
+      <section id="why" class="section-block">
+        <div class="section-head">
+          <div class="section-code">QUESTION 01</div>
+          <div><h2>企业为什么需要 Agent 管理平台？</h2><p>单个 Agent 可以依赖项目组经验运行；多个 Agent 进入生产后，企业面对的已经不是“如何写一个 Agent”，而是如何让很多 Agent 使用同一套身份、数据、工具和风险规则。</p></div>
+        </div>
+        <div class="verdict"><div class="verdict-label">结论</div><div class="verdict-body">当重复建设、治理断裂和接入摩擦同时出现时，平台化从可选优化变为生产基础条件。平台的目标是降低后续场景接入成本，并让风险、成本和责任能够被统一解释。</div></div>
+
+        <div class="driver-grid">
+          <article class="driver"><div class="mark">A</div><h3>避免重复建设</h3><p>不同团队不再分别封装模型、用户上下文、工具认证、RAG、Memory、审批、Runtime、Trace、评测和发布流程。平台提供可复用契约，业务只保留场景目标和领域规则。</p></article>
+          <article class="driver"><div class="mark">B</div><h3>修复治理断裂</h3><p>统一回答“谁让哪个 Agent、以什么身份、访问了什么数据、调用了哪个工具、产生了什么副作用、花了多少钱、由谁负责”。</p></article>
+          <article class="driver"><div class="mark">C</div><h3>控制生产风险</h3><p>将模型的调用意图和真实执行权分开；写操作必须经过参数校验、权限策略、审批、幂等、检查点和审计，失败后可以恢复、补偿或停止。</p></article>
+          <article class="driver"><div class="mark">D</div><h3>形成组织复利</h3><p>Agent、工具、知识、评测集、Trace 和故障经验成为版本化资产。平台化的判断标准不是功能数量，而是第二、第三个场景是否少做了重复工作。</p></article>
+        </div>
+
+        <h3 id="reuse" class="subhead">避免重复建设，具体是在避免重复建设什么？</h3>
+        <p class="intro">下面的清单把“重复建设”拆成可以实际盘点的能力。每一行都应回答三个问题：是否跨多个 Agent 重复、是否影响权限/成本/审计、平台化后能否降低下一次接入成本。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>能力域</th><th>没有平台时，各项目会重复建设</th><th>平台可以沉淀为共用能力</th><th>业务应用仍然负责</th><th>依据</th></tr></thead>
+            <tbody>
+              <tr><td>模型接入</td><td><ul><li>模型 SDK 和供应商适配</li><li>密钥管理、限流、重试、降级</li><li>模型选择、Token 预算和成本统计</li></ul></td><td>统一模型网关、路由策略、配额、成本标签、版本与降级契约。</td><td>场景对质量、时延和成本的要求；允许使用的模型范围。</td><td class="evidence-id">E01 / E02</td></tr>
+              <tr><td>用户与组织信息</td><td><ul><li>分别同步用户、部门、角色和租户</li><li>各自判断数据范围和操作权限</li><li>把登录用户、Agent 身份和工具凭证混在一起</li><li>重复维护语言、报告格式等偏好</li></ul></td><td>统一 UserContext、组织主数据映射、角色与数据范围、委托授权、Agent 工作负载身份、用户偏好治理和审计映射。</td><td>业务角色语义、场景内个性化规则和用户明确确认的偏好。</td><td class="evidence-id">E03 / E04 / E05</td></tr>
+              <tr><td>Agent 目录</td><td><ul><li>Agent 名称和版本散落在代码或文档</li><li>负责人、风险、模型、工具和数据域无法统一查询</li><li>无人维护时无法识别和下线</li></ul></td><td>AgentSpec、Owner、风险等级、模型、工具、数据域、评测版本、成本归属和退出条件。</td><td>Agent 的业务目标、业务验收样本和运营指标。</td><td class="evidence-id">E01</td></tr>
+              <tr><td>工具集成</td><td><ul><li>每个 Agent 重写 HTTP/MCP 客户端</li><li>重复处理认证、分页、限流、重试和错误</li><li>工具参数和结果结构不一致</li></ul></td><td>Tool Registry、统一 ToolSpec、Schema Adapter、连接池、版本、Owner、风险等级、熔断与审计。</td><td>工具背后的业务规则，以及工具执行结果的业务解释。</td><td class="evidence-id">E06 / E07</td></tr>
+              <tr><td>知识与 RAG</td><td><ul><li>重复建设采集、切分、索引和检索链路</li><li>文档权限、版本和引用方式不一致</li><li>私人对话误入共享知识库</li></ul></td><td>知识连接器、权限过滤、版本化索引、Citation、数据域和保留删除策略。</td><td>领域知识内容、权威来源和业务口径解释。</td><td class="evidence-id">E02 / E05</td></tr>
+              <tr><td>Memory</td><td><ul><li>会话状态、历史任务和用户偏好混入同一个向量库</li><li>无法解释为什么记住、如何删除、何时过期</li><li>团队和用户之间发生记忆串用</li></ul></td><td>Working、Episodic、Profile、Org Context 四层模型；确认、版本、租户隔离、删除和评测机制。</td><td>哪些业务信息值得长期保存，以及用户对偏好的确认。</td><td class="evidence-id">E05</td></tr>
+              <tr><td>运行时</td><td><ul><li>各 Agent 自写执行循环和状态</li><li>审批等待被当成错误</li><li>断线、重试造成重复副作用</li><li>失败、超时和取消没有统一语义</li></ul></td><td>Run / Step / Tool Call、状态机、SSE 事件、检查点、恢复、幂等、超时、取消和错误分类。</td><td>Planner 内部编排与场景专属工作流。</td><td class="evidence-id">E08</td></tr>
+              <tr><td>安全与审批</td><td><ul><li>不同项目分别维护工具白名单和审批页面</li><li>权限只在前端判断</li><li>Prompt injection 后可能直接执行高风险动作</li></ul></td><td>Policy、RBAC/ABAC、工具可见性、执行授权、沙箱、脱敏、风险分级、HITL 和 fail-closed 默认策略。</td><td>业务风险判断和必须人工确认的领域条件。</td><td class="evidence-id">E03 / E06</td></tr>
+              <tr><td>Trace 与观测</td><td><ul><li>日志字段、Run ID 和模型工具事件各不相同</li><li>只能看到聊天文本，不能证明执行了什么</li><li>成本、错误和延迟无法统一归集</li></ul></td><td>统一 Trace/Span 语义、run_id 映射、模型/工具事件、成本字段、回放和事故证据。</td><td>业务成功指标和面向用户的结果解释。</td><td class="evidence-id">E02 / E08 / E09</td></tr>
+              <tr><td>评测与发布</td><td><ul><li>每个项目临时拼测试集和 Judge</li><li>版本变更后无法判断是否退化</li><li>线上坏案例不能回流到回归集</li></ul></td><td>Dataset、Task、Run、Trial、Score、Finding 契约，Baseline、发布门禁、在线采样和 Trace-to-Dataset。</td><td>正式验收样本、质量底线、业务严重度和人工金标准。</td><td class="evidence-id">E10</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="user-context" class="subhead">用户信息为什么也应该共用？</h3>
+        <p class="intro">用户信息不能被简单理解成“用户名和部门”。Agent 需要同时知道用户是谁、代表哪个组织、可以看什么数据、可以做什么动作、有哪些经过确认的稳定偏好，以及当前任务处于什么上下文。平台应把这些信息分层，而不是让每个 Agent 复制一张用户表。</p>
+        <div class="user-model">
+          <div class="model-side">
+            <h4>企业权威来源</h4>
+            <div class="model-list">
+              <div class="model-item"><strong>身份与组织</strong><span>user_id、tenant_id、组织、部门、岗位、角色、群组；来自 IAM、HR、组织主数据。</span></div>
+              <div class="model-item"><strong>授权与数据范围</strong><span>scope、数据域、区域、项目、可调用工具和审批级别；由 Policy 计算。</span></div>
+              <div class="model-item"><strong>稳定偏好</strong><span>语言、报告格式、通知方式；候选写入后经过敏感检查和用户确认。</span></div>
+              <div class="model-item"><strong>任务上下文</strong><span>run_id、当前目标、会话状态、已确认事实和审批状态；只在本次 Run 内有效。</span></div>
+            </div>
+          </div>
+          <div class="arrow-col" aria-hidden="true">→</div>
+          <div class="context-side">
+            <h4>平台生成的受控 UserContext</h4>
+<pre class="context-schema"><code>{
+  "subject": {
+    "user_id": "u-...",
+    "tenant_id": "tenant-...",
+    "org_units": ["..."],
+    "roles": ["..."],
+    "groups": ["..."]
+  },
+  "authorization": {
+    "data_scopes": ["..."],
+    "allowed_tools": ["..."],
+    "approval_level": "...",
+    "delegation": "..."
+  },
+  "profile": {
+    "language": "zh-CN",
+    "report_format": "...",
+    "profile_version": "..."
+  },
+  "run_context": {
+    "run_id": "...",
+    "purpose": "...",
+    "risk_level": "...",
+    "consent_refs": ["..."]
+  }
+}</code></pre>
+          </div>
+        </div>
+        <div class="guardrail-list">
+          <div class="guardrail"><strong>身份不等于偏好。</strong>身份、组织和权限必须来自权威系统；模型从对话中推断出的偏好不能改变权限。</div>
+          <div class="guardrail"><strong>用户身份不等于 Agent 身份。</strong>Agent 应拥有独立工作负载身份，再结合用户委托范围访问工具，不能直接复用个人 Token。</div>
+          <div class="guardrail"><strong>个人偏好不能覆盖企业口径。</strong>读取顺序应以 Org Context 为先，再使用 Working、Episodic 和 Profile。</div>
+          <div class="guardrail"><strong>Memory 必须可治理。</strong>长期写入需要确认、版本、租户隔离和删除；私人对话不得进入共享 RAG。</div>
+        </div>
+      </section>
+
+      <section id="intake" class="section-block">
+        <div class="section-head">
+          <div class="section-code">QUESTION 02</div>
+          <div><h2>需求如何被接纳和运行？新增价值是什么？</h2><p>平台不应该把所有“想做 Agent”的需求直接变成开发任务。它先判断是否适合 Agent、是否已有能力可复用、风险是否可接受，再决定进入实验、有限生产或正式生产。</p></div>
+        </div>
+        <div class="verdict"><div class="verdict-label">结论</div><div class="verdict-body">需求接纳的本质，是把模糊业务想法编译成一组稳定契约：目标、Owner、用户、数据、工具、风险、评测、运行和退出条件。生产运行的本质，是让模型提出意图，但让 Runtime、Registry 和 Policy 掌握真实执行权。</div></div>
+
+        <div class="process" aria-label="需求接纳与运行七阶段">
+          <div class="step"><b>1</b><strong>需求登记</strong><span>目标、Owner、用户、KPI、业务范围</span></div>
+          <div class="step"><b>2</b><strong>适配判断</strong><span>是否需要 Agent；能否规则化或复用已有能力</span></div>
+          <div class="step"><b>3</b><strong>风险分级</strong><span>数据、工具、副作用、人工审批和合规</span></div>
+          <div class="step"><b>4</b><strong>方案注册</strong><span>AgentSpec、模型、Tool、Knowledge、Eval、Policy</span></div>
+          <div class="step"><b>5</b><strong>沙盒验证</strong><span>构建、回归、安全、人工样本和失败分析</span></div>
+          <div class="step"><b>6</b><strong>上线运行</strong><span>版本门禁、Runtime、HITL、Trace、成本</span></div>
+          <div class="step"><b>7</b><strong>运营退出</strong><span>在线评测、BadCase、优化、降级、冻结或退役</span></div>
+        </div>
+
+        <div class="intake-card">
+          <div><h3>一张合格的需求卡至少包含</h3><ul class="checklist"><li>业务目标与不做什么</li><li>目标用户与组织范围</li><li>Agent Owner 和业务 Owner</li><li>输入、输出和成功标准</li><li>正式验收样本</li><li>使用的数据域与权威口径</li><li>候选工具与副作用</li><li>人工审批点</li><li>质量、时延和成本预算</li><li>失败降级与退出条件</li></ul></div>
+          <div><h3>平台可以给出四类接纳决定</h3><ul class="decision-list"><li><strong>不接纳：</strong>规则系统或普通工作流更合适。</li><li><strong>实验接纳：</strong>进入沙盒，只能使用低风险数据和工具。</li><li><strong>有限生产：</strong>限定用户、数据域和工具，关键动作必须 HITL。</li><li><strong>正式生产：</strong>评测、权限、Trace、SLO、回滚和 Owner 全部就绪。</li></ul></div>
+        </div>
+
+        <div class="run-chain">
+          <h3>一次生产 Run 的受控链路</h3>
+          <div class="run-steps">
+            <div class="run-step"><strong>01 身份</strong>建立用户、租户和 Agent 工作负载身份。</div>
+            <div class="run-step"><strong>02 上下文</strong>加载组织口径、任务状态、必要历史和用户偏好。</div>
+            <div class="run-step"><strong>03 提议</strong>Planner 输出 FINISH、ASK 或 TOOL_CALL 意图。</div>
+            <div class="run-step"><strong>04 授权</strong>Registry 查工具，Policy 校验权限、参数、风险和审批。</div>
+            <div class="run-step"><strong>05 执行</strong>Runtime 执行、暂停、恢复、超时、取消和幂等控制。</div>
+            <div class="run-step"><strong>06 证据</strong>写入结果、Trace、成本、评测和审计记录。</div>
+          </div>
+        </div>
+
+        <h3 class="subhead">平台带来的新价值</h3>
+        <div class="value-grid">
+          <article class="value"><h4>需求资产化</h4><p>需求不再只是一份 PRD，而是 Agent、工具、数据、策略和评测契约。</p></article>
+          <article class="value"><h4>能力复用</h4><p>后续场景可以复用模型入口、用户上下文、工具、知识和模板。</p></article>
+          <article class="value"><h4>风险前置</h4><p>从事故后审计转为执行前授权、参数校验和人工闸门。</p></article>
+          <article class="value"><h4>证据闭环</h4><p>每次结果都能追溯到 Agent、版本、用户、工具、数据和评测。</p></article>
+          <article class="value"><h4>组织复利</h4><p>坏案例、人工修正和故障经验进入下一版评测与平台能力。</p></article>
+        </div>
+      </section>
+
+      <section id="roadmap" class="section-block">
+        <div class="section-head">
+          <div class="section-code">QUESTION 03</div>
+          <div><h2>企业级 Agent 管理平台如何构建？</h2><p>建设顺序不应该从“大门户”开始，而应该从一条能承载真实生产风险的最小治理线开始。每一阶段都必须沉淀可复用资产，并用下一个场景验证复用是否成立。</p></div>
+        </div>
+        <div class="verdict"><div class="verdict-label">结论</div><div class="verdict-body">最小可行平台不是功能最少的控制台，而是让一个生产 Agent 能够被注册、授权、运行、评测、审计、回滚和退役的完整闭环。</div></div>
+
+        <div class="principles">
+          <div class="principle"><strong>先治理，后增强</strong><span>身份、Policy、Trace 和 Eval 早于复杂 Memory、多 Agent 和自我反思。</span></div>
+          <div class="principle"><strong>先闭环，后铺开</strong><span>先用一个真实业务场景完成全链路，再复制第二、第三个场景。</span></div>
+          <div class="principle"><strong>先契约，后门户</strong><span>对象、状态、事件和策略是平台核心，不以页面数量代表平台成熟度。</span></div>
+          <div class="principle"><strong>先复用，后规模</strong><span>只有后续场景明显少做重复工作，才证明平台化产生了价值。</span></div>
+        </div>
+
+        <div class="roadmap">
+          <article class="phase"><div class="phase-name"><b>阶段 0</b>边界与基线</div><div><h4>建设内容</h4><ul><li>盘点现有 Agent、工具、模型和基础设施</li><li>定义 Agent / Tool / Run / Eval 核心对象</li><li>明确平台、业务、数据、安全四方责任</li></ul></div><div><h4>阶段产物</h4><p>平台边界、Agent Catalog 草案、风险分级、首个场景和退出条件。</p></div><div class="acceptance"><h4>验收信号</h4><p>企业能说清哪些责任必须统一、哪些逻辑继续留在业务应用。</p></div></article>
+          <article class="phase"><div class="phase-name"><b>阶段 1</b>最小治理线</div><div><h4>建设内容</h4><ul><li>模型入口、Runtime、Tool Registry</li><li>用户/Agent 身份、Policy、基础 Trace</li><li>一个真实生产候选场景</li></ul></div><div><h4>暂不追求</h4><p>复杂多 Agent、Memory 市场、多模型自动优化和全企业覆盖。</p></div><div class="acceptance"><h4>验收信号</h4><p>首个 Agent 可以被注册、授权、运行、追踪、暂停和停止。</p></div></article>
+          <article class="phase"><div class="phase-name"><b>阶段 2</b>交付闭环</div><div><h4>建设内容</h4><ul><li>模板、Dataset、回归评测和 Baseline</li><li>发布门禁、HITL、版本、成本和管理台</li><li>灰度、回滚和 BadCase 归档</li></ul></div><div><h4>阶段产物</h4><p>评测集模板、上线准入清单、版本对比报告和审批证据。</p></div><div class="acceptance"><h4>验收信号</h4><p>生产版本可评测、可审计、可灰度、可回滚；严重退化不能静默上线。</p></div></article>
+          <article class="phase"><div class="phase-name"><b>阶段 3</b>多场景复制</div><div><h4>建设内容</h4><ul><li>第二、第三业务线接入</li><li>企业知识、Memory、多租户和 SLO</li><li>MCP / A2A 等协议适配和跨团队工具复用</li></ul></div><div><h4>阶段产物</h4><p>统一语义与数据权限规范、接入黄金路径、平台级 SLO。</p></div><div class="acceptance"><h4>验收信号</h4><p>新场景不再重复搭建模型、用户、工具、权限、Trace 和评测底座。</p></div></article>
+          <article class="phase"><div class="phase-name"><b>阶段 4</b>平台化运营</div><div><h4>建设内容</h4><ul><li>自助目录、能力市场和多团队运营</li><li>在线评测、成本质量优化、事故复盘</li><li>冻结、降级、退役和供应商可替换</li></ul></div><div><h4>阶段产物</h4><p>平台目录、成本质量运营报表、能力复用指标和退出机制。</p></div><div class="acceptance"><h4>验收信号</h4><p>接入时间持续下降，质量、成本和风险能够形成稳定反馈闭环。</p></div></article>
+        </div>
+      </section>
+
+      <section id="evidence" class="section-block">
+        <div class="section-head">
+          <div class="section-code">EVIDENCE MAP</div>
+          <div><h2>本项目知识依据</h2><p>以下页面构成本报告的主要证据链。“直接支持”表示页面明确给出相同结论；“综合推导”表示本报告把多个页面中的原则组合成更具体的平台设计。</p></div>
+        </div>
+        <div class="sources">
+          <div class="source"><div class="source-id">E01</div><div class="source-title"><a href="../../wiki/concepts/agent-platform-boundary.md">Agent 平台边界</a></div><div class="source-desc">平台化触发信号、五类共性问题、准入、平台目录、责任分工与退出机制。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E02</div><div class="source-title"><a href="../../wiki/synthesis/enterprise-agent-platform-landscape.md">企业级 Agent 平台工程全景图</a></div><div class="source-desc">四层参考架构、八个能力簇、DataAgent 主线和一年建设顺序。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E03</div><div class="source-title"><a href="../../wiki/concepts/agent-security.md">Agent Security</a></div><div class="source-desc">Fail-closed、工具审批、沙箱、网络路径安全、日志脱敏以及 RBAC/ABAC/CBAC。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E04</div><div class="source-title"><a href="../../wiki/sources/enterprise-agent-runtime.md">第22章 Agent Runtime</a></div><div class="source-desc">/run context 中的 user、tenant、scope，身份上下文向 Policy 与工具层传递。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E05</div><div class="source-title"><a href="../../wiki/concepts/agent-memory-system.md">Agent 记忆系统</a></div><div class="source-desc">Working、Episodic、Profile、Org Context 四层模型及用户偏好治理。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E06</div><div class="source-title"><a href="../../wiki/concepts/agent-tool-system.md">Agent Tool System</a></div><div class="source-desc">工具准入、暴露、执行授权、Schema Adapter、Tool Registry 生命周期和证据分级。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E07</div><div class="source-title"><a href="../../wiki/sources/enterprise-agent-mcp.md">第24章 MCP 与企业工具生态</a></div><div class="source-desc">MCP 不替代 Registry，发现→注册→invoke，租户、scope、审计和连接池治理。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E08</div><div class="source-title"><a href="../../wiki/concepts/agent-run-lifecycle.md">Agent Run 生命周期</a></div><div class="source-desc">Run / Step / Tool Call、六态状态机、事件、检查点、恢复、幂等和取消。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E09</div><div class="source-title"><a href="../../wiki/concepts/agent-trace.md">Agent Trace</a></div><div class="source-desc">模型、工具与运行过程的 Trace/Span 证据，以及调试、成本和审计用途。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">E10</div><div class="source-title"><a href="../../wiki/synthesis/agent-eval-platform-landscape.md">Agent Eval 通用平台全景图</a></div><div class="source-desc">评测对象模型、离线回归、发布门禁、在线评估和生产失败回流。</div><div class="source-state">直接支持</div></div>
+          <div class="source"><div class="source-id">S01</div><div class="source-title">用户上下文统一模型</div><div class="source-desc">由 E03、E04、E05、E06 综合：权威身份、授权范围、用户偏好和 Run 上下文必须分层。</div><div class="source-state inference">综合推导</div></div>
+          <div class="source"><div class="source-id">S02</div><div class="source-title">重复建设详细清单</div><div class="source-desc">由 E01–E10 综合，把“模型、工具、RAG、审批、日志”扩展为可盘点的十类平台能力。</div><div class="source-state inference">综合推导</div></div>
+        </div>
+
+        <div class="gap-box"><h3>当前知识缺口</h3><ul><li>项目尚无独立页面系统描述“业务需求 → Agent 准入 → 产品立项”的完整产品流程；本报告依据准入五步和平台边界进行了扩展。</li><li>项目没有企业 IAM、HR、组织主数据的专门来源，因此 UserContext 字段是架构建议，不是已经确认的数据契约。</li><li>建设路径已有技术和治理顺序，但团队编制、预算、采购、组织变更和平台运营 KPI 尚未形成完整知识页。</li><li>关键页面已经超过 14 天；涉及具体产品、开源项目成熟度和供应商能力时需要重新核验。</li></ul></div>
+      </section>
+    </div>
+
+    <footer><strong>文档定位：</strong>基于本项目知识库的决策说明，不代表最终产品需求或已批准技术方案。业务规则、用户主数据字段和建设预算仍需企业实际情况确认。</footer>
+  </main>
+</div>
+</body>
+</html>
