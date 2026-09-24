@@ -1,9 +1,9 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-08-03
+updated: 2026-09-23
 domains: [software-development]
-sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, mcp-permission-middleware]
+sources: [hermes-agent, nanobot-framework-analysis, openclaw-framework-analysis, opencode-framework-analysis, mcp-permission-middleware, enterprise-agent-security-offense, enterprise-agent-guardrails]
 tags: [agent-architecture, security, prompt-injection, ssrf, sandbox, mcp, authorization, rbac, abac, cbac]
 ---
 
@@ -91,3 +91,12 @@ Agent 的权限不能只由身份决定。推荐把 **身份 + 上下文 + 资�
 | **Scope 过度授权** | 一次性请求全部 scope， stolen token 影响面大 | scope minimization；按需 step-up |
 
 参考实现见 [[mcp-permission-middleware]]。
+
+## 企业攻击面
+
+上面的框架对比停在 2026-08-03 的实现分析，这次没有重核那些命令黑名单。[[enterprise-agent-security-offense]] 补的是企业平台上的另一层：攻击不只有用户输入。
+
+输入、检索到的网页和文档、工具调用、业务输出、运维审计都要有控制点。间接注入藏在模型读到的内容里，下手的人可能不是当前用户。工具越权比说错话严重，因为输出会变成 SQL、导出或写入。万能工具入口让策略无法判断范围。
+
+红队样例要进回归集，至少覆盖直接注入、间接注入、越权、泄漏、不安全输出和业务绕过。运行中的策略决定见 [[agent-guardrails]]。框架里的 fail-closed 仍然适用，但它替代不了按身份、数据域和工具参数做的最小权限。
+

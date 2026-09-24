@@ -1,9 +1,9 @@
 ---
 type: concept
 created: 2026-07-26
-updated: 2026-08-05
+updated: 2026-09-23
 domains: [software-development]
-sources: [hermes-agent-orchestration-loop, openclaw-framework-analysis, opencode-framework-analysis, pi-agent-runtime-event-flow, pi-agent-loop-and-turn, pi-provider-unified-event-protocol, pi-tool-call-lifecycle]
+sources: [hermes-agent-orchestration-loop, openclaw-framework-analysis, opencode-framework-analysis, pi-agent-runtime-event-flow, pi-agent-loop-and-turn, pi-provider-unified-event-protocol, pi-tool-call-lifecycle, aws-agentcore-evaluations, aws-framework-neutral-evaluation, nvidia-agent-evaluation, microsoft-weavebench, enterprise-agent-eval-platform-report, enterprise-agent-observability]
 tags: [observability, trace, span, agent, llm, monitoring, debugging, evaluation]
 ---
 
@@ -111,3 +111,20 @@ agent_start/end    → Trace 生命周期
 - [[hermes-agent]] —— Hermes 的 budget/interrupt 等可观测计数
 - [[openclaw-framework-analysis]] —— 分层运行结构（Run/Attempt/Stream）
 - [[opencode-framework-analysis]] —— AI SDK 流式事件
+
+## 在评测里的位置
+
+2026-09-23 补入。上文 Trace / Span / Event 的定义仍以 2026-08-05 的框架分析为准，这次没有重核那些实现。
+
+这组 Agent Eval 资料把 Trace 从排障日志提升为评分证据。[[aws-agentcore-evaluations]] 用 OpenTelemetry Trace 做评估输入，粒度可以到 Session、Trace 和 Tool。[[aws-framework-neutral-evaluation]] 要求不同框架先落到同一套遥测，再复用评分口径。[[nvidia-agent-evaluation]] 把完整轨迹和工具使用当成 Agent 系统指标，而不是模型回答的附件。[[microsoft-weavebench]] 说明终态成功仍要回看动作轨迹和交付物，否则会把捷径当成能力。
+
+因此评测用的 Trace 至少要能对上模型调用、工具参数和结果、检索或记忆、环境状态变化，以及时延、Token 和成本。评分规则属于 [[hybrid-agent-evaluator]]，不是 Trace 自己。
+
+## 企业任务里的对象边界
+
+这一节来自 [[enterprise-agent-observability]]，不改写上面 2026-08-05 的 Span 定义。
+
+Session 是连续会话，里面可以有多次 Run。Run 是一次任务。Trace 是这次 Run 的步骤证据。Checkpoint 用来恢复。Artifact 是图表、SQL、报告这些产物的引用。Context Package 是这次模型实际看到的输入。把这几样记成同一条“日志”，诊断时就分不清用户在聊天、任务有没有执行、模型看见了什么、文件是谁生成的。
+
+一次可诊断的 Run 要能回答：任务从哪来，模型看到了什么，调用了哪个工具、参数是什么，下游返回了什么，产物从哪来，钱花在哪。线上失败要能转成 [[evaluation-asset]] 里的回归样本，而不是只留在事故聊天里。
+

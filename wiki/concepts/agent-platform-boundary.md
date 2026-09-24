@@ -1,9 +1,9 @@
 ---
 type: concept
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-09-23
 domains: [software-development]
-sources: [enterprise-agent-platform-boundary]
+sources: [enterprise-agent-platform-boundary, enterprise-agent-framework-boundary]
 tags: [platform-engineering, governance, enterprise-agent-platform]
 ---
 
@@ -64,3 +64,10 @@ tags: [platform-engineering, governance, enterprise-agent-platform]
 - [[enterprise-agent-platform-architecture-map]]（同一书的四层参考架构与八能力簇地图）
 - [[agent-eval-platform-landscape]]（评测平台是平台治理面的具体化）
 - [[agent-runtime-event-stream]]、[[agent-tool-system]]、[[agent-security]]（收归平台后的具体能力形态）
+
+## 框架不能代替平台
+
+[[enterprise-agent-framework-boundary]] 把三层说死了：框架负责把 Planner、角色和流程写出来；平台负责 `/run`、状态、工具注册、权限、人工审批和 Trace；应用负责一个业务任务。LangGraph 可以留在 Planner 里，低代码产品可以留在入口和知识库。会改业务状态的动作仍要进企业 Runtime 和 Registry。
+
+已有框架不要推倒。收编顺序是：工具调用先走 Registry，运行事件再折叠成统一状态，写操作和审批最后迁回 Runtime。工具和权限不能留到最后。画布好用只说明开发方便，不证明已经有审计和恢复。
+

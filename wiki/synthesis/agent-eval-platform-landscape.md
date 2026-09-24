@@ -1,9 +1,30 @@
 ---
 type: synthesis
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-23
 domains: [software-development]
-sources: []
+sources:
+  - anthropic-agent-evals
+  - amazon-real-world-agent-evaluation
+  - aws-agentcore-evaluations
+  - aws-custom-code-evaluators
+  - aws-framework-neutral-evaluation
+  - microsoft-foundry-evaluate-agents
+  - google-gemini-enterprise-agent-platform
+  - google-agent-platform-eval-updates
+  - nvidia-agent-evaluation
+  - openai-in-house-data-agent-eval
+  - ibm-benchmarking-the-benchmarks
+  - microsoft-weavebench
+  - microsoft-excytin-bench
+  - openai-evmbench
+  - accord-user-agent-collaboration
+  - agentcompass-evaluation-infrastructure
+  - ecommercebench
+  - atlas-industrial-tool-agents
+  - trajdebug
+  - huawei-complex-tool-agent-evaluation
+  - enterprise-agent-eval-platform-report
 tags:
   - agent-eval
   - evaluation-platform
@@ -102,7 +123,7 @@ Agent Eval 平台由 **8 个业务模块和 1 个基础模块**组成。其中�
     - 2.2 运行资源控制：控制并发、重试、超时、采样和成本预算
       - 2.2.1 策略化资源约束
         - 2.2.1.1 Concurrency / Retry / Timeout / Budget
-  - 3. ★ 评测资产管理
+  - [[evaluation-asset|3. ★ 评测资产管理]]
     - 3.1 任务与数据集管理：沉淀具有明确输入、成功条件和风险标签的业务测试资产
       - 3.1.1 版本化数据集
         - 3.1.1.1 Dataset / Task / Slice
@@ -115,7 +136,7 @@ Agent Eval 平台由 **8 个业务模块和 1 个基础模块**组成。其中�
   - 4. ★ 可复现执行环境
     - 4.1 Agent 执行适配：以统一 Harness 调用不同 Agent 并收集结果
       - 4.1.1 Harness 解耦模式
-        - 4.1.1.1 AgentCompass Harness
+        - [[agentcompass|4.1.1.1 AgentCompass Harness]]
     - 4.2 环境隔离与恢复：让工具调用、状态修改和外部副作用可控、可重置
       - 4.2.1 沙箱与环境快照
         - 4.2.1.1 Docker / Remote Sandbox
@@ -124,7 +145,7 @@ Agent Eval 平台由 **8 个业务模块和 1 个基础模块**组成。其中�
       - 4.3.1 Checkpoint 与 Replay
         - 4.3.1.1 Environment State / Artifact
   - 5. ★ Trace 与证据采集
-    - 5.1 全链路轨迹记录：保存模型、工具、检索、记忆和业务状态变化
+    - [[agent-trace|5.1 全链路轨迹记录]]：保存模型、工具、检索、记忆和业务状态变化
       - 5.1.1 分层 Trace 模型
         - 5.1.1.1 Session / Trace / Span
     - 5.2 终态与副作用验证：验证真实环境结果，而不是只相信 Agent 的文本回答
@@ -133,7 +154,7 @@ Agent Eval 平台由 **8 个业务模块和 1 个基础模块**组成。其中�
     - 5.3 性能与成本度量：同时记录质量、时延、Token 和工具成本
       - 5.3.1 统一运行指标
         - 5.3.1.1 Latency / Token / Cost / Error
-  - 6. ★ 混合评估器
+  - [[hybrid-agent-evaluator|6. ★ 混合评估器]]
     - 6.1 确定性验证：对结构、权限、工具参数和环境状态执行可复现检查
       - 6.1.1 规则与代码评估
         - 6.1.1.1 Assertion / SQL / Schema / Unit Test
@@ -153,7 +174,7 @@ Agent Eval 平台由 **8 个业务模块和 1 个基础模块**组成。其中�
     - 7.2 发布门禁：把严重失败、核心指标和统计退化转为发布决策
       - 7.2.1 硬门槛与趋势门槛
         - 7.2.1.1 CI Check / Release Gate / Waiver
-    - 7.3 失败根因定位：定位最早关键错误、传播路径和责任组件
+    - [[trajectory-root-cause|7.3 失败根因定位]]：定位最早关键错误、传播路径和责任组件
       - 7.3.1 错误树与证据下钻
         - 7.3.1.1 Finding / First Error Span / Owner
   - 8. 生产监控与反馈闭环
@@ -403,10 +424,27 @@ CI 硬门禁
 
 第一版明确不做：多租户计费、评估器市场、复杂 A/B、全量实时 Judge、通用人工标注平台和所有 Agent 框架适配。
 
+## 来源边界
+
+本页的平台模块、小企业建设顺序和第一版范围，来自截止 2026-09-01 的 20 篇一手译介，以及把它们收成判断的 [[enterprise-agent-eval-platform-report]]。单篇主张和局限留在对应来源页，不把产品发布说明或一篇论文的阈值升成通用事实。
+
+下面 AgentCompass、Arize Phoenix、Langfuse 的模块覆盖对比，是 2026-09-02 另做的外部产品核对。Phoenix 和 Langfuse 不在这 20 篇原文里，也还没有来源页。那一节只表示当时公开文档上的覆盖差异，不表示这批资料已经验证了二者的当前能力。
+
 ## 调研依据
+
 
 - [AgentCompass 官方仓库](https://github.com/open-compass/AgentCompass)
 - [Arize Phoenix 官方文档](https://arize.com/docs/phoenix)
 - [Phoenix Evaluation](https://arize.com/docs/phoenix/evaluation/llm-evals/evaluator-traces)
 - [Langfuse Evaluation 核心概念](https://langfuse.com/docs/evaluation/core-concepts)
 - [Langfuse CI/CD Experiments](https://langfuse.com/docs/evaluation/experiments/experiments-ci-cd)
+
+本批已编译的来源：
+
+- 方法论与真实闭环：[[anthropic-agent-evals]]、[[amazon-real-world-agent-evaluation]]、[[nvidia-agent-evaluation]]、[[openai-in-house-data-agent-eval]]
+- 云产品形态：[[aws-agentcore-evaluations]]、[[aws-custom-code-evaluators]]、[[aws-framework-neutral-evaluation]]、[[microsoft-foundry-evaluate-agents]]、[[google-gemini-enterprise-agent-platform]]、[[google-agent-platform-eval-updates]]、[[huawei-complex-tool-agent-evaluation]]
+- 评测资产与长程场景：[[ibm-benchmarking-the-benchmarks]]、[[microsoft-weavebench]]、[[microsoft-excytin-bench]]、[[openai-evmbench]]、[[accord-user-agent-collaboration]]、[[ecommercebench]]
+- 执行底座与根因：[[agentcompass-evaluation-infrastructure]]、[[atlas-industrial-tool-agents]]、[[trajdebug]]
+- 综合判断稿：[[enterprise-agent-eval-platform-report]]
+
+稳定概念：[[evaluation-asset]]、[[hybrid-agent-evaluator]]、[[trajectory-root-cause]]。执行层的开源项目见 [[agentcompass]]。

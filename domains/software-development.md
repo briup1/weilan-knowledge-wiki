@@ -1,7 +1,7 @@
 ---
 type: domain
 created: 2026-09-17
-updated: 2026-09-17
+updated: 2026-09-23
 domains: [software-development]
 tags: [navigation]
 title: "软件开发与 Agent 工程"
@@ -21,7 +21,7 @@ related: []
 ## 从问题进入
 
 - 理解 Agent 系统：[[wiki/synthesis/agent-concept-map|agent-concept-map]] → [[wiki/synthesis/pi-agent-runtime-architecture|pi-agent-runtime-architecture]] → [[wiki/synthesis/agent-framework-12-dimensions-comparison|agent-framework-12-dimensions-comparison]]。
-- 建设企业平台：[[wiki/synthesis/enterprise-agent-platform-landscape|enterprise-agent-platform-landscape]] → [[wiki/concepts/agent-platform-boundary|agent-platform-boundary]] → [[wiki/synthesis/agent-eval-platform-landscape|agent-eval-platform-landscape]]。
+- 建设企业平台：[[wiki/synthesis/enterprise-agent-platform-landscape|enterprise-agent-platform-landscape]] → [[wiki/concepts/agent-platform-boundary|agent-platform-boundary]] → [[wiki/concepts/human-in-the-loop|human-in-the-loop]] → [[wiki/synthesis/agent-eval-platform-landscape|agent-eval-platform-landscape]]。评测资产见 [[wiki/concepts/evaluation-asset|evaluation-asset]]、[[wiki/concepts/hybrid-agent-evaluator|hybrid-agent-evaluator]]；运行时安全控制见 [[wiki/concepts/agent-guardrails|agent-guardrails]]。
 - 构建后端服务：[[wiki/synthesis/fastapi-ecosystem-landscape|fastapi-ecosystem-landscape]] → [[wiki/entities/fastapi|fastapi]] → [[wiki/concepts/async-tasks|async-tasks]] → [[wiki/concepts/containerization|containerization]]。
 - 改善 AI 辅助开发：[[wiki/synthesis/claude-code-agent-ecosystem-landscape|claude-code-agent-ecosystem-landscape]] → [[wiki/synthesis/ai-coding-context-stack|ai-coding-context-stack]] → [[wiki/synthesis/knowledge-graph-tools-comparison|knowledge-graph-tools-comparison]]。
 

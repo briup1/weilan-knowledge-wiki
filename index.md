@@ -32,6 +32,7 @@
 [[redis]] —— 内存数据结构存储，用作缓存和消息队列
 [[remotion]] —— React 编程式视频创作库
 [[yt-dlp]] —— 视频下载与字幕提取工具，支持 1800+ 站点
+[[agentcompass]] —— 开源 Agent 评测基础设施：Benchmark、Harness、Environment 三层拆开
 
 ## Concepts
 
@@ -80,6 +81,13 @@
 [[tool-call-lifecycle]] —— ToolCall 从模型意图到校验、授权、同步结果或异步任务恢复
 [[sub-agent-orchestration]] —— 子 Agent 编排：受限临时实例的任务外包
 [[validation-loop]] —— 验证循环：LLM 决策到实际执行的多层把关
+[[evaluation-asset]] —— 评测资产：版本化的任务、Rubric、Ground Truth 和 BadCase
+[[hybrid-agent-evaluator]] —— 混合评估器：代码规则优先，语义用 Judge，高风险用人工
+[[trajectory-root-cause]] —— 轨迹根因：定位失败轨迹里最早的关键错误
+[[human-in-the-loop]] —— 人工介入：在同一条 Run 上授权高风险动作并恢复
+[[agent-cost-governance]] —— 任务成本：把模型、工具、检索和重试的花费贴回 Run
+[[agent-task-slo]] —— 任务 SLO：按完成质量而不是单次接口定义目标
+[[agent-guardrails]] —— Guardrails：分类器识别风险，策略引擎决定放行或拦截
 [[agent-platform-boundary]] —— Agent 平台边界：应用/框架/平台三层与四问判据、五类共性问题、治理配套机制
 [[agent-run-lifecycle]] —— Agent Run 生命周期：Run/Step/Tool Call 对象分层、六态状态机、检查点恢复与幂等
 [[agent-planner]] —— Agent Planner：只提议不执行的稳定接口、ReAct/Plan-and-Execute/状态图选择与回放治理
@@ -161,6 +169,40 @@
 [[enterprise-agent-memory]] —— Memory 系统：Working/Episodic/Profile/Org Context 四层、检查点与删除治理
 [[enterprise-agent-multi-agent]] —— 多 Agent 协作：同 Run Handoff、Agent Catalog、冲突仲裁与可收缩架构
 [[enterprise-agent-protocols]] —— Agent 协议：MCP/A2A/Agent Card/ACP 的职责版图与 Registry 收敛
+[[enterprise-agent-hitl]] —— HITL：审批进入 waiting_human，同一 run_id 恢复，双检查点分开
+[[enterprise-agent-framework-boundary]] —— 框架可做 Planner 或入口，不能替代 Runtime 和 Registry
+[[enterprise-agent-observability]] —— 可观测性：Session、Run、Trace、Checkpoint、Artifact 分开
+[[enterprise-agent-dataagent-eval]] —— DataAgent 评测：答案之外还要看口径、权限和轨迹
+[[enterprise-agent-online-eval]] —— 在线评测：真实流量发现问题，反馈不能直接当标签
+[[enterprise-agent-cost-governance]] —— 成本治理：花费贴到步骤，缓存键先看权限
+[[enterprise-agent-slo]] —— 任务级 SLO、错误预算，以及不能绕过安全的降级
+[[enterprise-agent-security-offense]] —— 攻击面：间接注入、工具越权和可回归的红队样例
+[[enterprise-agent-guardrails]] —— Guardrails：分层策略、脱敏位置、误杀漏杀运营
+
+
+### Agent Eval 2026
+
+[[anthropic-agent-evals]] —— Anthropic：任务、试验、轨迹、终态和评分器分开
+[[amazon-real-world-agent-evaluation]] —— Amazon：按模型、规划、工具、记忆和安全拆失败
+[[aws-agentcore-evaluations]] —— AWS AgentCore：用 Trace 贯通开发、发布和生产评分
+[[aws-custom-code-evaluators]] —— 硬约束用代码评分器，开放质量才用 Judge
+[[aws-framework-neutral-evaluation]] —— 用 OpenTelemetry / OpenInference 接多种 Agent 框架
+[[microsoft-foundry-evaluate-agents]] —— Foundry：版本化测试集、多评估器和持续评估
+[[google-gemini-enterprise-agent-platform]] —— 评估放进身份、工具治理和观测的控制平面
+[[google-agent-platform-eval-updates]] —— 可观测性回答做了什么，评估回答做得好不好
+[[nvidia-agent-evaluation]] —— 区分模型评测和 Agent 系统评测的五类指标
+[[openai-in-house-data-agent-eval]] —— 内部数据 Agent：Golden SQL、权限和金丝雀
+[[ibm-benchmarking-the-benchmarks]] —— 评测集本身也要查一致性、覆盖和 Judge 校准
+[[microsoft-weavebench]] —— 长程 Computer Use：只看终态会高估能力
+[[microsoft-excytin-bench]] —— 安全调查：用调查图生成可解释 Ground Truth
+[[openai-evmbench]] —— 智能合约：隔离环境、状态评分和评分器红队
+[[accord-user-agent-collaboration]] —— 用户偏好会在交互中形成和改变
+[[agentcompass-evaluation-infrastructure]] —— AgentCompass：Benchmark、Harness、Environment 解耦
+[[ecommercebench]] —— 365 天经营：短期成功不能代表长期价值
+[[atlas-industrial-tool-agents]] —— 请求内工具轨迹加跨请求体验，并用生产流量校准
+[[trajdebug]] —— 在失败轨迹里找最早关键错误及其传播
+[[huawei-complex-tool-agent-evaluation]] —— 华为云 AgentArts 的复杂工具调用评估操作流
+[[enterprise-agent-eval-platform-report]] —— 20 篇资料的企业 Eval 平台判断稿
 
 ## Synthesis
 

@@ -562,3 +562,22 @@
 - 验证：25 项单元测试通过，正式页面审计 0 errors / 5 类历史警告，单域/共享/跨域检索实测通过，git diff --check 通过。
 - 通用 at-kb 审计已执行并与 HEAD 临时副本对比；差异仅为用户原有 docker/ 文件，未引入新增审计问题。历史副本、来源链与时效问题未伪装清零，见 docs/knowledge/migration-2026-09-17.md。
 - 综合判断：本次是知识库治理架构调整，不是新来源摄取；未新增空概念或虚构知识综合，自媒体运营等能力保留待建设标记。
+
+## [2026-09-23] ingest | 2026 Agent Eval 资料集
+
+- 领域：`software-development`。资料回答的是 Agent 质量系统怎么建，不是自媒体方法，也不把评测方法升成 shared。
+- 归档 `raw/archive/agent-eval-2026/`：国外 15 篇、国内 5 篇、综合报告 1 篇。`README.md` 只是收集口径和阅读顺序，没有独立主张，不建来源页。
+- 新增 21 个来源页。新增概念 [[evaluation-asset]]、[[hybrid-agent-evaluator]]、[[trajectory-root-cause]]，新增实体 [[agentcompass]]。
+- 综合：不另建全景。更新 [[agent-eval-platform-landscape]]，补上这 21 个来源，并写明 Phoenix / Langfuse 对比不在这 20 篇原文里。企业平台全景里的 Eval 指针从 [[validation-loop]] 改到 [[hybrid-agent-evaluator]]，因为验证循环只挡单次工具调用。[[agent-trace]] 补了「评测证据」一节；2026-08-05 的 Trace 定义本次未重核。
+- 领域入口的企业平台阅读路径加上三个新概念。没有跨域综合。
+- 验收：`python3 scripts/knowledge/kb.py audit` 结果 0 errors、5 类既有警告。警告仍是历史同名链接、旧 sources 指向、空 sources、非标准路径和过期页面，本次没有新增错误。
+
+## [2026-09-23] ingest | 企业级 Agent 平台后续 9 章
+
+- 领域：`software-development`。把选定原文集里剩下的第30–31、38–42、50–51章补完。模型、RAG、部署、前端和组织专题本来就不在这 19 篇里，没有扩写。
+- 归档到已有目录 `raw/archive/enterprise-agent-platform/`，没有另做一份副本。`README.md` 和 `LICENSE` 一并移入。README 里的「待摄取」是移动前的原句，按 raw 只读未改。
+- 新增 9 个来源页。新增概念 [[human-in-the-loop]]、[[agent-cost-governance]]、[[agent-task-slo]]、[[agent-guardrails]]。
+- 更新已有概念：[[agent-run-lifecycle]] 只把人工等待指到 HITL；[[agent-platform-boundary]] 补上框架不能代替平台；[[agent-trace]]、[[evaluation-asset]]、[[hybrid-agent-evaluator]]、[[agent-security]] 各自加上这批章节的边界。旧的框架实现细节没有重核。
+- 综合：继续更新 [[enterprise-agent-platform-landscape]]，选定 19 章的覆盖说明改为已完成。没有另开全景，也没有跨到自媒体领域。
+- 原文图片没有随 Markdown 下载，来源页不把图示当证据。
+- 验收：`python3 scripts/knowledge/kb.py audit` 结果 0 errors、5 类既有警告。`raw/assets/` 里这批章节已经移走。

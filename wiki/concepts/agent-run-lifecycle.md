@@ -1,9 +1,9 @@
 ---
 type: concept
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-09-23
 domains: [software-development]
-sources: [enterprise-agent-runtime]
+sources: [enterprise-agent-runtime, enterprise-agent-hitl]
 tags: [agent-architecture, runtime, state-machine, checkpoint, enterprise-agent-platform]
 ---
 
@@ -67,3 +67,8 @@ pending ──> planning ──> executing ──> succeeded (终态)
 - [[session-persistence]] / [[state-management]]：会话与运行状态的持久化技术
 - [[agent-trace]]：run_id 与 trace-id 映射后进入可观测
 - 来源：[[enterprise-agent-runtime]]（第22章，含检查点字段表、错误码表、上线门禁清单）
+
+## 人工等待展开到哪里
+
+`waiting_human` 只说明 Run 停着等授权。谁来批、批的是执行前还是发布前、恢复后还是不是同一条 Run，见 [[human-in-the-loop]]。引擎检查点负责把执行恢复回来；给人看的草稿和审批里程碑是另一份业务检查点，不要塞进同一份恢复快照。
+

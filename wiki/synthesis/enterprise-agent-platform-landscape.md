@@ -1,9 +1,29 @@
 ---
 type: synthesis
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-09-23
 domains: [software-development]
-sources: [enterprise-agent-platform-boundary, enterprise-agent-platform-architecture-map, enterprise-agent-runtime, enterprise-agent-tool-registry, enterprise-agent-mcp, enterprise-agent-planner, enterprise-agent-agentic-workflow, enterprise-agent-memory, enterprise-agent-multi-agent, enterprise-agent-protocols]
+sources:
+  - enterprise-agent-platform-boundary
+  - enterprise-agent-platform-architecture-map
+  - enterprise-agent-runtime
+  - enterprise-agent-tool-registry
+  - enterprise-agent-mcp
+  - enterprise-agent-planner
+  - enterprise-agent-agentic-workflow
+  - enterprise-agent-memory
+  - enterprise-agent-multi-agent
+  - enterprise-agent-protocols
+  - enterprise-agent-hitl
+  - enterprise-agent-framework-boundary
+  - enterprise-agent-observability
+  - enterprise-agent-dataagent-eval
+  - enterprise-agent-online-eval
+  - enterprise-agent-cost-governance
+  - enterprise-agent-slo
+  - enterprise-agent-security-offense
+  - enterprise-agent-guardrails
+  - enterprise-agent-eval-platform-report
 tags:
   - enterprise-agent-platform
   - platform-architecture
@@ -14,7 +34,7 @@ tags:
 # 企业级 Agent 平台工程全景图
 
 > 基于《企业级 Agent 平台工程》原文章节编译，随章节摄取逐步扩展。来源：datagallery-lab enterprise_agent_platform（固定提交 e5d97a6，2026-07-03，Apache-2.0）。
-> 当前覆盖本轮选定的 10/19 章：平台边界（第2章）、参考架构（第4章）与第22-29章核心能力（Runtime、Registry、MCP、Planner、Workflow、Memory、多 Agent、协议）。
+> 本轮选定的 19 章已全部摄入：平台边界（第2章）、参考架构（第4章）、第22–31章核心能力，以及第38–42章反馈系统和第50–51章安全控制。模型、RAG、部署、前端和组织专题不在这 19 篇原文集里。
 
 ## 平台定位：从试点到统一治理线
 
@@ -61,7 +81,7 @@ Agent 能力层    任务状态/工具调用/规划/长任务/多Agent/协议   
 - **智能放大器**（Planner/Memory/RAG/Knowledge）：让 Agent 理解上下文并动态推进；缺它们长任务与多轮任务会失真。
 - **反馈系统**（Observability/Eval）：让平台避免黑箱化与失控；缺它们出错无法解释、版本好坏靠感觉。
 
-能力簇与已摄取概念的对应：Runtime → [[agent-runtime-event-stream]] / [[state-management]]；Registry → [[agent-tool-system]]（工具供给与契约）；Policy → [[agent-security]]；Memory → [[agent-memory-system]] / [[context-management]]；RAG/Knowledge → [[rag]]；Observability → [[agent-trace]]；Eval → [[agent-eval-platform-landscape]] / [[validation-loop]]。
+能力簇与已摄取概念的对应：Runtime → [[agent-runtime-event-stream]] / [[state-management]]；Registry → [[agent-tool-system]]（工具供给与契约）；Policy → [[agent-security]]；Memory → [[agent-memory-system]] / [[context-management]]；RAG/Knowledge → [[rag]]；Observability → [[agent-trace]]；Eval → [[agent-eval-platform-landscape]] / [[hybrid-agent-evaluator]]；成本 → [[agent-cost-governance]]；韧性 → [[agent-task-slo]]；安全控制 → [[agent-security]] / [[agent-guardrails]]。[[validation-loop]] 只挡单次工具调用前的格式和风险，不负责整次任务的轨迹和终态评分。
 
 ### 执行骨架落地（第22-24章）
 
@@ -80,6 +100,24 @@ Agent 能力层    任务状态/工具调用/规划/长任务/多Agent/协议   
 - **同 Run 多 Agent**（[[enterprise-agent-multi-agent]]）：[[multi-agent-collaboration]] 仅在职责/权限/产物确需拆分时启用；Router 选 Agent、Planner 选工具，Handoff 作为结构化 Tool Call，Catalog/工具白名单/类型化共享状态/权威源冲突处理共同保证可审计与可收缩。
 - **L3 协议互操作**（[[enterprise-agent-protocols]]）：[[agent-protocol-interoperability]] 按对象选择 MCP/A2A/Agent Card/ACP，外部声明经 adapter 映射为 ToolSpec/AgentSpec/Event 后再走 Registry/Policy/Runtime/Trace；保存原始声明与版本快照，协议可变而平台内核稳定。
 
+
+### 人工介入与框架边界（第30–31章）
+
+- **同一 Run 上的人工授权**（[[enterprise-agent-hitl]]）：[[human-in-the-loop]] 把审批从聊天追问里拆出来。前置审批停在写操作前，后置审批停在草稿发布前。批准后沿原 `run_id` 恢复。引擎检查点负责恢复执行，业务检查点负责证明谁批了哪一版。
+- **框架停在表达层**（[[enterprise-agent-framework-boundary]]）：LangGraph 可做 Planner 子图，低代码产品可做入口。会改业务状态的调用仍进 Runtime 和 Registry。收编先统一工具，再折叠状态，最后迁走写操作和审批。
+
+### 反馈系统落地（第38–42章）
+
+- **任务证据链**（[[enterprise-agent-observability]]）：Session、Run、Trace、Checkpoint、Artifact 分开记。失败要能转成回归样本。
+- **DataAgent 评测**（[[enterprise-agent-dataagent-eval]]、[[enterprise-agent-online-eval]]）：答案只是第一层证据。规则校验优先，裁判和人工处理开放解释。线上反馈先连着 Trace 和权限审，再进入 [[evaluation-asset]]。
+- **任务成本**（[[enterprise-agent-cost-governance]]）：钱贴到 `run_id` 和步骤上。缓存键先看权限边界。更便宜本身不是上线理由。
+- **任务 SLO**（[[enterprise-agent-slo]]）：承诺的是完成有质量的任务，不是接口 200。降级不能绕过权限、脱敏、审批和审计。
+
+### 安全控制（第50–51章）
+
+- **攻击面**（[[enterprise-agent-security-offense]]）：间接注入来自模型读到的内容，工具越权会把话变成动作。红队样例进入回归，而不是上线前问几句。
+- **运行时控制系统**（[[enterprise-agent-guardrails]]）：分类器只出风险类别，策略引擎决定拒绝、脱敏、审批、降级或放行。脱敏要覆盖日志和导出，不只覆盖最终回答。
+
 ## DataAgent 主线
 
 DataAgent 被选为贯穿场景，因为它几乎穿过每一架构层：模型（规划/生成 SQL/解释）、数据（语义层/口径/湖仓）、知识（元数据/历史分析/业务术语）、Agent（Runtime/Planner/人工介入）、治理（权限/trace/评估/审计）、前端（图表/引用/报告）。一次请求的七个检查点：任务创建 → 上下文加载 → 路径规划 → 工具执行 → 结果解释 → 治理记录 → 结果交付。误把 DataAgent 当「NL2SQL + 图表」，平台建设第一天就会跑偏。
@@ -95,6 +133,6 @@ Q4  灰度/降级/SLO/供应商接入/平台目录            → 复盘模板 +
 
 路线成败检验：第二、三个场景接入时重复步骤是否减少；平台化信号是「后续场景少做重复工作」，不是文档数量增加。能力归属判断（早期底座 vs 后期扩展）见 [[agent-platform-boundary]]。
 
-## 后续扩展计划
+## 原文集范围
 
-本轮已完成清单前 10/19 章。其余 9 章留在 `raw/assets/`，后续优先补：第30-31章 HITL/安全、第38-42章可观测与评测、第50-51章安全治理。
+选定的 19 章已经进入来源页。还没有摄入的是这套书里主动留在集外的专题：模型、数据基础设施、RAG、部署、前端、组织和案例。不要把上面的全景当成整本书已经编译完成。
